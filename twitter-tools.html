@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dominate X (formerly Twitter) with DigitalServicesHub. AI tools to generate viral threads, engaging tweets, professional bios, and trending hashtags.">
+    <meta name="keywords" content="Twitter Thread Creator, Viral Tweet Generator, X Bio Optimizer, Hashtag Tool, Social Media AI, Audience Growth">
+    <meta name="author" content="DigitalServicesHub">
+    <title>X (Twitter) Tools | DigitalServicesHub.online</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        x: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#64748b',
+                            800: '#1e293b',
+                            900: '#0f172a', // Main X Black
+                            accent: '#1d9bf0', // Twitter Blue accent
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar for Horizontal Nav */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .tool-tab.active {
+            background-color: #f1f5f9; /* slate-100 */
+            color: #0f172a; /* slate-900 */
+            border-bottom: 2px solid #0f172a;
+        }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #0f172a; /* Black loading bar */
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Full Page Modal Transition */
+        #full-page-modal {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #full-page-modal.hidden-modal {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #full-page-modal.visible-modal {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        /* Ad Placeholder Styles */
+        .ad-container { background: #f8fafc; border: 1px dashed #cbd5e1; display: flex; justify-content: center; align-items: center; overflow: hidden; margin: 20px auto; }
+        .ad-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-slate-200 selection:text-slate-900">
+
+    <!-- ==================== PRIMARY HEADER ==================== -->
+    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300" id="main-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="bg-brand-600 p-2 rounded-lg text-white shadow-lg shadow-brand-500/30">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">
+                        DigitalServices<span class="text-brand-600">Hub</span>.online
+                    </span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Home</a>
+                    <a href="about.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">About Us</a>
+                    <a href="blog.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Blog</a>
+                    <a href="contact.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Contact Us</a>
+                    <a href="#tools" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-transform hover:scale-105 shadow-lg">
+                        Get Started
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="index.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Home</a>
+                <a href="about.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
+                <a href="blog.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Blog</a>
+                <a href="contact.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Contact Us</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== SECONDARY NAV (Tools Bar) ==================== -->
+    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center overflow-x-auto hide-scrollbar py-3 px-4 space-x-2 sm:space-x-4">
+                <a href="index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="youtube" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">YouTube Tools</span>
+                </a>
+                <a href="instagram.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="instagram" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">Instagram Tools</span>
+                </a>
+                <a href="tiktok.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="music-2" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">TikTok Tools</span>
+                </a>
+                <a href="blog-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">Blog & SEO</span>
+                </a>
+                <a href="email-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span class="text-sm font-medium">Email Marketing</span>
+                </a>
+                <a href="twitter-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white border border-slate-700 shadow-sm whitespace-nowrap transition-colors">
+                    <i data-lucide="twitter" class="w-4 h-4"></i>
+                    <span class="text-sm font-semibold">X (Twitter)</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AD SPACE: LEADERBOARD (728x90) -->
+    <div class="pt-40 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
+        <p class="ad-label">Advertisement</p>
+        <div id="ad-728-90" class="ad-container w-[728px] h-[90px] mx-auto"></div>
+    </div>
+
+    <!-- ==================== HERO SECTION (X Tools) ==================== -->
+    <section class="relative py-20 lg:pt-20 lg:pb-32 overflow-hidden" id="tools">
+        <!-- Background Decor -->
+        <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="absolute left-0 top-20 -z-10 m-auto h-[400px] w-[400px] rounded-full bg-slate-300 opacity-20 blur-[100px]"></div>
+        <div class="absolute right-0 bottom-20 -z-10 m-auto h-[250px] w-[250px] rounded-full bg-blue-400 opacity-10 blur-[80px]"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                
+                <!-- Left: Text Content -->
+                <div class="text-center lg:text-left animate-slide-up">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold mb-6 border border-slate-700">
+                        <i data-lucide="twitter" class="w-3 h-3"></i>
+                        X (Twitter) Growth Suite
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-bold font-heading text-slate-900 leading-tight mb-6">
+                        Write Viral Threads & <span class="text-slate-500 relative">Tweets
+                            <svg class="absolute w-full h-3 -bottom-1 left-0 text-slate-300 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
+                            </svg>
+                        </span> in Seconds
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                        Grow your following on X with AI. Generate multi-tweet threads from a single topic, optimize your bio, and find trending hashtags instantly.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start text-sm font-medium text-slate-500">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="list-start" class="w-5 h-5 text-slate-900"></i> Thread Creator
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="zap" class="w-5 h-5 text-blue-500"></i> Viral Hooks
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-5 h-5 text-slate-900"></i> Bio Optimization
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Tool Card -->
+                <div class="relative animate-slide-up" style="animation-delay: 0.2s;">
+                    <!-- Decorative Blur behind card -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-slate-400 to-blue-400 rounded-2xl blur opacity-30"></div>
+                    
+                    <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+                        <!-- Tool Selection Bar (Tabs) -->
+                        <div class="bg-slate-50 border-b border-slate-200">
+                            <div class="flex overflow-x-auto hide-scrollbar">
+                                <button onclick="switchTab('thread')" class="tool-tab active flex-1 px-6 py-4 text-sm font-semibold text-slate-600 hover:bg-white hover:text-slate-900 transition-all whitespace-nowrap flex items-center justify-center gap-2">
+                                    <i data-lucide="list-start" class="w-4 h-4"></i> Thread
+                                </button>
+                                <button onclick="switchTab('tweet')" class="tool-tab flex-1 px-6 py-4 text-sm font-semibold text-slate-600 hover:bg-white hover:text-slate-900 transition-all whitespace-nowrap flex items-center justify-center gap-2">
+                                    <i data-lucide="message-square" class="w-4 h-4"></i> Tweet
+                                </button>
+                                <button onclick="switchTab('bio')" class="tool-tab flex-1 px-6 py-4 text-sm font-semibold text-slate-600 hover:bg-white hover:text-slate-900 transition-all whitespace-nowrap flex items-center justify-center gap-2">
+                                    <i data-lucide="user" class="w-4 h-4"></i> Bio
+                                </button>
+                                <button onclick="switchTab('tags')" class="tool-tab flex-1 px-6 py-4 text-sm font-semibold text-slate-600 hover:bg-white hover:text-slate-900 transition-all whitespace-nowrap flex items-center justify-center gap-2">
+                                    <i data-lucide="hash" class="w-4 h-4"></i> Hashtags
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tool Content Area -->
+                        <div class="p-6 sm:p-8">
+                            <div id="tool-header" class="mb-6">
+                                <h3 class="text-xl font-bold text-slate-900 mb-1" id="active-tool-title">Twitter Thread Creator</h3>
+                                <p class="text-sm text-slate-500" id="active-tool-desc">Turn a simple idea into a viral 5-tweet thread.</p>
+                            </div>
+
+                            <!-- Input Form -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Topic / Idea</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i data-lucide="edit-3" class="h-5 w-5 text-slate-400"></i>
+                                        </div>
+                                        <input type="text" id="user-input" class="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-slate-900 focus:border-slate-900 sm:text-sm transition-all" placeholder="e.g., 10 lessons from building a startup">
+                                    </div>
+                                </div>
+                                
+                                <button onclick="generateResult()" id="generate-btn" class="w-full flex items-center justify-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 transition-all transform active:scale-[0.98]">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    <span>Generate Thread</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AD SPACE: BANNER (468x60) -->
+    <div class="py-8 flex justify-center hidden" id="ad-468-60-container">
+        <div>
+            <p class="ad-label">Sponsored</p>
+            <div id="ad-468-60" class="ad-container w-[468px] h-[60px]"></div>
+        </div>
+    </div>
+
+    <!-- ==================== TRUST / STATS SECTION ==================== -->
+    <section class="bg-white py-12 border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">500k+</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Tweets Generated</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">20M+</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Impressions</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">10x</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Engagement Growth</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">Free</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Forever</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES / SEO CONTENT ==================== -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4 font-heading">Master the Art of Micro-Blogging</h2>
+                <p class="text-slate-600 text-lg">
+                    Twitter (X) rewards consistency and hooks. Our AI models are trained on thousands of viral tweets to understand exactly what makes people retweet.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white mb-6">
+                        <i data-lucide="list-start" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Thread Architecture</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        We structure threads with a strong hook, value-packed body tweets, and a compelling call-to-action (CTA) summary.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Viral Formatting</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Our tool automatically formats tweets with line breaks and bullet points to maximize readability and engagement.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center text-slate-700 mb-6">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Authority Building</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Generate bios and content that position you as an expert in your niche, attracting high-quality followers.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-slate-200 to-blue-200 rounded-full blur-3xl opacity-50"></div>
+                    <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=1974&auto=format&fit=crop" alt="Twitter Creator Dashboard" class="relative rounded-2xl shadow-2xl border border-slate-200 transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                </div>
+                
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-8 font-heading">Grow Your Personal Brand in 3 Steps</h2>
+                    
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Select Your Format</h4>
+                                <p class="text-slate-600">Choose between a long-form Thread, a single punchy Tweet, or Bio optimization.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Enter Your Idea</h4>
+                                <p class="text-slate-600">Type a rough topic, keyword, or industry. Example: "AI in Marketing".</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">3</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Review & Tweet</h4>
+                                <p class="text-slate-600">Copy the generated content directly to X. No editing required.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="bg-brand-600 p-1.5 rounded text-white">
+                            <i data-lucide="cpu" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-lg font-bold text-white">DigitalServicesHub</span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Empowering content creators with the next generation of AI tools. Scale your digital presence effortlessly.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-4">Tools</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">YouTube Suite</a></li>
+                        <li><a href="instagram.html" class="hover:text-white transition-colors">Instagram Tools</a></li>
+                        <li><a href="tiktok.html" class="hover:text-white transition-colors">TikTok Viral</a></li>
+                        <li><a href="blog-tools.html" class="hover:text-white transition-colors">Blog SEO</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+                <p>&copy; 2025 DigitalServicesHub.online. All rights reserved.</p>
+                <p>Made with <i data-lucide="heart" class="w-3 h-3 inline text-red-500"></i> for Creators</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== FULL PAGE RESULT MODAL ==================== -->
+    <div id="full-page-modal" class="fixed inset-0 z-[100] bg-white hidden-modal flex flex-col">
+        <!-- Modal Header -->
+        <div class="border-b border-slate-200 px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center bg-slate-50 shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="closeFullPageModal()" class="p-2 hover:bg-slate-200 rounded-full transition-colors group">
+                    <i data-lucide="arrow-left" class="w-6 h-6 text-slate-600 group-hover:text-slate-900 transition-colors"></i>
+                </button>
+                <div class="flex flex-col">
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900 leading-none" id="modal-tool-title">Generated Results</h3>
+                    <span class="text-xs font-medium text-slate-500 mt-1">X-Optimized Content</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="copyModalContent()" id="modal-copy-btn" class="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors shadow-md active:scale-95">
+                    <i data-lucide="copy" class="w-4 h-4"></i> <span class="hidden sm:inline">Copy All</span>
+                </button>
+                <button onclick="closeFullPageModal()" class="p-2 text-slate-400 hover:text-slate-800 transition-colors md:hidden">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Content Area -->
+        <div class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-8 lg:p-12">
+            <div class="max-w-4xl mx-auto animate-scale-in">
+                <div id="modal-output-content" class="space-y-4">
+                    <!-- Results will be dynamically injected here -->
+                </div>
+                
+                <!-- AD SPACE: IN MODAL (300x250) -->
+                 <div class="my-8 hidden" id="ad-modal-container">
+                    <p class="ad-label">Advertisement</p>
+                    <div id="ad-modal" class="ad-container w-[300px] h-[250px] mx-auto"></div>
+                </div>
+
+                <!-- Bottom Action Area -->
+                <div class="mt-12 text-center">
+                     <button onclick="closeFullPageModal()" class="text-slate-500 hover:text-slate-900 text-sm font-medium transition-colors flex items-center justify-center gap-2 mx-auto">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i> Generate New Content
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize Icons
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            init();
+        });
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (header) {
+                if (window.scrollY > 50) {
+                    header.classList.add('shadow-md');
+                    header.classList.add('bg-white/90');
+                } else {
+                    header.classList.remove('shadow-md');
+                    header.classList.remove('bg-white/90');
+                }
+            }
+        });
+
+        // --- GEMINI API INTEGRATION ---
+        const apiKey = "AIzaSyBds4GNoBuErhLnDNw50QjcjCPhqrCUrpM";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        async function fetchWithRetry(payload, maxRetries = 3) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "No content generated.";
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        async function callGemini(prompt) {
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            return await fetchWithRetry(payload);
+        }
+
+        // Tool Logic configuration
+        const toolConfig = {
+            'thread': {
+                title: 'Thread Creator',
+                desc: 'Turn a simple idea into a viral 5-tweet thread.',
+                placeholder: 'e.g., 10 lessons from building a startup',
+                icon: 'list-start',
+                prompt: (topic) => `Write a 5-tweet viral X thread about: "${topic}". 
+                Tweet 1: Strong Hook.
+                Tweet 2-4: Value points.
+                Tweet 5: Conclusion & CTA. 
+                Label each tweet clearly (e.g. "1/").`
+            },
+            'tweet': {
+                title: 'Viral Tweet Generator',
+                desc: 'Generate punchy, stand-alone tweets designed for engagement.',
+                placeholder: 'e.g., Productivity tips',
+                icon: 'message-square',
+                prompt: (topic) => `Write 3 distinct, high-engagement tweets about: "${topic}". 
+                1. Contrarian view
+                2. Listicle style
+                3. Question format`
+            },
+            'bio': {
+                title: 'Bio Optimizer',
+                desc: 'Create a professional or witty bio to convert profile visitors.',
+                placeholder: 'e.g., Freelance Designer & Coffee Lover',
+                icon: 'user',
+                prompt: (topic) => `Write 3 Twitter bios for a profile about: "${topic}". Keep them under 160 characters. Styles: Authority, Minimalist, Personal.`
+            },
+            'tags': {
+                title: 'Hashtag Finder',
+                desc: 'Find trending hashtags to increase your tweet impressions.',
+                placeholder: 'e.g., Tech, Marketing',
+                icon: 'hash',
+                prompt: (topic) => `List 10 relevant X (Twitter) hashtags for the topic: "${topic}".`
+            }
+        };
+
+        let currentTool = 'thread';
+
+        function switchTab(tool) {
+            currentTool = tool;
+            
+            // Update Tabs
+            document.querySelectorAll('.tool-tab').forEach(btn => {
+                btn.classList.remove('active', 'bg-slate-50', 'text-slate-900');
+                btn.classList.add('text-slate-600');
+                btn.style.borderBottom = "none";
+            });
+            const tabs = document.querySelectorAll('.tool-tab');
+            let activeIndex = 0;
+            if(tool === 'tweet') activeIndex = 1;
+            if(tool === 'bio') activeIndex = 2;
+            if(tool === 'tags') activeIndex = 3;
+            const activeBtn = tabs[activeIndex];
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-600');
+            activeBtn.style.backgroundColor = '#f1f5f9'; 
+            activeBtn.style.color = '#0f172a';
+            activeBtn.style.borderBottom = '2px solid #0f172a';
+
+            const config = toolConfig[tool];
+            const headerTitle = document.getElementById('active-tool-title');
+            const headerDesc = document.getElementById('active-tool-desc');
+            const input = document.getElementById('user-input');
+            const btnText = document.querySelector('#generate-btn span');
+            
+            headerTitle.style.opacity = 0;
+            setTimeout(() => {
+                headerTitle.innerText = config.title;
+                headerDesc.innerText = config.desc;
+                input.placeholder = config.placeholder;
+                if(tool === 'thread') btnText.innerText = "Generate Thread";
+                else if(tool === 'tweet') btnText.innerText = "Generate Tweet";
+                else if(tool === 'bio') btnText.innerText = "Optimize Bio";
+                else if(tool === 'tags') btnText.innerText = "Find Hashtags";
+                headerTitle.style.opacity = 1;
+            }, 200);
+        }
+
+        async function generateResult() {
+            const input = document.getElementById('user-input');
+            const btn = document.getElementById('generate-btn');
+            const modalOutput = document.getElementById('modal-output-content');
+            const modalTitle = document.getElementById('modal-tool-title');
+
+            if (!input.value.trim()) {
+                input.classList.add('ring-2', 'ring-slate-900');
+                setTimeout(() => input.classList.remove('ring-2', 'ring-slate-900'), 1000);
+                return;
+            }
+
+            const originalBtnText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<div class="loader"></div><span>Drafting...</span>`;
+
+            try {
+                const topic = input.value;
+                const prompt = toolConfig[currentTool].prompt(topic);
+                const aiResponse = await callGemini(prompt);
+                
+                // Thread Specific Formatting
+                let formattedResponse = aiResponse;
+                if (currentTool === 'thread') {
+                    formattedResponse = aiResponse.split(/\n/).map(line => {
+                        if (line.trim().match(/^\d+\//) || line.trim().match(/^Tweet \d+:/)) {
+                            return `<div class="bg-white p-4 mb-4 rounded-xl border border-slate-200 shadow-sm text-slate-800">${line}</div>`;
+                        }
+                        return line;
+                    }).join('<br>');
+                } else {
+                     formattedResponse = formattedResponse.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                }
+
+                formattedResponse = `<div class="space-y-4 text-slate-800">${formattedResponse}</div>`;
+
+                modalTitle.innerText = toolConfig[currentTool].title + " Results";
+                modalOutput.innerHTML = formattedResponse;
+                lucide.createIcons();
+                openFullPageModal();
+            } catch (error) {
+                console.error(error);
+                alert("Error generating content.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnText;
+            }
+        }
+
+        // --- FIREBASE INIT & ADS ---
+        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
+          apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
+          authDomain: "mubashir-2b7cc.firebaseapp.com",
+          projectId: "mubashir-2b7cc",
+          storageBucket: "mubashir-2b7cc.firebasestorage.app",
+          messagingSenderId: "107494735119",
+          appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
+          measurementId: "G-SP28C45HH4"
+        });
+        
+        const app = initializeApp(JSON.parse(firebaseConfigStr));
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mubashir-2b7cc';
+
+        let apiKeys = ["AIzaSyBds4GNoBuErhLnDNw50QjcjCPhqrCUrpM"]; 
+        let systemPrompts = {};
+
+        async function init() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // Fetch Keys
+                try {
+                    const keysSnapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'api_keys'));
+                    const fetchedKeys = keysSnapshot.docs.map(doc => doc.data().key).filter(k => k);
+                    if (fetchedKeys.length > 0) apiKeys = fetchedKeys;
+                } catch (e) { console.warn("Using fallback key"); }
+
+                // Fetch Prompts
+                try {
+                    const promptsSnapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'system_prompts'));
+                    promptsSnapshot.forEach(doc => {
+                        systemPrompts[doc.id] = doc.data().template;
+                    });
+                } catch (e) { console.warn("Using default prompts"); }
+
+                // Load Ads
+                loadAds();
+
+            } catch (e) { console.error("Init Error:", e); }
+        }
+
+        async function loadAds() {
+            try {
+                const settingsSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'));
+                if(settingsSnap.exists()) {
+                    const data = settingsSnap.data();
+                    const adsterra = data.adsterra || {};
+                    const adsense = data.adsense || '';
+
+                    const inject = (id, content) => {
+                        const el = document.getElementById(id);
+                        const container = document.getElementById(id + '-container');
+                        if(el && container && content) {
+                            el.innerHTML = content;
+                            container.classList.remove('hidden');
+                            Array.from(el.querySelectorAll('script')).forEach(oldScript => {
+                                const newScript = document.createElement('script');
+                                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                                oldScript.parentNode.replaceChild(newScript, oldScript);
+                            });
+                        }
+                    };
+
+                    inject('ad-728-90', adsterra['728x90']); // Top (if applicable layout)
+                    inject('ad-468-60', adsterra['468x60']); // Bottom
+                    inject('ad-modal', adsterra['300x250']); // Modal
+
+                    if(adsense) {
+                        const s = document.createElement('div');
+                        s.innerHTML = adsense;
+                        document.head.appendChild(s.firstChild);
+                    }
+                }
+            } catch(e) { console.error("Ad load error:", e); }
+        }
+
+        // Full Page Modal Controls
+        const modal = document.getElementById('full-page-modal');
+        function openFullPageModal() { modal.classList.remove('hidden-modal'); modal.classList.add('visible-modal'); document.body.style.overflow = 'hidden'; }
+        function closeFullPageModal() { modal.classList.remove('visible-modal'); modal.classList.add('hidden-modal'); document.body.style.overflow = ''; }
+        function copyModalContent() {
+            const content = document.getElementById('modal-output-content').innerText;
+            navigator.clipboard.writeText(content);
+            const copyBtn = document.getElementById('modal-copy-btn');
+            const originalHtml = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> <span>Copied!</span>`;
+            lucide.createIcons();
+            setTimeout(() => { copyBtn.innerHTML = originalHtml; lucide.createIcons(); }, 2000);
+        }
+    </script>
+</body>
+</html>

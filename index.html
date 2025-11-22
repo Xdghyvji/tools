@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DigitalServicesHub.online - The ultimate AI-powered tool suite for YouTube growth. Generate viral titles, SEO tags, scripts, and descriptions instantly.">
+    <title>YouTube Tools | DigitalServicesHub.online</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Enhanced Scrollbar for Desktop Usability */
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+        
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .tool-tab.active { background-color: #fef2f2; color: #dc2626; border-bottom: 2px solid #dc2626; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Shared Header (Height: h-20 / 80px) -->
+    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
+
+    <!-- Secondary Tool Nav (Fixed top-20, Height: ~60-64px) -->
+    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto">
+            <!-- Added 'flex-nowrap' to force horizontal scrolling -->
+            <!-- Added 'pb-2' to separate scrollbar from content slightly -->
+            <div class="flex items-center overflow-x-auto py-3 px-4 space-x-4 custom-scrollbar flex-nowrap">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-100 font-semibold whitespace-nowrap shadow-sm transition-colors hover:bg-red-100">
+                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
+                </a>
+                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                </a>
+                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
+                </a>
+                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
+                </a>
+                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Email
+                </a>
+                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <!-- Fix: Changed padding-top to pt-48 (192px) to clear the fixed headers (80px + ~64px = 144px) -->
+    <section class="pt-48 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="tools">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            
+            <!-- Left: Text Content -->
+            <div class="text-center lg:text-left animate-fade-in">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-semibold mb-6 border border-red-200">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    #1 Rated YouTube AI Suite
+                </div>
+                <h1 class="text-4xl lg:text-6xl font-bold font-heading text-slate-900 leading-tight mb-6">
+                    Dominate <span class="text-red-600 relative">YouTube
+                        <svg class="absolute w-full h-3 -bottom-1 left-0 text-red-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
+                        </svg>
+                    </span> With AI Precision
+                </h1>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                    Stop guessing what works. Our advanced AI generates viral titles, optimized tags, and engaging scripts tailored to your niche in seconds.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start text-sm font-medium text-slate-500">
+                    <div class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500"></i> Free to use</div>
+                    <div class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500"></i> No signup required</div>
+                    <div class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500"></i> SEO Optimized</div>
+                </div>
+            </div>
+
+            <!-- Right: Tool Interface -->
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-slide-up relative z-10">
+                <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar">
+                    <button onclick="setTool('title')" class="tool-tab active flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Title</button>
+                    <button onclick="setTool('tags')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Tags</button>
+                    <button onclick="setTool('desc')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Description</button>
+                    <button onclick="setTool('script')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Script</button>
+                </div>
+                <div class="p-8">
+                    <div class="mb-6">
+                        <h3 class="font-bold text-slate-900 mb-2 text-xl" id="tool-title">YouTube Title Generator</h3>
+                        <p class="text-sm text-slate-500" id="tool-desc">Create click-worthy, SEO-optimized titles for your next video.</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Video Topic / Keyword</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="search" class="h-5 w-5 text-slate-400"></i>
+                                </div>
+                                <input type="text" id="user-input" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all" placeholder="e.g., How to bake a cake from scratch">
+                            </div>
+                        </div>
+                        <button id="generate-btn" class="w-full py-3.5 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-red-500/30">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> <span>Generate Magic</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AD SPACE: BANNER -->
+    <div class="py-8 flex justify-center bg-slate-50 hidden" id="ad-468-60-container">
+        <div>
+            <p class="text-[10px] text-slate-400 text-center uppercase tracking-wider mb-1">Sponsored</p>
+            <div id="ad-468-60" class="bg-white border border-slate-200 w-[468px] h-[60px] flex items-center justify-center"></div>
+        </div>
+    </div>
+
+    <!-- TRUST / STATS -->
+    <section class="bg-white py-16 border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">50k+</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Videos Optimized</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">98%</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Satisfaction Rate</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">10+</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">AI Models Used</p>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-bold text-slate-900">24/7</h3>
+                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Free Access</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4 font-heading">Supercharge Your Channel Growth</h2>
+                <p class="text-slate-600 text-lg">
+                    DigitalServicesHub.online isn't just a tool; it's your dedicated AI production team. We utilize cutting-edge NLP models to understand YouTube's algorithm.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 mb-6">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Keyword Precision</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Our AI analyzes millions of trending videos to find high-volume, low-competition keywords tailored for your specific niche.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center text-brand-600 mb-6">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Click-Through Rate (CTR)</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Titles generated by our system are psychologically designed to trigger curiosity and drive clicks without resorting to clickbait.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Save Hours of Work</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        What used to take creators hours of brainstorming now happens in milliseconds. Focus on creating; let us handle the metadata.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-red-100 rounded-full blur-3xl opacity-50"></div>
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop" alt="Content Creator Dashboard" class="relative rounded-2xl shadow-2xl border border-slate-200 transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-8 font-heading">SEO Optimization in 3 Simple Steps</h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Select Your Tool</h4>
+                                <p class="text-slate-600">Choose from our suite of YouTube tools located in the tool bar above.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Enter Your Topic</h4>
+                                <p class="text-slate-600">Provide a short keyword or topic description. The more specific, the better the AI results.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">3</div>
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-900 mb-2">Generate & Publish</h4>
+                                <p class="text-slate-600">Copy the high-performing results directly to your YouTube Studio dashboard.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Injection Point -->
+    <footer id="main-footer"></footer>
+
+    <!-- Result Modal -->
+    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl m-4 flex flex-col max-h-[80vh] transform scale-95 transition-transform duration-300" id="result-modal-content">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <div>
+                    <h3 class="font-bold text-xl text-slate-900" id="modal-title">Generated Results</h3>
+                    <p class="text-xs text-slate-500">Optimized for YouTube Algorithm</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="copyContent()" class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700">
+                        <i data-lucide="copy" class="w-4 h-4"></i> Copy
+                    </button>
+                    <button onclick="closeModal()" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 p-8 overflow-y-auto">
+                <div id="result-content" class="prose prose-slate max-w-none text-slate-800 leading-relaxed"></div>
+            </div>
+            <!-- AD SPACE: IN MODAL -->
+            <div class="p-4 border-t border-slate-100 flex justify-center bg-slate-50 rounded-b-2xl hidden" id="ad-modal-container">
+                <div>
+                    <p class="text-[10px] text-slate-400 text-center uppercase mb-1">Sponsored</p>
+                    <div id="ad-modal" class="w-[300px] h-[250px] bg-white border border-slate-200 flex items-center justify-center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loadHeader, loadFooter, loadGlobalSettings, generateAIContent, loadSystemPrompts, getPromptForTool } from './assets/js/shared.js';
+
+        let currentTool = 'title';
+        const titles = {
+            'title': 'YouTube Title Generator',
+            'tags': 'YouTube Tag Generator',
+            'desc': 'Description Generator',
+            'script': 'Video Script Writer'
+        };
+        const descs = {
+            'title': 'Create click-worthy, SEO-optimized titles for your next video.',
+            'tags': 'Generate high-ranking keywords to boost search visibility.',
+            'desc': 'Write engaging descriptions with timestamps and social links.',
+            'script': 'Get a structured hook, body, and CTA script in seconds.'
+        };
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", async () => {
+            loadHeader('home');
+            loadFooter();
+            
+            // Load Global Settings & Ads
+            const settings = await loadGlobalSettings();
+            if(settings) {
+                if(settings.title) document.title = settings.title;
+                if(settings.description) document.querySelector('meta[name="description"]').setAttribute("content", settings.description);
+            }
+
+            // Load System Prompts
+            await loadSystemPrompts();
+
+            // Handle Generation
+            document.getElementById('generate-btn').addEventListener('click', async () => {
+                const input = document.getElementById('user-input');
+                const btn = document.getElementById('generate-btn');
+                const originalContent = btn.innerHTML;
+                
+                if(!input.value.trim()) {
+                    input.classList.add('ring-2', 'ring-red-500');
+                    setTimeout(() => input.classList.remove('ring-2', 'ring-red-500'), 1000);
+                    return;
+                }
+                
+                btn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span>`;
+                btn.disabled = true;
+
+                try {
+                    const promptTemplate = getPromptForTool(`youtube_${currentTool}`, input.value);
+                    const responseText = await generateAIContent(promptTemplate, `youtube_${currentTool}`, input.value);
+                    
+                    const modal = document.getElementById('result-modal');
+                    const modalContent = document.getElementById('result-modal-content');
+                    const outputDiv = document.getElementById('result-content');
+                    
+                    let formattedHtml = responseText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-red-700">$1</strong>').replace(/\n/g, '<br>');
+                    
+                    outputDiv.innerHTML = formattedHtml;
+                    document.getElementById('modal-title').innerText = titles[currentTool] + " Results";
+
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modalContent.classList.remove('scale-95');
+                        modalContent.classList.add('scale-100');
+                    }, 10);
+                    
+                    lucide.createIcons();
+
+                } catch (e) {
+                    alert(e.message || "Error generating content");
+                } finally {
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }
+            });
+        });
+
+        // Tab Switcher Logic
+        window.setTool = (tool) => {
+            currentTool = tool;
+            document.querySelectorAll('.tool-tab').forEach(t => {
+                t.classList.remove('active', 'text-red-600', 'border-b-2', 'border-red-600');
+                t.classList.add('text-slate-600', 'hover:bg-white');
+            });
+            
+            const activeBtn = document.querySelector(`button[onclick="setTool('${tool}')"]`);
+            if(activeBtn) {
+                activeBtn.classList.add('active', 'text-red-600', 'border-b-2', 'border-red-600');
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-white');
+            }
+            
+            const titleEl = document.getElementById('tool-title');
+            const descEl = document.getElementById('tool-desc');
+            
+            titleEl.style.opacity = 0;
+            descEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                titleEl.innerText = titles[tool];
+                descEl.innerText = descs[tool];
+                titleEl.style.opacity = 1;
+                descEl.style.opacity = 1;
+            }, 200);
+        }
+
+        // Modal Logic
+        window.closeModal = () => {
+            const modal = document.getElementById('result-modal');
+            const modalContent = document.getElementById('result-modal-content');
+            
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        window.copyContent = () => {
+            const text = document.getElementById('result-content').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Content copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
