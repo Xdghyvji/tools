@@ -1,0 +1,12 @@
+{
+    "name": "digitalserviceshub-backend",
+    "version": "1.0.0",
+    "description": "Serverless functions for AI generation",
+    "main": "netlify/functions/generate-content.js",
+    "dependencies": {
+      "node-fetch": "^2.7.0"
+    },
+    "scripts": {
+      "build": "echo 'No build step needed for static site'"
+    }
+  }
