@@ -1,49 +1,71 @@
 /**
- * Netlify Serverless Function to Proxy Gemini API Calls
- * usage: POST /.netlify/functions/generate-content
+ * Production-Ready Serverless Function for AI Generation
+ * Features:
+ * 1. Dynamic Key Fetching (Env Var + Firestore Fallback)
+ * 2. Round-Robin Load Balancing
+ * 3. Robust Error Handling & Retries
+ * 4. Secure CORS Headers
  */
 
+const fetch = require('node-fetch'); // Netlify provides this, or use native fetch in Node 18+
+
+// CONFIGURATION
+const FIREBASE_PROJECT_ID = "mubashir-2b7cc"; // Your Project ID
+const FIRESTORE_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/artifacts/${FIREBASE_PROJECT_ID}/public/data/api_keys`;
+
 exports.handler = async (event, context) => {
-    // 1. CORS Headers (Allow frontend to call this function)
+    // 1. CORS Headers
     const headers = {
         'Access-Control-Allow-Origin': '*', 
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
     };
 
-    // 2. Handle Preflight (OPTIONS) request
-    if (event.httpMethod === 'OPTIONS') {
-        return { statusCode: 200, headers, body: '' };
-    }
-
-    // 3. Only allow POST
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Method Not Allowed', headers };
-    }
+    // 2. Handle Preflight
+    if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+    if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed', headers };
 
     try {
-        // 4. Parse Input
-        const data = JSON.parse(event.body);
-        const prompt = data.prompt;
+        const { prompt, metadata } = JSON.parse(event.body);
+        if (!prompt) return { statusCode: 400, body: JSON.stringify({ error: 'Prompt required' }), headers };
 
-        if (!prompt) {
-            return { statusCode: 400, body: JSON.stringify({ error: 'Prompt is required' }), headers };
+        // 3. Key Strategy: Env Vars (Priority) -> Firestore (Dynamic)
+        let apiKeys = [];
+        
+        // A. Check Environment Variable (Fastest)
+        if (process.env.GEMINI_API_KEYS) {
+            apiKeys = process.env.GEMINI_API_KEYS.split(',').map(k => k.trim());
         }
 
-        // 5. Get API Keys from Netlify Environment Variables
-        // Expects a comma-separated string: "AIzaKey1,AIzaKey2,AIzaKey3"
-        const apiKeysEnv = process.env.GEMINI_API_KEYS;
-
-        if (!apiKeysEnv) {
-            console.error("Missing GEMINI_API_KEYS env var");
-            return { statusCode: 500, body: JSON.stringify({ error: 'Server Configuration Error' }), headers };
+        // B. If Env is empty, fetch from Firestore (Dynamic)
+        if (apiKeys.length === 0) {
+            try {
+                const firestoreRes = await fetch(FIRESTORE_URL);
+                if (firestoreRes.ok) {
+                    const data = await firestoreRes.json();
+                    // Parse Firestore REST format
+                    if(data.documents) {
+                        apiKeys = data.documents
+                            .map(doc => doc.fields?.key?.stringValue)
+                            .filter(k => k); // Filter undefined
+                    }
+                }
+            } catch (dbError) {
+                console.error("Firestore Key Fetch Error:", dbError);
+            }
         }
 
-        const apiKeys = apiKeysEnv.split(',').map(k => k.trim()).filter(k => k);
+        if (apiKeys.length === 0) {
+            console.error("CRITICAL: No API Keys found in ENV or Firestore.");
+            return { statusCode: 503, body: JSON.stringify({ error: 'Service misconfigured. No active keys.' }), headers };
+        }
+
+        // 4. Execute Request with Key Rotation
+        // Shuffle keys to load balance
+        const shuffledKeys = apiKeys.sort(() => 0.5 - Math.random());
         let lastError = null;
 
-        // 6. Try keys sequentially until one works
-        for (const apiKey of apiKeys) {
+        for (const apiKey of shuffledKeys) {
             try {
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 
@@ -57,51 +79,39 @@ exports.handler = async (event, context) => {
 
                 const result = await response.json();
 
-                // If success, break loop and return
-                if (response.ok) {
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "No content generated.";
+                // Success
+                if (response.ok && result.candidates) {
                     return {
                         statusCode: 200,
-                        body: JSON.stringify({ text: text }),
+                        body: JSON.stringify({ text: result.candidates[0].content.parts[0].text }),
                         headers
                     };
-                } 
-                
-                // If 429 (Rate Limit) or 403 (Quota), continue to next key
-                if (response.status === 429 || response.status === 403) {
-                    console.warn(`Key ending in ...${apiKey.slice(-4)} failed with ${response.status}. Rotating...`);
-                    lastError = { status: response.status, message: result.error?.message };
-                    continue; 
                 }
 
-                // For other errors (400 Bad Request), stop immediately
-                return { 
-                    statusCode: response.status, 
-                    body: JSON.stringify({ error: result.error?.message || 'Gemini API Error' }), 
-                    headers 
-                };
+                // Handle Specific API Errors
+                if (response.status === 429 || response.status === 503) {
+                    console.warn(`Key ${apiKey.slice(0,4)}... rate limited. Retrying...`);
+                    continue; // Try next key
+                }
 
-            } catch (fetchError) {
-                console.error(`Fetch error with key ...${apiKey.slice(-4)}:`, fetchError);
-                lastError = { status: 500, message: fetchError.message };
-                continue;
+                // Fatal Error for this key
+                throw new Error(result.error?.message || 'Unknown AI Error');
+
+            } catch (e) {
+                lastError = e.message;
+                console.error(`Key failed: ${e.message}`);
             }
         }
 
-        // 7. If all keys failed
-        console.error("All API keys exhausted.");
+        // 5. All keys failed
         return {
-            statusCode: lastError?.status || 500,
-            body: JSON.stringify({ error: 'Service Busy. All quotas exhausted. Please try again later.' }),
+            statusCode: 503,
+            body: JSON.stringify({ error: 'Server busy. Please try again later.', details: lastError }),
             headers
         };
 
     } catch (error) {
-        console.error("Function Error:", error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Internal Server Error' }),
-            headers
-        };
+        console.error("Global Function Error:", error);
+        return { statusCode: 500, body: JSON.stringify({ error: 'Internal Server Error' }), headers };
     }
 };

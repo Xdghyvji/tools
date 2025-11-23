@@ -4,152 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="DigitalServicesHub Blog - Expert insights on AI tools, SEO strategies, social media growth, and content marketing trends.">
-    <meta name="keywords" content="Digital Marketing Blog, SEO Tips, AI Tools Review, Social Media Strategy, Content Creation Guide">
-    <meta name="author" content="DigitalServicesHub">
     <title>Blog | DigitalServicesHub.online</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
-    <!-- Custom Configuration -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        }
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
                 }
             }
         }
     </script>
 
     <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
         .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #2563eb; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Ad Placeholder Styles */
-        .ad-container { background: #f8fafc; border: 1px dashed #cbd5e1; display: flex; justify-content: center; align-items: center; overflow: hidden; margin: 20px auto; }
-        .ad-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; text-align: center; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- ==================== PRIMARY HEADER ==================== -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300" id="main-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <div class="bg-brand-600 p-2 rounded-lg text-white shadow-lg shadow-brand-500/30">
-                        <i data-lucide="cpu" class="w-6 h-6"></i>
-                    </div>
-                    <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">
-                        DigitalServices<span class="text-brand-600">Hub</span>.online
-                    </span>
-                </div>
+    <!-- Header Container -->
+    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
 
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="index.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Home</a>
-                    <a href="about.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">About Us</a>
-                    <a href="blog.html" class="text-brand-600 font-semibold text-sm uppercase tracking-wide">Blog</a>
-                    <a href="contact.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Contact Us</a>
-                    <a href="index.html#tools" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-transform hover:scale-105 shadow-lg">
-                        Get Started
-                    </a>
-                </nav>
-
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-xl">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="index.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Home</a>
-                <a href="about.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
-                <a href="blog.html" class="block px-3 py-3 rounded-md text-brand-600 font-semibold bg-brand-50">Blog</a>
-                <a href="contact.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Contact Us</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- ==================== SECONDARY NAV (Tools Bar) ==================== -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm overflow-hidden">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex items-center overflow-x-auto hide-scrollbar py-3 px-4 space-x-2 sm:space-x-4">
-                <a href="index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">YouTube Tools</span>
+    <!-- Secondary Tool Nav -->
+    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm h-16 flex items-center">
+        <div class="max-w-7xl mx-auto w-full">
+            <div class="flex items-center overflow-x-auto px-4 space-x-4 custom-scrollbar flex-nowrap">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
+                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
                 </a>
-                <a href="instagram.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="instagram" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">Instagram Tools</span>
+                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
                 </a>
-                <a href="tiktok.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="music-2" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">TikTok Tools</span>
+                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
                 </a>
-                <a href="blog-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 border border-brand-100 shadow-sm whitespace-nowrap transition-colors">
-                    <i data-lucide="file-text" class="w-4 h-4"></i>
-                    <span class="text-sm font-semibold">Blog & SEO</span>
+                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 border border-brand-100 font-semibold whitespace-nowrap shadow-sm transition-colors">
+                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
                 </a>
-                <a href="email-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">Email Marketing</span>
+                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Email
                 </a>
-                <a href="twitter-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="twitter" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">X (Twitter)</span>
+                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
+                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- AD SPACE: LEADERBOARD (728x90) -->
-    <div class="pt-40 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
-        <p class="ad-label">Advertisement</p>
-        <div id="ad-728-90" class="ad-container w-[728px] h-[90px] mx-auto"></div>
+    <!-- AD SPACE: LEADERBOARD -->
+    <div class="pt-48 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
+        <p class="text-[10px] text-slate-400 text-center uppercase tracking-wider mb-1">Advertisement</p>
+        <div id="ad-728-90" class="w-[728px] h-[90px] mx-auto bg-slate-50 border border-slate-200 flex items-center justify-center"></div>
     </div>
 
-    <!-- ==================== BLOG HERO ==================== -->
+    <!-- BLOG HERO -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-12">
@@ -158,265 +78,99 @@
                 <p class="text-lg text-slate-600">Master the art of digital growth with our expert guides, case studies, and tool tutorials.</p>
             </div>
 
-            <!-- Category Filters -->
-            <div class="flex justify-center flex-wrap gap-3 mb-12">
-                <button class="px-5 py-2 rounded-full bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors">All</button>
-                <button class="px-5 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors">YouTube Growth</button>
-                <button class="px-5 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors">SEO</button>
-                <button class="px-5 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors">AI Tools</button>
-                <button class="px-5 py-2 rounded-full bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors">Marketing</button>
-            </div>
-
-            <!-- Featured Post -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer" onclick="window.location.href='single-blog.html?id=1'">
+            <!-- Featured Post (Static Placeholder or Dynamic) -->
+            <!-- Note: For production, this could also be dynamic, but kept static for layout stability -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer" onclick="window.location.href='single-blog.html?id=featured'">
                 <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" alt="Featured Blog" class="w-full h-[500px] object-cover transform group-hover:scale-105 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
                 <div class="absolute bottom-0 left-0 p-8 md:p-12 max-w-3xl">
                     <span class="inline-block px-3 py-1 bg-brand-600 text-white text-xs font-bold rounded-full mb-4">FEATURED</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight group-hover:text-brand-200 transition-colors">10 AI Tools That Will Replace Your Marketing Agency in 2025</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight group-hover:text-brand-200 transition-colors">10 AI Tools That Will Replace Your Marketing Agency</h2>
                     <p class="text-slate-300 mb-6 line-clamp-2">Discover the cutting-edge software stack that solo creators are using to scale to 7-figures without hiring a single employee.</p>
-                    <div class="flex items-center gap-4 text-sm text-slate-300">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold">A</div>
-                            <span class="font-medium text-white">Alex Morgan</span>
-                        </div>
-                        <span>•</span>
-                        <span>Oct 24, 2025</span>
-                        <span>•</span>
-                        <span>8 min read</span>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ==================== BLOG GRID ==================== -->
+    <!-- BLOG GRID -->
     <section class="py-16 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Loading State -->
             <div id="loading-indicator" class="flex flex-col items-center justify-center py-20">
                 <div class="loader mb-4"></div>
                 <p class="text-slate-500">Loading latest posts...</p>
             </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden" id="blog-grid">
-                <!-- Blog Cards injected via JS -->
-            </div>
-            
-            <!-- Pagination (Visual Only) -->
-            <div class="mt-16 flex justify-center gap-2">
-                <button class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 disabled:opacity-50"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-                <button class="w-10 h-10 rounded-lg bg-brand-600 text-white flex items-center justify-center font-medium shadow-sm">1</button>
-                <button class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 font-medium hover:bg-slate-50 transition-colors">2</button>
-                <button class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
-            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden" id="blog-grid"></div>
         </div>
     </section>
 
-    <!-- AD SPACE: BANNER (468x60) -->
-    <div class="py-8 flex justify-center hidden" id="ad-468-60-container">
-        <div>
-            <p class="ad-label">Sponsored</p>
-            <div id="ad-468-60" class="ad-container w-[468px] h-[60px]"></div>
-        </div>
-    </div>
+    <!-- Footer Injection Point -->
+    <footer id="main-footer"></footer>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="bg-brand-600 p-1.5 rounded text-white"><i data-lucide="cpu" class="w-5 h-5"></i></div>
-                        <span class="text-lg font-bold text-white">DigitalServicesHub</span>
-                    </div>
-                    <p class="text-sm text-slate-400 leading-relaxed">Empowering content creators with the next generation of AI tools.</p>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4">Tools</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html" class="hover:text-white transition-colors">YouTube Suite</a></li>
-                        <li><a href="instagram.html" class="hover:text-white transition-colors">Instagram Tools</a></li>
-                        <li><a href="blog-tools.html" class="hover:text-white transition-colors">Blog SEO</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4">Company</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-4">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                        <a href="#" class="hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-                <p>&copy; 2025 DigitalServicesHub.online. All rights reserved.</p>
-                <p>Made with <i data-lucide="heart" class="w-3 h-3 inline text-red-500"></i> for Creators</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- FIREBASE SDKs -->
+    <!-- PRODUCTION LEVEL SCRIPT -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { loadHeader, loadFooter, loadGlobalSettings, db, appId } from './assets/js/shared.js';
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Initialize Icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-            init();
+        document.addEventListener("DOMContentLoaded", async () => {
+            // 1. Load UI
+            loadHeader('blog');
+            loadFooter();
+            
+            // 2. Load Ads
+            await loadGlobalSettings();
+            
+            // 3. Fetch Posts
+            await loadPosts();
         });
 
-        // Mobile Menu Toggle
-        const mobileBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        // Header Scroll Effect
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('main-header');
-            if (header) {
-                if (window.scrollY > 50) {
-                    header.classList.add('shadow-md');
-                    header.classList.add('bg-white/90');
-                } else {
-                    header.classList.remove('shadow-md');
-                    header.classList.remove('bg-white/90');
-                }
-            }
-        });
-
-        // --- FIREBASE CONFIG & INIT ---
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
-          apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
-          authDomain: "mubashir-2b7cc.firebaseapp.com",
-          projectId: "mubashir-2b7cc",
-          storageBucket: "mubashir-2b7cc.firebasestorage.app",
-          messagingSenderId: "107494735119",
-          appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
-          measurementId: "G-SP28C45HH4"
-        });
-        const app = initializeApp(JSON.parse(firebaseConfigStr));
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mubashir-2b7cc';
-
-        // Default posts if DB is empty or error
-        const defaultPosts = [
-            { id: 'default1', title: "10 AI Tools That Will Replace Your Marketing Agency", category: "AI Tools", author: "Alex Morgan", date: "Oct 24, 2025", readTime: "8 min", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop", content: "<p>Default content...</p>" },
-            { id: 'default2', title: "How to Write Viral TikTok Scripts in 15 Seconds", category: "TikTok", author: "Sarah Chen", date: "Oct 22, 2025", readTime: "5 min", image: "https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=1974&auto=format&fit=crop", content: "<p>Default content...</p>" }
-        ];
-
-        async function init() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                
-                // Fetch Posts
-                try {
-                    const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-                    const snapshot = await getDocs(postsRef);
-                    
-                    let posts = [];
-                    if (snapshot.empty) {
-                        posts = defaultPosts;
-                    } else {
-                        snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
-                        // Sort descending by date/timestamp
-                        posts.sort((a, b) => {
-                            const dateA = a.createdAt ? a.createdAt.seconds : new Date(a.date).getTime();
-                            const dateB = b.createdAt ? b.createdAt.seconds : new Date(b.date).getTime();
-                            return dateB - dateA;
-                        });
-                    }
-                    renderPosts(posts);
-                } catch (e) {
-                    console.error("Error fetching posts:", e);
-                    renderPosts(defaultPosts);
-                }
-                
-                // Load Ads
-                loadAds();
-
-            } catch (e) {
-                console.error("Auth Init Error:", e);
-                renderPosts(defaultPosts);
-            }
-        }
-
-        function renderPosts(posts) {
+        async function loadPosts() {
             const grid = document.getElementById('blog-grid');
             const loader = document.getElementById('loading-indicator');
             
-            grid.innerHTML = posts.map(post => `
-                <article class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group" onclick="window.location.href='single-blog.html?id=${post.id}'">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                        <span class="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border border-slate-200">${post.category}</span>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
-                            <span>${post.date}</span>
-                            <span>•</span>
-                            <span>${post.readTime || '5 min'} read</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors leading-snug line-clamp-2">${post.title}</h3>
-                        <div class="flex items-center gap-2 text-sm font-medium text-slate-900">
-                             <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500 uppercase">${post.author ? post.author.charAt(0) : 'A'}</div>
-                            ${post.author || 'Admin'}
-                        </div>
-                    </div>
-                </article>
-            `).join('');
-
-            loader.classList.add('hidden');
-            grid.classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        async function loadAds() {
             try {
-                const settingsSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'));
-                if(settingsSnap.exists()) {
-                    const data = settingsSnap.data();
-                    const adsterra = data.adsterra || {};
+                // Fetch all posts
+                // Note: For thousands of posts, use pagination (limit/startAfter)
+                // For now, fetching all is fine for a starter blog
+                const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
+                let posts = [];
+                snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                
+                // Sort Descending by createdAt
+                posts.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                    const inject = (id, content) => {
-                        const el = document.getElementById(id);
-                        const container = document.getElementById(id + '-container');
-                        if(el && container && content) {
-                            el.innerHTML = content;
-                            container.classList.remove('hidden');
-                            Array.from(el.querySelectorAll('script')).forEach(oldScript => {
-                                const newScript = document.createElement('script');
-                                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                                oldScript.parentNode.replaceChild(newScript, oldScript);
-                            });
-                        }
-                    };
-
-                    inject('ad-728-90', adsterra['728x90']);
-                    inject('ad-468-60', adsterra['468x60']);
+                if (posts.length === 0) {
+                    grid.innerHTML = '<p class="col-span-3 text-center text-slate-500 italic">No posts found. Check back later!</p>';
+                } else {
+                    grid.innerHTML = posts.map(post => `
+                        <article class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-full" onclick="window.location.href='single-blog.html?id=${post.id}'">
+                            <div class="relative h-48 overflow-hidden flex-shrink-0">
+                                <img src="${post.image || 'https://via.placeholder.com/400x200?text=No+Image'}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border border-slate-200">${post.category || 'General'}</span>
+                            </div>
+                            <div class="p-6 flex flex-col flex-1">
+                                <div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                                    <span>${post.date}</span>
+                                    <span>•</span>
+                                    <span>${post.readTime || '5 min'} read</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors leading-snug line-clamp-2">${post.title}</h3>
+                                <div class="mt-auto flex items-center gap-2 text-sm font-medium text-slate-900">
+                                     <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500 uppercase border border-slate-300">${(post.author || 'A').charAt(0)}</div>
+                                    ${post.author || 'Admin'}
+                                </div>
+                            </div>
+                        </article>
+                    `).join('');
                 }
-            } catch(e) { console.error("Ad load error:", e); }
+            } catch (e) {
+                console.error("Error loading posts:", e);
+                grid.innerHTML = '<p class="col-span-3 text-center text-red-500">Failed to load posts. Please refresh.</p>';
+            } finally {
+                loader.classList.add('hidden');
+                grid.classList.remove('hidden');
+                if(window.lucide) window.lucide.createIcons();
+            }
         }
-
     </script>
 </body>
 </html>

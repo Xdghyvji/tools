@@ -3,381 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Log in to DigitalServicesHub.online to access your saved history, favorite tools, and premium features.">
-    <meta name="keywords" content="Login, Sign In, Digital Services Hub, User Account">
-    <meta name="author" content="DigitalServicesHub">
     <title>Login | DigitalServicesHub.online</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-    <!-- Custom Configuration -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-out',
-                        'slide-up': 'slideUp 0.5s ease-out',
-                    },
-                    keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        },
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        /* Custom Scrollbar for Horizontal Nav */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 3px solid #ffffff;
-            width: 20px;
-            height: 20px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <script>tailwind.config = {theme: {extend: {colors: { brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb' }}}}}</script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-100 selection:text-brand-900 flex flex-col min-h-screen">
-
-    <!-- ==================== PRIMARY HEADER ==================== -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300" id="main-header">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <div class="bg-brand-600 p-2 rounded-lg text-white shadow-lg shadow-brand-500/30">
-                        <i data-lucide="cpu" class="w-6 h-6"></i>
-                    </div>
-                    <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">
-                        DigitalServices<span class="text-brand-600">Hub</span>.online
-                    </span>
-                </div>
-
-                <!-- Desktop Navigation -->
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="index.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Home</a>
-                    <a href="about.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">About Us</a>
-                    <a href="blog.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Blog</a>
-                    <a href="contact.html" class="text-slate-600 hover:text-brand-600 font-medium text-sm uppercase tracking-wide transition-colors">Contact Us</a>
-                    <a href="index.html#tools" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-transform hover:scale-105 shadow-lg">
-                        Get Started
-                    </a>
-                </nav>
-
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-xl">
-            <div class="px-4 pt-2 pb-6 space-y-2">
-                <a href="index.html" class="block px-3 py-3 rounded-md text-brand-600 font-semibold bg-brand-50">Home</a>
-                <a href="about.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">About Us</a>
-                <a href="blog.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Blog</a>
-                <a href="contact.html" class="block px-3 py-3 rounded-md text-slate-600 hover:bg-slate-50 font-medium">Contact Us</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- ==================== SECONDARY NAV (Tools Bar) ==================== -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm overflow-hidden">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex items-center overflow-x-auto hide-scrollbar py-3 px-4 space-x-2 sm:space-x-4">
-                <a href="index.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">YouTube Tools</span>
-                </a>
-                <a href="instagram.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="instagram" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">Instagram Tools</span>
-                </a>
-                <a href="tiktok.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="music-2" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">TikTok Tools</span>
-                </a>
-                <a href="blog-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="file-text" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">Blog & SEO</span>
-                </a>
-                <a href="email-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">Email Marketing</span>
-                </a>
-                <a href="twitter-tools.html" class="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="twitter" class="w-4 h-4"></i>
-                    <span class="text-sm font-medium">X (Twitter)</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== MAIN CONTENT ==================== -->
-    <main class="flex-grow pt-40 pb-20 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
+    <main class="flex-grow pt-48 pb-20 flex items-center justify-center px-4">
         <div class="w-full max-w-md animate-fade-in">
-            
-            <!-- Login Card -->
             <div class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                
-                <!-- Card Header -->
                 <div class="text-center mb-8">
-                    <div class="inline-flex bg-brand-600 p-3 rounded-xl text-white shadow-lg shadow-brand-500/30 mb-4">
-                        <i data-lucide="lock" class="w-6 h-6"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold font-heading text-slate-900">Welcome Back</h2>
-                    <p class="text-slate-500 mt-1">Please sign in to your account</p>
+                    <div class="inline-flex bg-brand-600 p-3 rounded-xl text-white shadow-lg mb-4"><i data-lucide="lock" class="w-6 h-6"></i></div>
+                    <h2 class="text-2xl font-bold font-heading">Welcome Back</h2>
                 </div>
-
-                <!-- Login Form -->
                 <form id="login-form" class="space-y-5">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="mail" class="h-5 w-5 text-slate-400"></i>
-                            </div>
-                            <input type="email" id="email" name="email" class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 sm:text-sm transition-all" placeholder="name@company.com" required>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-1">
-                            <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                            <a href="#" class="text-sm font-medium text-brand-600 hover:text-brand-700">Forgot password?</a>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="lock-keyhole" class="h-5 w-5 text-slate-400"></i>
-                            </div>
-                            <input type="password" id="password" name="password" class="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 sm:text-sm transition-all" placeholder="••••••••" required>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded cursor-pointer">
-                        <label for="remember-me" class="ml-2 block text-sm text-slate-600 cursor-pointer">
-                            Remember me
-                        </label>
-                    </div>
-
-                    <div id="error-message" class="hidden text-red-500 text-sm text-center font-medium bg-red-50 p-2 rounded-lg border border-red-100">
-                        Invalid credentials. Please try again.
-                    </div>
-
-                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-transform hover:scale-[1.02]">
-                        <span class="btn-text">Sign In</span>
-                        <div class="loader hidden"></div>
-                    </button>
+                    <div><label class="block text-sm font-medium mb-1">Email</label><input type="email" id="email" class="w-full p-3 border rounded-lg" required></div>
+                    <div><label class="block text-sm font-medium mb-1">Password</label><input type="password" id="password" class="w-full p-3 border rounded-lg" required></div>
+                    <div id="error-message" class="hidden text-red-500 text-sm text-center"></div>
+                    <button type="submit" class="w-full py-3 bg-brand-600 text-white rounded-lg font-bold">Sign In</button>
                 </form>
-
-                <!-- Divider -->
-                <div class="relative my-8">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-slate-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-slate-500">Or continue with</span>
-                    </div>
-                </div>
-
-                <!-- Social Login -->
-                <div class="grid grid-cols-1 gap-4">
-                    <button id="google-btn" class="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-200 rounded-lg shadow-sm bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
-                        <span>Sign in with Google</span>
-                    </button>
-                </div>
-
-                <!-- Sign Up Footer -->
-                <div class="mt-8 text-center">
-                    <p class="text-sm text-slate-600">
-                        Don't have an account? 
-                        <a href="#" class="font-medium text-brand-600 hover:text-brand-500">Sign up for free</a>
-                    </p>
-                </div>
-
+                <div class="relative my-8"><div class="absolute inset-0 flex items-center"><div class="w-full border-t"></div></div><div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-slate-500">Or</span></div></div>
+                <button id="google-btn" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg font-medium hover:bg-slate-50">Sign in with Google</button>
             </div>
-            
-            <!-- Security Badge -->
-            <div class="mt-6 text-center flex items-center justify-center gap-2 text-slate-400 text-xs">
-                <i data-lucide="shield-check" class="w-4 h-4"></i>
-                <span>Secure 256-bit SSL Encrypted Connection</span>
-            </div>
-
         </div>
     </main>
-
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="bg-slate-900 text-slate-300 py-8 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-             <p class="text-sm text-slate-500">&copy; 2025 DigitalServicesHub.online. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <footer id="main-footer"></footer>
+    
+    <!-- FIXED IMPORT PATH: ./assets/js/shared.js (since assets is inside tools folder) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        // Initialize Icons
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
+        import { loadHeader, loadFooter, auth } from './assets/js/shared.js';
+        import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        document.addEventListener("DOMContentLoaded", () => { 
+            loadHeader(); 
+            loadFooter(); 
+            if(window.lucide) lucide.createIcons(); 
         });
 
-        // Mobile Menu Toggle
-        const mobileBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        // Firebase Config
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
-          apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
-          authDomain: "mubashir-2b7cc.firebaseapp.com",
-          projectId: "mubashir-2b7cc",
-          storageBucket: "mubashir-2b7cc.firebasestorage.app",
-          messagingSenderId: "107494735119",
-          appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
-          measurementId: "G-SP28C45HH4"
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error-message');
+            
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
+                // EXPLICIT REDIRECT TO /tools/index.html
+                window.location.href = '/tools/index.html'; 
+            } catch (error) { 
+                errorDiv.textContent = "Invalid credentials. Please try again."; 
+                errorDiv.classList.remove('hidden'); 
+            }
         });
-        
-        const app = initializeApp(JSON.parse(firebaseConfigStr));
-        const auth = getAuth(app);
 
-        // Email Login Logic
-        const loginForm = document.getElementById('login-form');
-        const errorMessage = document.getElementById('error-message');
-        const googleBtn = document.getElementById('google-btn');
-        
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const btn = loginForm.querySelector('button[type="submit"]');
-                const btnText = btn.querySelector('.btn-text');
-                const loader = btn.querySelector('.loader');
-
-                if(!email || !password) {
-                    showError("Please fill in all fields.");
-                    return;
-                }
-
-                // Loading State
-                btn.disabled = true;
-                btnText.classList.add('hidden');
-                loader.classList.remove('hidden');
-                errorMessage.classList.add('hidden');
-
-                try {
-                    // Real Firebase Auth
-                    await signInWithEmailAndPassword(auth, email, password);
-                    // Success -> Redirect
-                    window.location.href = 'index.html';
-                } catch (error) {
-                    console.error(error);
-                    let msg = "Invalid email or password.";
-                    if (error.code === 'auth/user-not-found') msg = "No user found with this email.";
-                    if (error.code === 'auth/wrong-password') msg = "Incorrect password.";
-                    if (error.code === 'auth/too-many-requests') msg = "Too many failed attempts. Try later.";
-                    showError(msg);
-                    
-                    btn.disabled = false;
-                    btnText.classList.remove('hidden');
-                    loader.classList.add('hidden');
-                }
-            });
-        }
-
-        // Google Login Logic
-        if (googleBtn) {
-            googleBtn.addEventListener('click', async () => {
-                try {
-                    const provider = new GoogleAuthProvider();
-                    await signInWithPopup(auth, provider);
-                    window.location.href = 'index.html';
-                } catch (error) {
-                    console.error("Google Auth Error:", error);
-                    showError("Google sign-in failed. Please try again.");
-                }
-            });
-        }
-
-        function showError(msg) {
-            errorMessage.textContent = msg;
-            errorMessage.classList.remove('hidden');
-        }
-
-        // Header Scroll Effect
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('main-header');
-            if (header) {
-                if (window.scrollY > 50) {
-                    header.classList.add('shadow-md');
-                    header.classList.add('bg-white/90');
-                } else {
-                    header.classList.remove('shadow-md');
-                    header.classList.remove('bg-white/90');
-                }
+        document.getElementById('google-btn').addEventListener('click', async () => {
+            try { 
+                await signInWithPopup(auth, new GoogleAuthProvider()); 
+                // EXPLICIT REDIRECT TO /tools/index.html
+                window.location.href = '/tools/index.html'; 
+            } catch(e) {
+                console.error(e);
+                document.getElementById('error-message').textContent = "Google sign-in failed.";
+                document.getElementById('error-message').classList.remove('hidden');
             }
         });
     </script>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to VIP | DigitalServicesHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .shine-effect { position: relative; overflow: hidden; }
+        .shine-effect::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-25deg); animation: shine 3s infinite; }
+        @keyframes shine { 100% { left: 150%; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
+
+    <main class="pt-32 pb-20 flex-grow px-4">
+        <div class="max-w-7xl mx-auto text-center mb-16">
+            <span class="text-brand-600 font-bold text-sm uppercase tracking-wider mb-2 block">Premium Access</span>
+            <h1 class="text-4xl md:text-5xl font-bold font-heading text-slate-900 mb-6">Unlock the Full Power of AI</h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Get access to exclusive VIP models, remove all ads, and generate content without limits.</p>
+        </div>
+
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+            
+            <!-- Free Tier -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm hover:shadow-md transition-all relative">
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Free Tier</h3>
+                <div class="text-4xl font-bold text-slate-900 mb-6">$0<span class="text-lg text-slate-500 font-medium">/mo</span></div>
+                <p class="text-slate-500 mb-8">Perfect for getting started.</p>
+                
+                <ul class="space-y-4 mb-8 text-left">
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-green-500"></i> Access to 24 Standard Tools</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-green-500"></i> Basic AI Models</li>
+                    <li class="flex items-center gap-3"><i data-lucide="check" class="w-5 h-5 text-green-500"></i> Standard Support</li>
+                    <li class="flex items-center gap-3 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i> Ads Included</li>
+                    <li class="flex items-center gap-3 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i> No VIP Templates</li>
+                </ul>
+
+                <button class="w-full py-3 rounded-xl border border-slate-200 font-bold text-slate-600 hover:bg-slate-50 transition-colors" disabled>Current Plan</button>
+            </div>
+
+            <!-- VIP Tier -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-8 shadow-2xl relative transform md:-translate-y-4 md:scale-105 shine-effect text-white">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg uppercase tracking-wide">Most Popular</div>
+                
+                <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i data-lucide="crown" class="w-5 h-5 text-amber-400 fill-current"></i> VIP Access</h3>
+                <div class="text-4xl font-bold text-white mb-6">$19<span class="text-lg text-slate-400 font-medium">/mo</span></div>
+                <p class="text-slate-400 mb-8">For serious content creators.</p>
+                
+                <ul class="space-y-4 mb-8 text-left">
+                    <li class="flex items-center gap-3"><div class="bg-green-500/20 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div> <strong>Ad-Free Experience</strong></li>
+                    <li class="flex items-center gap-3"><div class="bg-green-500/20 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div> <strong>Exclusive VIP AI Models</strong></li>
+                    <li class="flex items-center gap-3"><div class="bg-green-500/20 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div> Advanced "Expert" Prompts</li>
+                    <li class="flex items-center gap-3"><div class="bg-green-500/20 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div> Priority Generation Speed</li>
+                    <li class="flex items-center gap-3"><div class="bg-green-500/20 p-1 rounded-full"><i data-lucide="check" class="w-4 h-4 text-green-400"></i></div> Early Access to New Tools</li>
+                </ul>
+
+                <button id="buy-vip-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 font-bold text-white hover:shadow-lg hover:shadow-orange-500/20 transition-all transform hover:scale-[1.02]">Upgrade Now</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm opacity-0 transition-opacity duration-500">
+        <div class="bg-white rounded-2xl p-8 max-w-sm text-center transform scale-90 transition-transform duration-300" id="success-content">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                <i data-lucide="crown" class="w-10 h-10 text-green-600 fill-current"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">Welcome to VIP!</h2>
+            <p class="text-slate-600 mb-6">Your account has been upgraded successfully. Enjoy ad-free access and premium models.</p>
+            <button onclick="window.location.href='userprofile.html'" class="w-full py-3 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <footer id="main-footer"></footer>
+
+    <script type="module">
+        import { loadHeader, loadFooter, auth, db, appId, onAuthStateChanged } from './assets/js/shared.js';
+        import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadHeader();
+            loadFooter();
+            
+            let currentUser = null;
+            
+            onAuthStateChanged(auth, (user) => {
+                if (user) currentUser = user;
+            });
+
+            document.getElementById('buy-vip-btn').addEventListener('click', async () => {
+                if(!currentUser) {
+                    alert("Please login first to upgrade.");
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const btn = document.getElementById('buy-vip-btn');
+                btn.innerText = "Processing...";
+                btn.disabled = true;
+
+                // SIMULATE PAYMENT DELAY
+                setTimeout(async () => {
+                    try {
+                        // UPGRADE USER IN DB
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), {
+                            vip: true
+                        });
+
+                        // Show Success UI
+                        const modal = document.getElementById('success-modal');
+                        const content = document.getElementById('success-content');
+                        modal.classList.remove('hidden');
+                        // Small delay for CSS transition
+                        setTimeout(() => {
+                            modal.classList.remove('opacity-0');
+                            content.classList.remove('scale-90');
+                            content.classList.add('scale-100');
+                        }, 50);
+                        
+                        if(window.lucide) window.lucide.createIcons();
+
+                    } catch(e) {
+                        alert("Error processing upgrade: " + e.message);
+                        btn.innerText = "Upgrade Now";
+                        btn.disabled = false;
+                    }
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

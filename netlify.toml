@@ -1,0 +1,58 @@
+[build]
+  publish = "." 
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# --- REWRITES (The Fix) ---
+
+# 1. Admin Panel
+# Maps domain.com/admin -> root/tools/admin/index.html
+[[redirects]]
+  from = "/admin"
+  to = "/tools/admin/index.html"
+  status = 200
+
+# 2. Admin Sub-resources (JS/CSS inside admin)
+[[redirects]]
+  from = "/admin/*"
+  to = "/tools/admin/:splat"
+  status = 200
+
+# 3. Main Site (Root -> Tools Index)
+# Maps domain.com/ -> root/tools/index.html
+[[redirects]]
+  from = "/"
+  to = "/tools/index.html"
+  status = 200
+
+# 4. General Tools Access
+# Maps domain.com/login -> root/tools/login.html
+[[redirects]]
+  from = "/*"
+  to = "/tools/:splat.html"
+  status = 200
+
+# 5. Asset Passthrough
+# If assets are requested at /assets/..., look in /tools/assets/...
+[[redirects]]
+  from = "/assets/*"
+  to = "/tools/assets/:splat"
+  status = 200
+
+# 404 Fallback
+[[redirects]]
+  from = "/*"
+  to = "/tools/index.html"
+  status = 404

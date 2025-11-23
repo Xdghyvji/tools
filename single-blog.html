@@ -41,25 +41,13 @@
         .ad-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; text-align: center; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
     <!-- HEADER -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
-                    <div class="bg-brand-600 p-2 rounded-lg text-white shadow-lg"><i data-lucide="cpu" class="w-6 h-6"></i></div>
-                    <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">DigitalServices<span class="text-brand-600">Hub</span></span>
-                </div>
-                <nav class="hidden md:flex space-x-8 items-center">
-                    <a href="blog.html" class="text-slate-600 hover:text-brand-600 font-medium flex items-center gap-2"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Blog</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm" id="main-header"></header>
 
     <!-- MAIN CONTENT -->
-    <main class="pt-32 pb-20">
+    <main class="pt-32 pb-20 flex-grow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid lg:grid-cols-3 gap-12">
                 
@@ -93,6 +81,7 @@
                     </div>
 
                     <!-- AD SPACE: IN ARTICLE (300x250) -->
+                    <!-- IDs match shared.js adMapping -->
                     <div class="hidden mb-8" id="ad-in-article-container">
                         <p class="ad-label">Advertisement</p>
                         <div id="ad-in-article" class="ad-container w-[300px] h-[250px] mx-auto"></div>
@@ -100,7 +89,6 @@
 
                     <!-- Article Body -->
                     <article class="prose max-w-none text-slate-700" id="post-content">
-                        <!-- Skeleton Loader -->
                         <div class="animate-pulse space-y-4">
                             <div class="h-4 bg-slate-200 rounded w-3/4"></div>
                             <div class="h-4 bg-slate-200 rounded"></div>
@@ -123,7 +111,6 @@
                     <div class="mt-16">
                         <h3 class="text-2xl font-bold font-heading text-slate-900 mb-8">Comments (<span id="comment-count">0</span>)</h3>
                         
-                        <!-- Comment Form -->
                         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-10">
                             <h4 class="font-bold text-slate-900 mb-4">Leave a comment</h4>
                             <div class="grid gap-4">
@@ -133,7 +120,6 @@
                             </div>
                         </div>
 
-                        <!-- Comment List -->
                         <div id="comment-list" class="space-y-6">
                             <!-- Comments injected here -->
                         </div>
@@ -182,65 +168,33 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center md:text-left">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                     <span class="text-lg font-bold text-white">DigitalServicesHub</span>
-                     <p class="text-sm text-slate-500 mt-1">&copy; 2025 All rights reserved.</p>
-                </div>
-                <div class="flex space-x-6">
-                    <a href="#" class="hover:text-white"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                    <a href="#" class="hover:text-white"><i data-lucide="github" class="w-5 h-5"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <footer id="main-footer"></footer>
 
+    <!-- PRODUCTION LEVEL SCRIPT -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Config
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
-          apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
-          authDomain: "mubashir-2b7cc.firebaseapp.com",
-          projectId: "mubashir-2b7cc",
-          storageBucket: "mubashir-2b7cc.firebasestorage.app",
-          messagingSenderId: "107494735119",
-          appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
-          measurementId: "G-SP28C45HH4"
-        });
-        const firebaseConfig = JSON.parse(firebaseConfigStr);
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mubashir-2b7cc';
+        import { loadHeader, loadFooter, loadGlobalSettings, db, appId } from './assets/js/shared.js';
+        import { doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
 
         document.addEventListener("DOMContentLoaded", async () => {
-            lucide.createIcons();
+            // 1. Load Shared UI
+            loadHeader('blog');
+            loadFooter();
+            
+            // 2. Load Global Settings (SEO & ADS)
+            // This automatically injects the ads into the containers above
+            await loadGlobalSettings();
+
+            if (!postId) {
+                document.getElementById('post-title').innerText = "Post ID Not Provided";
+                document.getElementById('post-content').innerHTML = "<p>Please go back to the blog page.</p>";
+                return;
+            }
+
+            // 3. Fetch Post Logic
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                
-                // 1. Load Ads
-                loadAds();
-
-                if (!postId) {
-                    document.getElementById('post-title').innerText = "Post ID Not Provided";
-                    document.getElementById('post-content').innerHTML = "<p>Please go back to the blog page.</p>";
-                    return;
-                }
-
-                // 2. Fetch Blog Post
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
                 const docSnap = await getDoc(docRef);
 
@@ -248,25 +202,24 @@
                     const data = docSnap.data();
                     document.title = `${data.title} | DigitalServicesHub`;
                     
-                    // Populate fields
+                    // Populate UI
                     document.getElementById('post-category').innerText = data.category || "General";
                     document.getElementById('post-title').innerText = data.title;
                     document.getElementById('post-author').innerText = data.author || "Admin";
                     document.getElementById('author-avatar').innerText = (data.author || "A").charAt(0);
                     document.getElementById('post-date').innerText = data.date;
                     
-                    // Handle Image
-                    const img = document.getElementById('post-image');
                     if (data.image) {
+                        const img = document.getElementById('post-image');
                         img.src = data.image;
                         img.classList.remove('hidden');
                     }
                     
-                    // Set Content
+                    // Inject Content
                     document.getElementById('post-content').innerHTML = data.content;
                     
-                    // 3. Load Comments
-                    loadComments();
+                    // Load Comments
+                    await loadComments();
                 } else {
                     document.getElementById('post-title').innerText = "Post Not Found";
                     document.getElementById('post-content').innerHTML = "<p>The article you are looking for does not exist or has been removed.</p>";
@@ -274,49 +227,19 @@
             } catch (error) {
                 console.error("Error loading post:", error);
             }
+            
+            if(window.lucide) window.lucide.createIcons();
         });
-
-        async function loadAds() {
-            try {
-                const settingsSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global'));
-                if(settingsSnap.exists()) {
-                    const data = settingsSnap.data();
-                    const adsterra = data.adsterra || {};
-
-                    const inject = (id, content) => {
-                        const el = document.getElementById(id);
-                        const container = document.getElementById(id + '-container');
-                        if(el && container && content) {
-                            el.innerHTML = content;
-                            container.classList.remove('hidden');
-                            // Execute any JS inside the ad tag
-                            Array.from(el.querySelectorAll('script')).forEach(oldScript => {
-                                const newScript = document.createElement('script');
-                                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                                oldScript.parentNode.replaceChild(newScript, oldScript);
-                            });
-                        }
-                    };
-
-                    inject('ad-sidebar', adsterra['300x250']);
-                    inject('ad-in-article', adsterra['300x250']); // Same size often used in content
-                    inject('ad-sidebar-sky', adsterra['160x600']);
-                }
-            } catch(e) { console.error("Ad load error:", e); }
-        }
 
         async function loadComments() {
             try {
-                // Query comments where postId matches
-                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), where("postId", "==", postId), orderBy("createdAt", "desc"));
-                // Note: 'orderBy' requires a composite index in Firebase. If fails, remove orderBy.
-                // Simplified fallback query without orderBy if index missing:
-                // const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), where("postId", "==", postId));
-                
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), where("postId", "==", postId));
                 const snapshot = await getDocs(q);
-                const comments = [];
+                let comments = [];
                 snapshot.forEach(doc => comments.push(doc.data()));
+                
+                // Client-side sort (robust fallback if index missing)
+                comments.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 
                 document.getElementById('comment-count').innerText = comments.length;
                 const list = document.getElementById('comment-list');
@@ -337,16 +260,7 @@
                         </div>
                     `).join('');
                 }
-            } catch (e) {
-                // Fallback if index error
-                console.warn("Index might be missing for sorting, trying simple fetch:", e);
-                const qSimple = query(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), where("postId", "==", postId));
-                const snapshot = await getDocs(qSimple);
-                const comments = [];
-                snapshot.forEach(doc => comments.push(doc.data()));
-                document.getElementById('comment-count').innerText = comments.length;
-                // ... render simple list ...
-            }
+            } catch (e) { console.warn("Comment load error", e); }
         }
 
         document.getElementById('submit-comment').addEventListener('click', async () => {
@@ -369,7 +283,6 @@
                     createdAt: serverTimestamp()
                 });
                 
-                // Reset & Reload
                 document.getElementById('comment-name').value = '';
                 document.getElementById('comment-text').value = '';
                 await loadComments();

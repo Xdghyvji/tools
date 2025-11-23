@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | DigitalServicesHub</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/admin.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR (Static Shell) -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 z-20" id="sidebar">
+        <div class="h-16 flex items-center px-6 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+                <div class="bg-brand-600 p-1.5 rounded text-white"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                <span class="text-lg font-bold font-heading tracking-tight">DSH Admin</span>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="sidebar-nav">
+            <!-- Nav items injected by app.js -->
+        </nav>
+
+        <div class="p-4 border-t border-slate-800">
+            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+        
+        <!-- Top Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 lg:px-8 z-10">
+            <button id="toggle-sidebar" class="lg:hidden text-slate-500 hover:text-slate-700">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex items-center gap-4 ml-auto">
+                <div id="db-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-xs font-medium border border-yellow-200">
+                    <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div> Auth Check...
+                </div>
+                <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-900" id="admin-email">Loading...</p>
+                        <p class="text-xs text-slate-500">Super Admin</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold">A</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- DYNAMIC CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8" id="main-view">
+            <!-- Views will be injected here by JS -->
+            <div class="flex items-center justify-center h-full text-slate-400">
+                <div class="loader mr-2"></div> Loading Dashboard...
+            </div>
+        </div>
+    </main>
+
+    <!-- GLOBAL MODAL CONTAINER (Reused by views) -->
+    <div id="global-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" id="modal-backdrop"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all scale-95 opacity-0" id="global-modal-content">
+                <!-- Modal Content Injected Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Logic -->
+    <script type="module" src="../assets/js/admin/app.js"></script>
+</body>
+</html>
