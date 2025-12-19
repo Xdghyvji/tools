@@ -9,18 +9,15 @@ export function render() {
     <div class="animate-fade-in">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-slate-900">Blog Posts</h1>
-            
             <div class="flex gap-3">
                  <button id="update-sitemap-btn" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors flex items-center gap-2">
                     <i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap
                 </button>
-                
                 <button id="new-post-btn" class="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-700 transition-colors flex items-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i> New Post
                 </button>
             </div>
         </div>
-
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <table class="w-full text-sm text-left">
                 <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
@@ -46,7 +43,6 @@ let postsData = [];
 // 2. INITIALIZATION & LISTENERS
 // ==========================================
 export async function init() {
-    // 1. Attach Button Listeners
     try {
         const newPostBtn = document.getElementById('new-post-btn');
         if (newPostBtn) newPostBtn.addEventListener('click', () => openModal());
@@ -57,26 +53,21 @@ export async function init() {
         console.error("Error attaching listeners:", e);
     }
 
-    // 2. Real-time Database Listener
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
-        
-        // Sort by Newest First
         postsData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
         
         const tbody = document.getElementById('posts-table-body');
-        
         if (postsData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No posts found.</td></tr>`;
             return;
         }
 
-        // Render Rows
         tbody.innerHTML = postsData.map(p => `
             <tr class="hover:bg-slate-50 group transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-900">
-                    <a href="/single-blog.html?id=${p.id}" target="_blank" class="hover:text-brand-600 hover:underline flex items-center gap-2">
+                    <a href="/single-blog.html?slug=${p.slug || p.id}" target="_blank" class="hover:text-brand-600 hover:underline flex items-center gap-2">
                         ${p.title} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
                     </a>
                 </td>
@@ -96,7 +87,6 @@ export async function init() {
 
         if(window.lucide) window.lucide.createIcons();
 
-        // Attach Row Action Listeners
         document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openModal(e.target.dataset.id)));
         document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deletePost(e.target.dataset.id)));
     });
@@ -105,13 +95,13 @@ export async function init() {
 }
 
 // ==========================================
-// 3. CORE LOGIC (DELETE & SITEMAP)
+// 3. CORE LOGIC
 // ==========================================
 async function deletePost(id) {
     if(confirm("Are you sure? This will remove the post from your live site.")) {
         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'posts', id));
         logAction('Delete', 'Deleted Blog Post');
-        await updateSitemap(); // Auto-update sitemap when deleting
+        await updateSitemap();
     }
 }
 
@@ -123,17 +113,28 @@ async function logAction(action, details) {
     }
 }
 
+// --- SEO: URL SLUG GENERATOR ---
+function createSlug(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')     // Replace spaces with -
+        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+        .replace(/\-\-+/g, '-')   // Replace multiple - with single -
+        .replace(/^-+/, '')       // Trim - from start of text
+        .replace(/-+$/, '');      // Trim - from end of text
+}
+
 // --- DYNAMIC SITEMAP GENERATOR ---
 async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
     if(btn) { btn.innerText = "Updating..."; btn.disabled = true; }
 
     try {
-        // 1. Fetch all active posts from Database
         const q = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
         let urls = [];
         
-        // 2. Add Static Pages (Standard Pages)
         const staticPages = [
             'index.html', 'about.html', 'blog.html', 'contact.html', 
             'subscription.html', 'tiktok.html', 'instagram.html',
@@ -144,17 +145,15 @@ async function updateSitemap(force = false) {
             urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' });
         });
 
-        // 3. Add Dynamic Blog Posts
         q.forEach(doc => {
             const d = doc.data();
-            // Only add if published
             if (d.published !== false) {
-                // Generates the correct dynamic link
-                urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?id=${doc.id}`, priority: '0.9' });
+                // *** SEO FIX: USE SLUG IF AVAILABLE, ELSE FALLBACK TO ID ***
+                const identifier = d.slug ? `slug=${d.slug}` : `id=${doc.id}`;
+                urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?${identifier}`, priority: '0.9' });
             }
         });
 
-        // 4. Construct XML String
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
@@ -164,15 +163,13 @@ ${urls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-        // 5. Save XML string to Firestore (Netlify Function reads this)
-        // FIXED PATH: Added 'xml' at the end to make it an EVEN path (6 segments)
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { 
             xml: xmlContent, 
             updatedAt: serverTimestamp() 
         });
 
         console.log("Sitemap Updated Successfully!");
-        if(force && btn) alert("Sitemap updated! Search engines will now see the latest posts.");
+        if(force && btn) alert("Sitemap updated! Search engines will now see your SEO-friendly links.");
 
     } catch(e) {
         console.error("Sitemap Error", e);
@@ -203,12 +200,14 @@ function openModal(id = null) {
             
             <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
                 <input type="hidden" id="post-id" value="${id || ''}">
+                <input type="hidden" id="post-slug" value="${post?.slug || ''}">
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2 space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Post Title</label>
                             <input type="text" id="post-title" class="w-full p-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none shadow-sm" placeholder="Enter an engaging title..." value="${post?.title || ''}">
+                            <p class="text-xs text-slate-400 mt-1">Slug: <span id="slug-preview">${post?.slug || 'will-be-generated-automatically'}</span></p>
                         </div>
 
                         <div class="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
@@ -275,11 +274,14 @@ function openModal(id = null) {
     setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
     if(window.lucide) window.lucide.createIcons();
 
-    // Attach Listeners
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('save-post-btn').onclick = savePost;
 
-    // Image Preview Logic
+    // Live Slug Preview
+    document.getElementById('post-title').addEventListener('input', (e) => {
+        document.getElementById('slug-preview').innerText = createSlug(e.target.value);
+    });
+
     document.getElementById('post-image').addEventListener('input', (e) => {
         const img = document.getElementById('preview-image');
         const span = img.nextElementSibling;
@@ -293,15 +295,8 @@ function openModal(id = null) {
         }
     });
 
-    // Make editor functions global so onClick works
-    window.promptLink = () => {
-        const url = prompt("Enter link URL:");
-        if (url) document.execCommand('createLink', false, url);
-    };
-    window.promptImage = () => {
-        const url = prompt("Enter image URL:");
-        if (url) document.execCommand('insertImage', false, url);
-    };
+    window.promptLink = () => { const url = prompt("Enter link URL:"); if (url) document.execCommand('createLink', false, url); };
+    window.promptImage = () => { const url = prompt("Enter image URL:"); if (url) document.execCommand('insertImage', false, url); };
 }
 
 function closeModal() {
@@ -313,19 +308,23 @@ function closeModal() {
 }
 
 // ==========================================
-// 5. SAVE POST LOGIC
+// 5. SAVE POST LOGIC (With Slug Generation)
 // ==========================================
 async function savePost() {
     const id = document.getElementById('post-id').value;
     const btn = document.getElementById('save-post-btn');
-    
-    // Gather Data
     const title = document.getElementById('post-title').value;
-    // Get content from WYSIWYG Editor
     const content = document.getElementById('post-content-editor').innerHTML;
     
+    // *** SEO MAGIC: CREATE OR KEEP SLUG ***
+    let slug = document.getElementById('post-slug').value;
+    if (!slug || slug === 'undefined') {
+        slug = createSlug(title); // Create new slug from title
+    }
+
     const data = {
         title: title,
+        slug: slug, // Saving the clean URL
         category: document.getElementById('post-category').value,
         readTime: document.getElementById('post-readTime').value,
         image: document.getElementById('post-image').value,
@@ -351,9 +350,7 @@ async function savePost() {
             logAction('Create', `Created Post: ${title}`);
         }
         
-        // AUTO-UPDATE SITEMAP when saving a post
-        await updateSitemap();
-
+        await updateSitemap(); // This will now use the new slug
         closeModal();
     } catch(e) {
         alert("Error saving post: " + e.message);
