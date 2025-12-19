@@ -140,6 +140,7 @@ export function loadHeader(activePage = 'home') {
 
     const getClass = (page) => activePage === page ? 'text-brand-600 font-semibold' : 'text-slate-600 hover:text-brand-600 font-medium transition-colors';
 
+    // UPDATED: All href links below now point explicitly to /tools/ paths to prevent broken links on sub-pages
     headerElement.innerHTML = `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
@@ -148,11 +149,11 @@ export function loadHeader(activePage = 'home') {
                 <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">DigitalServices<span class="text-brand-600">Hub</span></span>
             </div>
             <nav class="hidden md:flex space-x-8 items-center">
-                <a href="index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
-                <a href="about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
-                <a href="blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
-                <a href="contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
-                <a href="login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
+                <a href="/tools/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
+                <a href="/tools/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
+                <a href="/tools/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
+                <a href="/tools/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
+                <a href="/tools/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
             </nav>
             <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
@@ -181,10 +182,12 @@ export function loadHeader(activePage = 'home') {
 // TAGLINE INJECTOR (CLICKABLE)
 function injectTagline() {
     const toolNav = document.querySelector('.fixed.top-20');
+    // Ensure we don't inject if it already exists
     if (toolNav && !document.getElementById('global-tagline')) {
-        const tagline = document.createElement('a'); // Changed to 'a' tag
+        const tagline = document.createElement('a'); 
         tagline.id = 'global-tagline';
-        tagline.href = "/subscription.html"; // Link to subscription
+        // UPDATED: Pointing to correct subscription path
+        tagline.href = "/tools/subscription.html"; 
         tagline.className = "fixed top-[144px] w-full z-30 bg-amber-50/95 backdrop-blur border-b border-amber-200 py-2 text-center text-xs font-bold text-amber-800 hidden md:block animate-fade-in hover:bg-amber-100 transition-colors cursor-pointer flex justify-center items-center gap-2";
         tagline.innerHTML = `<i data-lucide="crown" class="w-3 h-3 fill-current"></i> <span class="underline decoration-amber-300 underline-offset-2">NEW: Experience our Exclusive SEO AI models and boost your social media journey</span>`;
         document.body.appendChild(tagline);
@@ -238,7 +241,7 @@ export function loadFooter() {
                 <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-wider">Legal</h4>
                 <ul class="space-y-3 text-sm">
                     <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
-                    <li><a href="/contact.html" class="hover:text-white transition-colors">Support</a></li>
+                    <li><a href="/tools/contact.html" class="hover:text-white transition-colors">Support</a></li>
                 </ul>
             </div>
             <div>
