@@ -1,0 +1,37 @@
+# -----------------------------------------------------------------------------
+# DIGITAL SERVICES HUB - ROBOTS.TXT
+# -----------------------------------------------------------------------------
+
+# 1. Rules for all standard search bots (Google, Bing, etc.)
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /images/
+
+# --- RESTRICTED AREAS (Do not index these) ---
+
+# Admin Panel: Block both the public URL and internal path
+Disallow: /admin/
+Disallow: /tools/admin/
+
+# User Private Pages
+Disallow: /userprofile.html
+Disallow: /login.html
+Disallow: /subscription.html
+
+# Backend/System Files
+Disallow: /netlify/
+Disallow: /.netlify/
+Disallow: /package.json
+Disallow: /netlify.toml
+
+# 2. Special Rule for Google AdSense
+# (Allows Google to scan pages to serve relevant ads, even if restricted above)
+User-agent: Mediapartners-Google
+Disallow:
+
+# -----------------------------------------------------------------------------
+# SITEMAP LOCATION
+# -----------------------------------------------------------------------------
+# This points to the dynamic function rewrite we set up in netlify.toml
+Sitemap: https://digitalserviceshub.online/sitemap.xml
