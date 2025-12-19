@@ -49,7 +49,7 @@
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
                 // EXPLICIT REDIRECT TO /tools/index.html
-                window.location.href = '/tools/index.html'; 
+                window.location.href = '/tools/admin/index.html'; 
             } catch (error) { 
                 errorDiv.textContent = "Invalid credentials. Please try again."; 
                 errorDiv.classList.remove('hidden'); 
