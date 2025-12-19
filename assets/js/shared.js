@@ -30,23 +30,23 @@ let currentUserData = null;
 // ==========================================
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // 1. Redirect Logic: If on Login Page -> Go to Tools Index
+        // 1. Redirect Logic: If on Login Page -> Go to Home
         if (window.location.pathname.includes('login')) {
-            window.location.href = '/tools/index.html';
+            window.location.href = '/index.html';
         }
         
         // 2. Navbar Logic: Admin vs User
         const navCta = document.getElementById('nav-cta');
         if(navCta) {
             if (user.email === "admin@dsh.online") {
-                // ADMIN VIEW -> /tools/admin/index.html
+                // *** FIX: Point directly to /admin/index.html ***
                 navCta.innerHTML = `<span class="flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</span>`;
-                navCta.href = "/tools/admin/index.html"; 
+                navCta.href = "/admin/index.html"; 
                 navCta.className = "bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center";
             } else {
-                // NORMAL USER VIEW -> /tools/userprofile.html
+                // NORMAL USER VIEW -> /userprofile.html
                 const profileBtn = document.createElement('a');
-                profileBtn.href = "/tools/userprofile.html"; 
+                profileBtn.href = "/userprofile.html"; 
                 profileBtn.className = "w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md hover:shadow-lg transition-transform transform hover:scale-105 border-2 border-white ring-2 ring-brand-100";
                 profileBtn.innerHTML = user.email ? user.email.charAt(0).toUpperCase() : 'U';
                 profileBtn.title = "My Profile";
@@ -54,7 +54,7 @@ onAuthStateChanged(auth, async (user) => {
                 // Replace the "Login" button
                 if(navCta.parentNode) navCta.parentNode.replaceChild(profileBtn, navCta);
             }
-            // Re-scan icons for the new dashboard icon if added
+            // Re-scan icons
             if(window.lucide) window.lucide.createIcons();
         }
 
@@ -84,7 +84,6 @@ onAuthStateChanged(auth, async (user) => {
                 if (currentUserData?.vip) {
                     document.querySelectorAll('[id^="ad-"]').forEach(el => el.classList.add('hidden'));
                 } else {
-                    // If NOT VIP, inject upgrade buttons
                     injectUpgradeButton();
                 }
 
@@ -98,7 +97,6 @@ onAuthStateChanged(auth, async (user) => {
         }
     } else {
         signInAnonymously(auth).catch(console.error);
-        // Guest users also see upgrade button
         injectUpgradeButton();
     }
 });
@@ -140,31 +138,31 @@ export function loadHeader(activePage = 'home') {
 
     const getClass = (page) => activePage === page ? 'text-brand-600 font-semibold' : 'text-slate-600 hover:text-brand-600 font-medium transition-colors';
 
-    // UPDATED: All href links below now point explicitly to /tools/ paths to prevent broken links on sub-pages
+    // *** FIX: Removed '/tools/' prefix from all links below ***
     headerElement.innerHTML = `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-            <div class="flex items-center gap-2 cursor-pointer select-none" onclick="window.location.href='/tools/index.html'">
+            <div class="flex items-center gap-2 cursor-pointer select-none" onclick="window.location.href='/index.html'">
                 <div class="bg-brand-600 p-2 rounded-lg text-white shadow-lg shadow-brand-500/30"><i data-lucide="cpu" class="w-6 h-6"></i></div>
                 <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">DigitalServices<span class="text-brand-600">Hub</span></span>
             </div>
             <nav class="hidden md:flex space-x-8 items-center">
-                <a href="/tools/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
-                <a href="/tools/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
-                <a href="/tools/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
-                <a href="/tools/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
-                <a href="/tools/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
+                <a href="/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
+                <a href="/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
+                <a href="/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
+                <a href="/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
+                <a href="/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
             </nav>
             <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
     </div>
     <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full shadow-xl z-50">
         <div class="px-4 pt-4 pb-6 space-y-2">
-            <a href="/tools/index.html" class="block px-4 py-3 rounded-lg font-medium">Home</a>
-            <a href="/tools/about.html" class="block px-4 py-3 rounded-lg font-medium">About</a>
-            <a href="/tools/blog.html" class="block px-4 py-3 rounded-lg font-medium">Blog</a>
-            <a href="/tools/contact.html" class="block px-4 py-3 rounded-lg font-medium">Contact</a>
-            <a href="/tools/login.html" class="block px-4 py-3 mt-4 text-center rounded-lg bg-slate-900 text-white font-bold">Login</a>
+            <a href="/index.html" class="block px-4 py-3 rounded-lg font-medium">Home</a>
+            <a href="/about.html" class="block px-4 py-3 rounded-lg font-medium">About</a>
+            <a href="/blog.html" class="block px-4 py-3 rounded-lg font-medium">Blog</a>
+            <a href="/contact.html" class="block px-4 py-3 rounded-lg font-medium">Contact</a>
+            <a href="/login.html" class="block px-4 py-3 mt-4 text-center rounded-lg bg-slate-900 text-white font-bold">Login</a>
         </div>
     </div>`;
 
@@ -174,20 +172,17 @@ export function loadHeader(activePage = 'home') {
         const menu = document.getElementById('mobile-menu');
         if(btn && menu) btn.addEventListener('click', () => menu.classList.toggle('hidden'));
         
-        // Injections
         injectTagline();
     }, 0);
 }
 
-// TAGLINE INJECTOR (CLICKABLE)
+// TAGLINE INJECTOR
 function injectTagline() {
     const toolNav = document.querySelector('.fixed.top-20');
-    // Ensure we don't inject if it already exists
     if (toolNav && !document.getElementById('global-tagline')) {
         const tagline = document.createElement('a'); 
         tagline.id = 'global-tagline';
-        // UPDATED: Pointing to correct subscription path
-        tagline.href = "/tools/subscription.html"; 
+        tagline.href = "/subscription.html"; // Corrected Path
         tagline.className = "fixed top-[144px] w-full z-30 bg-amber-50/95 backdrop-blur border-b border-amber-200 py-2 text-center text-xs font-bold text-amber-800 hidden md:block animate-fade-in hover:bg-amber-100 transition-colors cursor-pointer flex justify-center items-center gap-2";
         tagline.innerHTML = `<i data-lucide="crown" class="w-3 h-3 fill-current"></i> <span class="underline decoration-amber-300 underline-offset-2">NEW: Experience our Exclusive SEO AI models and boost your social media journey</span>`;
         document.body.appendChild(tagline);
@@ -197,13 +192,11 @@ function injectTagline() {
 
 // UPGRADE BUTTON INJECTOR
 function injectUpgradeButton() {
-    // Look for the secondary tool nav container
     const navContainer = document.querySelector('.fixed.top-20 .max-w-7xl .flex');
-    // Prevent duplicates
     if (navContainer && !document.getElementById('nav-upgrade-btn')) {
         const btn = document.createElement('a');
         btn.id = 'nav-upgrade-btn';
-        btn.href = "/tools/subscription.html";
+        btn.href = "/subscription.html"; // Corrected Path
         btn.className = "ml-auto flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold shadow-sm hover:shadow-md hover:scale-105 transition-all transform whitespace-nowrap border border-white/20";
         btn.innerHTML = `<i data-lucide="sparkles" class="w-3 h-3 fill-current"></i> Go Premium`;
         
@@ -233,15 +226,15 @@ export function loadFooter() {
             <div>
                 <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-wider">Tools</h4>
                 <ul class="space-y-3 text-sm">
-                    <li><a href="/tools/index.html" class="hover:text-white transition-colors">YouTube Generator</a></li>
-                    <li><a href="/tools/tiktok.html" class="hover:text-white transition-colors">TikTok Viral</a></li>
+                    <li><a href="/index.html" class="hover:text-white transition-colors">YouTube Generator</a></li>
+                    <li><a href="/tiktok.html" class="hover:text-white transition-colors">TikTok Viral</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-wider">Legal</h4>
                 <ul class="space-y-3 text-sm">
                     <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
-                    <li><a href="/tools/contact.html" class="hover:text-white transition-colors">Support</a></li>
+                    <li><a href="/contact.html" class="hover:text-white transition-colors">Support</a></li>
                 </ul>
             </div>
             <div>
