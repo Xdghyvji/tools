@@ -48,7 +48,6 @@ let postsData = [];
 // ==========================================
 export async function init() {
     // 1. Attach Button Listeners
-    // We use try-catch here so one missing button doesn't break the whole page
     try {
         const newPostBtn = document.getElementById('new-post-btn');
         if (newPostBtn) newPostBtn.addEventListener('click', () => openModal());
@@ -175,7 +174,8 @@ ${urls.map(u => `  <url>
 </urlset>`;
 
         // 5. Save XML string to Firestore (Netlify Function reads this)
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap'), { 
+        // FIXED PATH: Added 'xml' at the end to make it an EVEN path (Collection/Doc/Collection/Doc/Collection/Doc)
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { 
             xml: xmlContent, 
             updatedAt: serverTimestamp() 
         });
@@ -185,7 +185,7 @@ ${urls.map(u => `  <url>
 
     } catch(e) {
         console.error("Sitemap Error", e);
-        if(force) alert("Error updating sitemap. Check console.");
+        if(force) alert("Error updating sitemap: " + e.message);
     } finally {
         if(btn) { 
             btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap`; 
