@@ -148,11 +148,11 @@ export function loadHeader(activePage = 'home') {
                 <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">DigitalServices<span class="text-brand-600">Hub</span></span>
             </div>
             <nav class="hidden md:flex space-x-8 items-center">
-                <a href="/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
-                <a href="/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
-                <a href="/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
-                <a href="/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
-                <a href="/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
+                <a href="index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
+                <a href="about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
+                <a href="blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
+                <a href="contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
+                <a href="login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
             </nav>
             <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
