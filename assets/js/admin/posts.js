@@ -1,4 +1,5 @@
-import { db, appId, auth } from '../../assets/js/shared.js';
+// FIXED IMPORT: adjusted for /tools/assets/js/admin/ structure
+import { db, appId, auth } from '../shared.js'; 
 import { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // ==========================================
@@ -47,8 +48,16 @@ let postsData = [];
 // ==========================================
 export async function init() {
     // 1. Attach Button Listeners
-    document.getElementById('new-post-btn').addEventListener('click', () => openModal());
-    document.getElementById('update-sitemap-btn').addEventListener('click', () => updateSitemap(true));
+    // We use try-catch here so one missing button doesn't break the whole page
+    try {
+        const newPostBtn = document.getElementById('new-post-btn');
+        if (newPostBtn) newPostBtn.addEventListener('click', () => openModal());
+
+        const sitemapBtn = document.getElementById('update-sitemap-btn');
+        if (sitemapBtn) sitemapBtn.addEventListener('click', () => updateSitemap(true));
+    } catch (e) {
+        console.error("Error attaching listeners:", e);
+    }
 
     // 2. Real-time Database Listener
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
