@@ -9,15 +9,18 @@ export function render() {
     <div class="animate-fade-in">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-slate-900">Blog Posts</h1>
+            
             <div class="flex gap-3">
                  <button id="update-sitemap-btn" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors flex items-center gap-2">
                     <i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap
                 </button>
+                
                 <button id="new-post-btn" class="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-700 transition-colors flex items-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i> New Post
                 </button>
             </div>
         </div>
+
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <table class="w-full text-sm text-left">
                 <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
@@ -43,21 +46,26 @@ let postsData = [];
 // 2. INITIALIZATION & LISTENERS
 // ==========================================
 export async function init() {
+    // 1. Attach Button Listeners
     document.getElementById('new-post-btn').addEventListener('click', () => openModal());
     document.getElementById('update-sitemap-btn').addEventListener('click', () => updateSitemap(true));
 
+    // 2. Real-time Database Listener
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
         
+        // Sort by Newest First
         postsData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
         
         const tbody = document.getElementById('posts-table-body');
+        
         if (postsData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No posts found.</td></tr>`;
             return;
         }
 
+        // Render Rows
         tbody.innerHTML = postsData.map(p => `
             <tr class="hover:bg-slate-50 group transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-900">
@@ -81,6 +89,7 @@ export async function init() {
 
         if(window.lucide) window.lucide.createIcons();
 
+        // Attach Row Action Listeners
         document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openModal(e.target.dataset.id)));
         document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deletePost(e.target.dataset.id)));
     });
@@ -95,14 +104,16 @@ async function deletePost(id) {
     if(confirm("Are you sure? This will remove the post from your live site.")) {
         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'posts', id));
         logAction('Delete', 'Deleted Blog Post');
-        await updateSitemap(); // Auto-update sitemap on delete
+        await updateSitemap(); // Auto-update sitemap when deleting
     }
 }
 
 async function logAction(action, details) {
-    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), {
-        action, details, admin: auth.currentUser.email, createdAt: serverTimestamp()
-    });
+    if (auth.currentUser) {
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs'), {
+            action, details, admin: auth.currentUser.email, createdAt: serverTimestamp()
+        });
+    }
 }
 
 // --- DYNAMIC SITEMAP GENERATOR ---
@@ -111,12 +122,25 @@ async function updateSitemap(force = false) {
     if(btn) { btn.innerText = "Updating..."; btn.disabled = true; }
 
     try {
-        // 1. Fetch all active posts
+        // 1. Fetch all active posts from Database
         const q = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
         let urls = [];
         
-        // 2. Add Static Pages
-        const staticPages = ['index.html', 'about.html', 'blog.html', 'contact.html', 'subscription.html', 'tiktok.html', 'instagram.html'];
+        // 2. Add Static Pages (Standard Pages)
+        // If you create new HTML pages, ADD THEM HERE to include them in the sitemap
+        const staticPages = [
+            'index.html', 
+            'about.html', 
+            'blog.html', 
+            'contact.html', 
+            'subscription.html', 
+            'tiktok.html', 
+            'instagram.html',
+            'twitter-tools.html',
+            'email-tools.html',
+            'blog-tools.html'
+        ];
+
         staticPages.forEach(page => {
             urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' });
         });
@@ -124,7 +148,9 @@ async function updateSitemap(force = false) {
         // 3. Add Dynamic Blog Posts
         q.forEach(doc => {
             const d = doc.data();
+            // Only add if published
             if (d.published !== false) {
+                // Generates the correct dynamic link
                 urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?id=${doc.id}`, priority: '0.9' });
             }
         });
@@ -139,17 +165,18 @@ ${urls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-        // 5. Save to Firestore (So you can fetch/serve it or copy-paste it)
+        // 5. Save XML string to Firestore (Netlify Function reads this)
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap'), { 
             xml: xmlContent, 
             updatedAt: serverTimestamp() 
         });
 
         console.log("Sitemap Updated Successfully!");
-        if(force && btn) alert("Sitemap updated! You can now serve this XML.");
+        if(force && btn) alert("Sitemap updated! Search engines will now see the latest posts.");
 
     } catch(e) {
         console.error("Sitemap Error", e);
+        if(force) alert("Error updating sitemap. Check console.");
     } finally {
         if(btn) { 
             btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap`; 
@@ -266,7 +293,7 @@ function openModal(id = null) {
         }
     });
 
-    // Make editor functions global for the onclick handlers
+    // Make editor functions global so onClick works
     window.promptLink = () => {
         const url = prompt("Enter link URL:");
         if (url) document.execCommand('createLink', false, url);
@@ -294,7 +321,7 @@ async function savePost() {
     
     // Gather Data
     const title = document.getElementById('post-title').value;
-    // IMPORTANT: Get content from the editable DIV, not a textarea
+    // Get content from WYSIWYG Editor
     const content = document.getElementById('post-content-editor').innerHTML;
     
     const data = {
@@ -302,7 +329,7 @@ async function savePost() {
         category: document.getElementById('post-category').value,
         readTime: document.getElementById('post-readTime').value,
         image: document.getElementById('post-image').value,
-        content: content, // HTML Content
+        content: content,
         published: document.getElementById('post-status').value === 'true',
         author: "Admin",
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
@@ -320,13 +347,13 @@ async function savePost() {
             logAction('Update', `Updated Post: ${title}`);
         } else {
             data.createdAt = serverTimestamp();
-            const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), data);
             logAction('Create', `Created Post: ${title}`);
         }
         
-        // AUTO-UPDATE SITEMAP
+        // AUTO-UPDATE SITEMAP when saving a post
         await updateSitemap();
-        
+
         closeModal();
     } catch(e) {
         alert("Error saving post: " + e.message);
