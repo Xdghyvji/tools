@@ -238,7 +238,7 @@ export function loadFooter() {
                 <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-wider">Legal</h4>
                 <ul class="space-y-3 text-sm">
                     <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
-                    <li><a href="/tools/contact.html" class="hover:text-white transition-colors">Support</a></li>
+                    <li><a href="/contact.html" class="hover:text-white transition-colors">Support</a></li>
                 </ul>
             </div>
             <div>
