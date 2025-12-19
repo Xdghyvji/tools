@@ -148,11 +148,11 @@ export function loadHeader(activePage = 'home') {
                 <span class="text-xl font-bold font-heading text-slate-900 tracking-tight">DigitalServices<span class="text-brand-600">Hub</span></span>
             </div>
             <nav class="hidden md:flex space-x-8 items-center">
-                <a href="/tools/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
-                <a href="/tools/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
-                <a href="/tools/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
-                <a href="/tools/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
-                <a href="/tools/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
+                <a href="/index.html" class="${getClass('home')} text-sm uppercase tracking-wide">Home</a>
+                <a href="/about.html" class="${getClass('about')} text-sm uppercase tracking-wide">About</a>
+                <a href="/blog.html" class="${getClass('blog')} text-sm uppercase tracking-wide">Blog</a>
+                <a href="/contact.html" class="${getClass('contact')} text-sm uppercase tracking-wide">Contact</a>
+                <a href="/login.html" id="nav-cta" class="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg">Login</a>
             </nav>
             <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
@@ -184,7 +184,7 @@ function injectTagline() {
     if (toolNav && !document.getElementById('global-tagline')) {
         const tagline = document.createElement('a'); // Changed to 'a' tag
         tagline.id = 'global-tagline';
-        tagline.href = "/tools/subscription.html"; // Link to subscription
+        tagline.href = "/subscription.html"; // Link to subscription
         tagline.className = "fixed top-[144px] w-full z-30 bg-amber-50/95 backdrop-blur border-b border-amber-200 py-2 text-center text-xs font-bold text-amber-800 hidden md:block animate-fade-in hover:bg-amber-100 transition-colors cursor-pointer flex justify-center items-center gap-2";
         tagline.innerHTML = `<i data-lucide="crown" class="w-3 h-3 fill-current"></i> <span class="underline decoration-amber-300 underline-offset-2">NEW: Experience our Exclusive SEO AI models and boost your social media journey</span>`;
         document.body.appendChild(tagline);
