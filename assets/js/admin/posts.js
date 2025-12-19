@@ -1,5 +1,4 @@
-// FIXED IMPORT: adjusted for /tools/assets/js/admin/ structure
-import { db, appId, auth } from '../shared.js'; 
+import { db, appId, auth } from '../shared.js';
 import { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // ==========================================
@@ -135,18 +134,10 @@ async function updateSitemap(force = false) {
         let urls = [];
         
         // 2. Add Static Pages (Standard Pages)
-        // If you create new HTML pages, ADD THEM HERE to include them in the sitemap
         const staticPages = [
-            'index.html', 
-            'about.html', 
-            'blog.html', 
-            'contact.html', 
-            'subscription.html', 
-            'tiktok.html', 
-            'instagram.html',
-            'twitter-tools.html',
-            'email-tools.html',
-            'blog-tools.html'
+            'index.html', 'about.html', 'blog.html', 'contact.html', 
+            'subscription.html', 'tiktok.html', 'instagram.html',
+            'twitter-tools.html', 'email-tools.html', 'blog-tools.html'
         ];
 
         staticPages.forEach(page => {
@@ -174,7 +165,7 @@ ${urls.map(u => `  <url>
 </urlset>`;
 
         // 5. Save XML string to Firestore (Netlify Function reads this)
-        // FIXED PATH: Added 'xml' at the end to make it an EVEN path (Collection/Doc/Collection/Doc/Collection/Doc)
+        // FIXED PATH: Added 'xml' at the end to make it an EVEN path (6 segments)
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { 
             xml: xmlContent, 
             updatedAt: serverTimestamp() 
