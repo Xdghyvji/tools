@@ -17,50 +17,27 @@
 
 # --- REWRITES ---
 
-# 1. Sitemap (Dynamic Function) - IMPORTANT: Must be at the top!
-# When Google asks for /sitemap.xml, we run the function.
+# 1. Sitemap (Dynamic Function)
 [[redirects]]
   from = "/sitemap.xml"
   to = "/.netlify/functions/sitemap"
   status = 200
 
-# 2. Assets (Images, JS, CSS)
-# We handle assets early so they don't get confused with HTML pages
-[[redirects]]
-  from = "/assets/*"
-  to = "/tools/assets/:splat"
-  status = 200
-
-# 3. Admin Panel
-# Maps domain.com/admin -> root/tools/admin/index.html
+# 2. Admin Panel Redirect (FIXED)
+# Points to /admin/index.html instead of /tools/admin/...
 [[redirects]]
   from = "/admin"
-  to = "/tools/admin/index.html"
+  to = "/admin/index.html"
   status = 200
 
-# Admin Sub-resources
-[[redirects]]
-  from = "/admin/*"
-  to = "/tools/admin/:splat"
-  status = 200
-
-# 4. Main Site Root
-# Maps domain.com/ -> root/tools/index.html
-[[redirects]]
-  from = "/"
-  to = "/tools/index.html"
-  status = 200
-
-# 5. Clean URLs (e.g., /login -> /tools/login.html)
-# This allows users to visit /login without seeing .html
+# 3. Fallback for clean URLs
 [[redirects]]
   from = "/*"
-  to = "/tools/:splat.html"
+  to = "/:splat.html"
   status = 200
 
-# 6. Fallback / 404
-# If nothing matches above, show the home page (or a custom 404)
+# 4. Final 404 Fallback
 [[redirects]]
   from = "/*"
-  to = "/tools/index.html"
+  to = "/index.html"
   status = 404
