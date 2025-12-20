@@ -13,76 +13,84 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-50 flex flex-col min-h-screen">
 
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden animate-fade-in">
-        
-        <div class="p-8 pb-6 text-center">
-            <div class="w-12 h-12 bg-brand-600 rounded-xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
-                <i data-lucide="layout-grid" class="w-6 h-6 text-blue-600"></i>
-            </div>
-            <h1 class="text-2xl font-bold text-slate-900" id="page-title">Welcome Back</h1>
-            <p class="text-slate-500 text-sm mt-2" id="page-desc">Enter your credentials to access the admin panel.</p>
-        </div>
+    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
 
-        <div class="px-8 mb-6">
-            <button id="google-btn" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 font-medium py-2.5 rounded-lg hover:bg-slate-50 transition-all hover:shadow-sm group">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google">
-                <span class="group-hover:text-slate-900">Continue with Google</span>
-            </button>
-            <div class="relative my-6">
-                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
-                <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-slate-400">Or continue with email</span></div>
-            </div>
-        </div>
-
-        <form id="auth-form" class="px-8 pb-8 space-y-4">
-            <div id="name-field" class="hidden">
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
-                <input type="text" id="name" placeholder="John Doe" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+    <main class="flex-grow flex items-center justify-center pt-24 pb-12 px-4">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden animate-fade-in">
+            
+            <div class="p-8 pb-6 text-center">
+                <div class="w-12 h-12 bg-brand-600 rounded-xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
+                    <i data-lucide="layout-grid" class="w-6 h-6 text-blue-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-900" id="page-title">Welcome Back</h1>
+                <p class="text-slate-500 text-sm mt-2" id="page-desc">Login to access your dashboard.</p>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
-                <div class="relative">
-                    <i data-lucide="mail" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
-                    <input type="email" id="email" required placeholder="admin@dsh.online" class="w-full pl-10 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <div class="px-8 mb-6">
+                <button id="google-btn" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-300 text-slate-700 font-medium py-2.5 rounded-lg hover:bg-slate-50 transition-all hover:shadow-sm group">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google">
+                    <span class="group-hover:text-slate-900">Continue with Google</span>
+                </button>
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+                    <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-slate-400">Or continue with email</span></div>
                 </div>
             </div>
 
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <label class="block text-xs font-bold text-slate-700 uppercase">Password</label>
-                    <a href="#" id="forgot-password" class="text-xs text-blue-600 hover:underline">Forgot?</a>
+            <form id="auth-form" class="px-8 pb-8 space-y-4">
+                <div id="name-field" class="hidden">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                 </div>
-                <div class="relative">
-                    <i data-lucide="lock" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
-                    <input type="password" id="password" required placeholder="••••••••" class="w-full pl-10 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
+                        <input type="email" id="email" required placeholder="name@example.com" class="w-full pl-10 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </div>
                 </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Password</label>
+                        <a href="#" id="forgot-password" class="text-xs text-blue-600 hover:underline">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-3 top-3 w-4 h-4 text-slate-400"></i>
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full pl-10 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <div id="error-msg" class="hidden bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 flex items-start gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                    <span id="error-text">Error message here</span>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex justify-center items-center gap-2">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="bg-slate-50 p-4 text-center border-t border-slate-200">
+                <p class="text-sm text-slate-600" id="toggle-text">
+                    Don't have an account? 
+                    <button id="toggle-mode" class="text-blue-600 font-bold hover:underline">Create Account</button>
+                </p>
             </div>
-
-            <div id="error-msg" class="hidden bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 flex items-start gap-2">
-                <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 shrink-0"></i>
-                <span id="error-text">Error message here</span>
-            </div>
-
-            <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex justify-center items-center gap-2">
-                Sign In
-            </button>
-        </form>
-
-        <div class="bg-slate-50 p-4 text-center border-t border-slate-200">
-            <p class="text-sm text-slate-600" id="toggle-text">
-                Don't have an account? 
-                <button id="toggle-mode" class="text-blue-600 font-bold hover:underline">Create Account</button>
-            </p>
         </div>
-    </div>
+    </main>
+
+    <footer id="main-footer"></footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // Import Auth & UI Loaders from Shared.js
+        // IMPORTANT: Ensure shared.js is located at /assets/js/shared.js
+        import { auth, loadHeader, loadFooter } from '/assets/js/shared.js';
+        
         import { 
-            getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             signInWithPopup, 
@@ -91,22 +99,14 @@
             updateProfile
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- 1. CONFIGURATION (Embedded directly to fix "No Injections" error) ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
-            authDomain: "mubashir-2b7cc.firebaseapp.com",
-            projectId: "mubashir-2b7cc",
-            storageBucket: "mubashir-2b7cc.firebasestorage.app",
-            messagingSenderId: "107494735119",
-            appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a"
-        };
+        // Initialize UI
+        document.addEventListener("DOMContentLoaded", () => {
+            loadHeader('login'); // Inject Header
+            loadFooter();        // Inject Footer
+            if(window.lucide) lucide.createIcons();
+        });
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        // --- 2. INITIALIZE UI ---
-        if(window.lucide) lucide.createIcons();
-
+        // State & Elements
         let isLoginMode = true;
         const form = document.getElementById('auth-form');
         const googleBtn = document.getElementById('google-btn');
@@ -114,15 +114,29 @@
         const submitBtn = document.getElementById('submit-btn');
         const errorBox = document.getElementById('error-msg');
         const errorText = document.getElementById('error-text');
+        
+        const ADMIN_EMAIL = "admin@dsh.online";
 
-        // --- 3. TOGGLE MODE (Login <-> Register) ---
+        // --- CORE REDIRECT LOGIC ---
+        function handleRedirect(user) {
+            console.log("Logged in user:", user.email);
+            if (user.email === ADMIN_EMAIL) {
+                // Admin goes to Dashboard
+                window.location.href = "/admin/index.html";
+            } else {
+                // Everyone else goes Home
+                window.location.href = "/index.html";
+            }
+        }
+
+        // Toggle Login/Register
         toggleBtn.addEventListener('click', () => {
             isLoginMode = !isLoginMode;
-            errorBox.classList.add('hidden'); // Clear errors
+            errorBox.classList.add('hidden');
             
             if (isLoginMode) {
                 document.getElementById('page-title').innerText = "Welcome Back";
-                document.getElementById('page-desc').innerText = "Enter your credentials to access the admin panel.";
+                document.getElementById('page-desc').innerText = "Login to access your dashboard.";
                 submitBtn.innerText = "Sign In";
                 document.getElementById('name-field').classList.add('hidden');
                 document.getElementById('name').required = false;
@@ -130,18 +144,18 @@
                 document.getElementById('forgot-password').classList.remove('hidden');
             } else {
                 document.getElementById('page-title').innerText = "Create Account";
-                document.getElementById('page-desc').innerText = "Join the team to manage the platform.";
+                document.getElementById('page-desc').innerText = "Join DigitalServicesHub today.";
                 submitBtn.innerText = "Create Account";
                 document.getElementById('name-field').classList.remove('hidden');
                 document.getElementById('name').required = true;
                 toggleBtn.parentElement.innerHTML = `Already have an account? <button id="toggle-mode" class="text-blue-600 font-bold hover:underline">Sign In</button>`;
                 document.getElementById('forgot-password').classList.add('hidden');
             }
-            // Re-attach listener to the new button we just created
+            // Re-attach listener
             document.getElementById('toggle-mode').addEventListener('click', arguments.callee);
         });
 
-        // --- 4. SUBMIT HANDLER ---
+        // Email/Pass Submit
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -151,16 +165,17 @@
             setLoading(true);
 
             try {
+                let userCredential;
                 if (isLoginMode) {
-                    // LOGIN
-                    await signInWithEmailAndPassword(auth, email, password);
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
                 } else {
-                    // REGISTER
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     await updateProfile(userCredential.user, { displayName: name });
                 }
-                // Redirect
-                window.location.href = "/admin/index.html"; 
+                
+                // REDIRECT BASED ON ROLE
+                handleRedirect(userCredential.user);
+
             } catch (error) {
                 showError(parseError(error.code));
             } finally {
@@ -168,24 +183,26 @@
             }
         });
 
-        // --- 5. GOOGLE LOGIN ---
+        // Google Login
         googleBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
             try {
-                await signInWithPopup(auth, provider);
-                window.location.href = "/admin/index.html";
+                const result = await signInWithPopup(auth, provider);
+                
+                // REDIRECT BASED ON ROLE
+                handleRedirect(result.user);
+
             } catch (error) {
                 console.error("Google Error:", error);
-                showError("Google Sign-In failed. See console.");
+                showError("Google Sign-In failed.");
             }
         });
 
-        // --- 6. FORGOT PASSWORD ---
+        // Forgot Password
         document.getElementById('forgot-password').addEventListener('click', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             if (!email) return showError("Please enter your email address first.");
-            
             try {
                 await sendPasswordResetEmail(auth, email);
                 alert("Reset link sent! Check your email.");
@@ -194,7 +211,7 @@
             }
         });
 
-        // --- HELPERS ---
+        // Helpers
         function setLoading(isLoading) {
             if (isLoading) {
                 submitBtn.disabled = true;
