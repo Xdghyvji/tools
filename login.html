@@ -80,8 +80,9 @@
     </div>
 
     <script type="module">
-        import { auth } from './assets/js/shared.js'; // Ensure this path is correct based on your file structure
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
+            getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             signInWithPopup, 
@@ -90,51 +91,57 @@
             updateProfile
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Initialize Icons
-        lucide.createIcons();
+        // --- 1. CONFIGURATION (Embedded directly to fix "No Injections" error) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
+            authDomain: "mubashir-2b7cc.firebaseapp.com",
+            projectId: "mubashir-2b7cc",
+            storageBucket: "mubashir-2b7cc.firebasestorage.app",
+            messagingSenderId: "107494735119",
+            appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a"
+        };
 
-        // State
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- 2. INITIALIZE UI ---
+        if(window.lucide) lucide.createIcons();
+
         let isLoginMode = true;
-
-        // Elements
         const form = document.getElementById('auth-form');
         const googleBtn = document.getElementById('google-btn');
         const toggleBtn = document.getElementById('toggle-mode');
-        const nameField = document.getElementById('name-field');
-        const title = document.getElementById('page-title');
-        const desc = document.getElementById('page-desc');
         const submitBtn = document.getElementById('submit-btn');
-        const forgotBtn = document.getElementById('forgot-password');
         const errorBox = document.getElementById('error-msg');
         const errorText = document.getElementById('error-text');
 
-        // 1. Toggle Login / Register
+        // --- 3. TOGGLE MODE (Login <-> Register) ---
         toggleBtn.addEventListener('click', () => {
             isLoginMode = !isLoginMode;
             errorBox.classList.add('hidden'); // Clear errors
             
             if (isLoginMode) {
-                title.innerText = "Welcome Back";
-                desc.innerText = "Enter your credentials to access the admin panel.";
+                document.getElementById('page-title').innerText = "Welcome Back";
+                document.getElementById('page-desc').innerText = "Enter your credentials to access the admin panel.";
                 submitBtn.innerText = "Sign In";
-                nameField.classList.add('hidden');
+                document.getElementById('name-field').classList.add('hidden');
                 document.getElementById('name').required = false;
                 toggleBtn.parentElement.innerHTML = `Don't have an account? <button id="toggle-mode" class="text-blue-600 font-bold hover:underline">Create Account</button>`;
-                forgotBtn.classList.remove('hidden');
+                document.getElementById('forgot-password').classList.remove('hidden');
             } else {
-                title.innerText = "Create Account";
-                desc.innerText = "Join the team to manage the platform.";
+                document.getElementById('page-title').innerText = "Create Account";
+                document.getElementById('page-desc').innerText = "Join the team to manage the platform.";
                 submitBtn.innerText = "Create Account";
-                nameField.classList.remove('hidden');
+                document.getElementById('name-field').classList.remove('hidden');
                 document.getElementById('name').required = true;
                 toggleBtn.parentElement.innerHTML = `Already have an account? <button id="toggle-mode" class="text-blue-600 font-bold hover:underline">Sign In</button>`;
-                forgotBtn.classList.add('hidden');
+                document.getElementById('forgot-password').classList.add('hidden');
             }
-            // Re-attach listener since we replaced innerHTML
+            // Re-attach listener to the new button we just created
             document.getElementById('toggle-mode').addEventListener('click', arguments.callee);
         });
 
-        // 2. Handle Form Submit (Email/Pass)
+        // --- 4. SUBMIT HANDLER ---
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
@@ -148,13 +155,12 @@
                     // LOGIN
                     await signInWithEmailAndPassword(auth, email, password);
                 } else {
-                    // SIGN UP
+                    // REGISTER
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    // Update Name
                     await updateProfile(userCredential.user, { displayName: name });
                 }
-                // Redirect on success
-                window.location.href = "admin/index.html"; 
+                // Redirect
+                window.location.href = "/admin/index.html"; 
             } catch (error) {
                 showError(parseError(error.code));
             } finally {
@@ -162,38 +168,37 @@
             }
         });
 
-        // 3. Handle Google Login
+        // --- 5. GOOGLE LOGIN ---
         googleBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                window.location.href = "admin/index.html";
+                window.location.href = "/admin/index.html";
             } catch (error) {
-                console.error(error);
-                showError("Google Sign-In failed. Please check your domain settings in Firebase Console.");
+                console.error("Google Error:", error);
+                showError("Google Sign-In failed. See console.");
             }
         });
 
-        // 4. Handle Forgot Password
-        forgotBtn.addEventListener('click', async (e) => {
+        // --- 6. FORGOT PASSWORD ---
+        document.getElementById('forgot-password').addEventListener('click', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             if (!email) return showError("Please enter your email address first.");
             
             try {
                 await sendPasswordResetEmail(auth, email);
-                alert("Password reset link sent to your email!");
+                alert("Reset link sent! Check your email.");
             } catch (error) {
                 showError(parseError(error.code));
             }
         });
 
-        // Helpers
+        // --- HELPERS ---
         function setLoading(isLoading) {
             if (isLoading) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processing...`;
-                lucide.createIcons();
+                submitBtn.innerHTML = `<span class="animate-spin mr-2">⟳</span> Processing...`;
             } else {
                 submitBtn.disabled = false;
                 submitBtn.innerText = isLoginMode ? "Sign In" : "Create Account";
@@ -206,15 +211,11 @@
         }
 
         function parseError(code) {
-            switch (code) {
-                case 'auth/invalid-credential': return "Incorrect email or password.";
-                case 'auth/user-not-found': return "No account found with this email.";
-                case 'auth/wrong-password': return "Incorrect password.";
-                case 'auth/email-already-in-use': return "This email is already registered.";
-                case 'auth/weak-password': return "Password should be at least 6 characters.";
-                case 'auth/popup-closed-by-user': return "Sign-in cancelled.";
-                default: return "An error occurred. Please try again.";
-            }
+            if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') return "Incorrect email or password.";
+            if (code === 'auth/user-not-found') return "No account found with this email.";
+            if (code === 'auth/email-already-in-use') return "This email is already registered.";
+            if (code === 'auth/weak-password') return "Password must be at least 6 characters.";
+            return "Error: " + code;
         }
     </script>
 </body>
