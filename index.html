@@ -18,6 +18,7 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    // Using standard brand colors for header/footer consistency
                     colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' } },
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
                     animation: { 'fade-in': 'fadeIn 0.3s ease-out' },
@@ -44,7 +45,7 @@
 
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="flex border-b border-slate-200">
-                    <button onclick="switchTab('title')" id="tab-title" class="flex-1 py-4 text-sm font-bold text-brand-600 border-b-2 border-brand-600 bg-brand-50/50 flex items-center justify-center gap-2 transition-all">
+                    <button onclick="switchTab('title')" id="tab-title" class="flex-1 py-4 text-sm font-bold text-red-600 border-b-2 border-red-600 bg-red-50/50 flex items-center justify-center gap-2 transition-all">
                         <i data-lucide="type" class="w-4 h-4"></i> Title Gen
                     </button>
                     <button onclick="switchTab('tags')" id="tab-tags" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center justify-center gap-2 transition-all">
@@ -60,8 +61,8 @@
                     <div id="tool-title" class="animate-fade-in">
                         <label class="block text-sm font-bold text-slate-700 mb-2">What is your video about?</label>
                         <div class="flex gap-2 mb-6">
-                            <input type="text" id="title-input" placeholder="e.g. iPhone 15 review, How to bake a cake..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                            <button onclick="generateTitles()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Generate</button>
+                            <input type="text" id="title-input" placeholder="e.g. iPhone 15 review, How to bake a cake..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 outline-none">
+                            <button onclick="generateTitles()" class="bg-red-600 text-white px-6 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/30">Generate</button>
                         </div>
                         
                         <div id="title-results" class="hidden space-y-3">
@@ -72,13 +73,13 @@
                     <div id="tool-tags" class="hidden animate-fade-in">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Enter main keyword</label>
                         <div class="flex gap-2 mb-6">
-                            <input type="text" id="tags-input" placeholder="e.g. Digital Marketing..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                            <button onclick="generateTags()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Extract</button>
+                            <input type="text" id="tags-input" placeholder="e.g. Digital Marketing..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 outline-none">
+                            <button onclick="generateTags()" class="bg-red-600 text-white px-6 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/30">Extract</button>
                         </div>
                         
                         <div id="tags-results" class="hidden">
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 leading-loose" id="tags-output"></div>
-                            <button onclick="copyToClipboard('tags-output')" class="mt-3 flex items-center gap-2 text-brand-600 font-bold text-sm hover:underline">
+                            <button onclick="copyToClipboard('tags-output')" class="mt-3 flex items-center gap-2 text-red-600 font-bold text-sm hover:underline">
                                 <i data-lucide="copy" class="w-4 h-4"></i> Copy Tags
                             </button>
                         </div>
@@ -87,13 +88,13 @@
                     <div id="tool-desc" class="hidden animate-fade-in">
                         <label class="block text-sm font-bold text-slate-700 mb-2">Video Topic / Keywords</label>
                         <div class="flex gap-2 mb-6">
-                            <input type="text" id="desc-input" placeholder="e.g. Travel Vlog Japan 2025..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                            <button onclick="generateDesc()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Write</button>
+                            <input type="text" id="desc-input" placeholder="e.g. Travel Vlog Japan 2025..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 outline-none">
+                            <button onclick="generateDesc()" class="bg-red-600 text-white px-6 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg shadow-red-500/30">Write</button>
                         </div>
 
                         <div id="desc-results" class="hidden">
                             <textarea id="desc-output" readonly class="w-full h-48 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none resize-none"></textarea>
-                            <button onclick="copyToClipboard('desc-output')" class="mt-3 flex items-center gap-2 text-brand-600 font-bold text-sm hover:underline">
+                            <button onclick="copyToClipboard('desc-output')" class="mt-3 flex items-center gap-2 text-red-600 font-bold text-sm hover:underline">
                                 <i data-lucide="copy" class="w-4 h-4"></i> Copy Description
                             </button>
                         </div>
@@ -128,18 +129,19 @@
     <script type="module" src="./assets/js/shared.js"></script>
 
     <script>
-        // Tab Switching
+        // Tab Logic
         function switchTab(tab) {
             ['title', 'tags', 'desc'].forEach(t => {
                 document.getElementById(`tool-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('text-brand-600', 'border-b-2', 'border-brand-600', 'bg-brand-50/50');
-                document.getElementById(`tab-${t}`).classList.add('text-slate-500');
+                const btn = document.getElementById(`tab-${t}`);
+                btn.classList.remove('text-red-600', 'border-b-2', 'border-red-600', 'bg-red-50/50');
+                btn.classList.add('text-slate-500');
             });
 
             document.getElementById(`tool-${tab}`).classList.remove('hidden');
             const btn = document.getElementById(`tab-${tab}`);
             btn.classList.remove('text-slate-500');
-            btn.classList.add('text-brand-600', 'border-b-2', 'border-brand-600', 'bg-brand-50/50');
+            btn.classList.add('text-red-600', 'border-b-2', 'border-red-600', 'bg-red-50/50');
         }
 
         // 1. Generate Titles
@@ -158,9 +160,9 @@
             const container = document.getElementById('title-results');
             container.innerHTML = `<h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Viral Suggestions</h4>` + 
                 results.map(t => `
-                <div class="flex justify-between items-center p-3 bg-slate-50 border border-slate-200 rounded-lg group hover:border-brand-300 transition-colors">
+                <div class="flex justify-between items-center p-3 bg-slate-50 border border-slate-200 rounded-lg group hover:border-red-300 transition-colors">
                     <span class="font-medium text-slate-800 text-sm">${t}</span>
-                    <button onclick="copyText('${t}')" class="text-slate-400 hover:text-brand-600"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                    <button onclick="copyText('${t}')" class="text-slate-400 hover:text-red-600"><i data-lucide="copy" class="w-4 h-4"></i></button>
                 </div>`).join('');
             
             container.classList.remove('hidden');
@@ -173,7 +175,6 @@
             if(!input) return alert("Enter a keyword.");
             
             // Simulating smart tag generation
-            const baseTags = input.split(' ').map(w => w.trim());
             const tags = [
                 input, 
                 `${input} tutorial`, 
@@ -200,7 +201,6 @@
             document.getElementById('desc-results').classList.remove('hidden');
         }
 
-        // Utilities
         function copyText(text) {
             navigator.clipboard.writeText(text);
             alert("Copied!");
@@ -213,7 +213,6 @@
             alert("Copied to clipboard!");
         }
 
-        // Init
         if(window.lucide) lucide.createIcons();
     </script>
 </body>
