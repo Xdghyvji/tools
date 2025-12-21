@@ -1,8 +1,8 @@
 // ===============================================================
-// SHARED.JS - Config, VIP Logic, UI Loader & Cookie Consent
+// SHARED.JS - Global Config, VIP Logic & UI Loader
 // ===============================================================
 
-// 1. FIREBASE IMPORTS (Stable Version 10.13.1)
+// 1. FIREBASE IMPORTS (Using Stable v10.13.1)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
@@ -29,22 +29,19 @@ console.log("Shared.js loaded successfully");
 export { app, db, auth, appId, onAuthStateChanged, signOut, doc, getDoc };
 
 // ===============================================================
-// 5. VIP SYSTEM & USER LOGIC
+// 5. VIP SYSTEM LOGIC (Safe Mode)
 // ===============================================================
 
-/**
- * Checks if the user is a VIP member based on their database record.
- */
 export async function getUserStatus(user) {
     if (!user) return { isVip: false, plan: 'free', name: 'User' };
 
     try {
+        // Path: artifacts -> {appId} -> public -> data -> users -> {uid}
         const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
         const snapshot = await getDoc(userRef);
 
         if (snapshot.exists()) {
             const data = snapshot.data();
-            // Check if plan is 'vip' or 'pro'
             const isVip = data.plan === 'vip' || data.plan === 'pro';
             return { 
                 isVip, 
@@ -53,18 +50,18 @@ export async function getUserStatus(user) {
             };
         }
     } catch (error) {
-        console.error("Error fetching user status:", error);
+        console.warn("VIP Check Failed (Network or Permission):", error);
     }
     
-    // Default fallback
+    // Default if error or no data
     return { isVip: false, plan: 'free', name: user.displayName || 'User' };
 }
 
 // ===============================================================
-// 6. UI COMPONENTS (Header & Footer)
+// 6. UI LOADERS (Header & Footer)
 // ===============================================================
 
-// Inject Styles for Animations (Dropdowns, Fade-ins)
+// Inject CSS for animations
 const style = document.createElement('style');
 style.innerHTML = `
     .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
@@ -72,12 +69,9 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-/**
- * Injects the global Navigation Bar.
- */
 export function loadHeader(activePage = '') {
     const header = document.getElementById('main-header');
-    if (!header) return;
+    if (!header) return; // Stop if header doesn't exist
 
     header.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-full flex justify-between items-center">
@@ -96,7 +90,8 @@ export function loadHeader(activePage = '') {
             </nav>
 
             <div id="auth-action-area" class="hidden md:flex items-center gap-4">
-                 <div class="animate-pulse bg-slate-200 w-24 h-9 rounded-full"></div> </div>
+                 <div class="animate-pulse bg-slate-200 w-24 h-9 rounded-full"></div>
+            </div>
 
             <button class="md:hidden text-slate-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
                 <i data-lucide="menu" class="w-6 h-6"></i>
@@ -113,34 +108,26 @@ export function loadHeader(activePage = '') {
         </div>
     `;
 
-    // Initialize Icons
     if (window.lucide) window.lucide.createIcons();
-
-    // Start Auth Logic
     initAuthUI();
 }
 
-/**
- * Handles Real-time Login/Logout UI updates
- */
 function initAuthUI() {
     onAuthStateChanged(auth, async (user) => {
         const desktopArea = document.getElementById('auth-action-area');
         const mobileArea = document.getElementById('mobile-auth-area');
         
         if (user) {
-            // --- USER IS LOGGED IN ---
-            
-            // 1. Fetch VIP & Profile Data
+            // LOGGED IN
             const { isVip, name } = await getUserStatus(user);
-            const initial = (name && name.length > 0) ? name[0].toUpperCase() : 'U';
+            const initial = (name && name[0]) ? name[0].toUpperCase() : 'U';
 
-            // 2. Create VIP Badge HTML
+            // VIP Badge HTML
             const vipBadge = isVip 
                 ? `<div class="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 rounded-full border border-white shadow-sm flex items-center gap-0.5"><i data-lucide="crown" class="w-2 h-2"></i> VIP</div>` 
                 : '';
 
-            // 3. Render Desktop Profile Dropdown
+            // Desktop Profile
             if(desktopArea) {
                 desktopArea.innerHTML = `
                     <div class="relative group cursor-pointer z-50">
@@ -148,29 +135,20 @@ function initAuthUI() {
                             ${initial}
                             ${vipBadge}
                         </div>
-                        
                         <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 py-2 hidden group-hover:block animate-fade-in z-50">
                             <div class="px-4 py-3 border-b border-slate-50 mb-1">
                                 <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Signed in as</p>
                                 <p class="font-bold text-sm truncate text-slate-900">${name}</p>
                                 ${isVip ? '<p class="text-xs text-yellow-600 font-bold mt-1 bg-yellow-50 inline-block px-2 py-0.5 rounded-full border border-yellow-100">★ VIP Active</p>' : ''}
                             </div>
-                            
-                            ${user.email === 'admin@dsh.online' ? `
-                                <a href="/admin/index.html" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-600">
-                                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Admin Panel
-                                </a>` : ''
-                            }
-                            
-                            <a href="#" id="logout-btn" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 mt-1">
-                                <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-                            </a>
+                            ${user.email === 'admin@dsh.online' ? '<a href="/admin/index.html" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-600">Admin Panel</a>' : ''}
+                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign Out</a>
                         </div>
                     </div>
                 `;
             }
 
-            // 4. Render Mobile Profile
+            // Mobile Profile
             if(mobileArea) {
                 mobileArea.innerHTML = `
                     <div class="flex items-center gap-3 border-t border-slate-100 pt-4 mt-2">
@@ -184,26 +162,25 @@ function initAuthUI() {
                 `;
             }
 
-            // 5. Attach Logout Listeners
+            // Attach Logout
             document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
             document.getElementById('mobile-logout-btn')?.addEventListener('click', handleLogout);
             
-            // 6. Update Icons
+            // Handle Pricing Page Button Update
+            if (window.location.pathname.includes('subscription.html') && isVip) {
+                document.querySelectorAll('.vip-plan-btn').forEach(btn => {
+                    btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Current Plan`;
+                    btn.disabled = true;
+                    btn.className = "w-full py-3 px-6 rounded-xl font-bold transition-all bg-green-100 text-green-700 cursor-default flex items-center justify-center gap-2 border border-green-200";
+                });
+            }
+
             if (window.lucide) window.lucide.createIcons();
 
-            // 7. Pricing Page Logic (Mark Plan Active)
-            if (window.location.pathname.includes('subscription.html') && isVip) {
-                markVipPlanActive();
-            }
-
         } else {
-            // --- USER IS LOGGED OUT ---
-            if(desktopArea) {
-                desktopArea.innerHTML = `<a href="/login.html" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">Login</a>`;
-            }
-            if(mobileArea) {
-                mobileArea.innerHTML = `<a href="/login.html" class="text-brand-600 font-bold block">Login / Sign Up</a>`;
-            }
+            // LOGGED OUT
+            if(desktopArea) desktopArea.innerHTML = `<a href="/login.html" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">Login</a>`;
+            if(mobileArea) mobileArea.innerHTML = `<a href="/login.html" class="text-brand-600 font-bold block">Login / Sign Up</a>`;
         }
     });
 }
@@ -213,23 +190,9 @@ function handleLogout(e) {
     signOut(auth).then(() => window.location.href = '/index.html');
 }
 
-function markVipPlanActive() {
-    const btns = document.querySelectorAll('.vip-plan-btn');
-    btns.forEach(btn => {
-        btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Current Plan`;
-        btn.disabled = true;
-        btn.className = "w-full py-3 px-6 rounded-xl font-bold transition-all bg-green-100 text-green-700 cursor-default flex items-center justify-center gap-2 border border-green-200";
-    });
-    if (window.lucide) window.lucide.createIcons();
-}
-
-/**
- * Injects the global Footer.
- */
 export function loadFooter() {
     const footer = document.getElementById('main-footer');
     if (!footer) return;
-    const year = new Date().getFullYear();
 
     footer.innerHTML = `
         <div class="bg-slate-900 text-white py-12 border-t border-slate-800">
@@ -239,9 +202,7 @@ export function loadFooter() {
                         <div class="bg-brand-500 text-white p-1.5 rounded-md"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
                         <span class="font-bold text-xl">DigitalServicesHub</span>
                     </div>
-                    <p class="text-slate-400 text-sm leading-relaxed max-w-sm">
-                        Empowering creators with free, AI-powered tools to grow their online presence.
-                    </p>
+                    <p class="text-slate-400 text-sm leading-relaxed max-w-sm">Empowering creators with AI tools.</p>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4">Tools</h4>
@@ -260,67 +221,34 @@ export function loadFooter() {
                 </div>
             </div>
             <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
-                &copy; ${year} Digital Services Hub. All rights reserved.
+                &copy; ${new Date().getFullYear()} Digital Services Hub.
             </div>
         </div>
     `;
-
-    // Trigger Cookie Consent Logic
-    initCookieConsent();
     
+    // Cookie Popup Logic
+    initCookieConsent();
     if (window.lucide) window.lucide.createIcons();
 }
 
-// ===============================================================
-// 7. COOKIE CONSENT POPUP (AdSense Compliant)
-// ===============================================================
 function initCookieConsent() {
-    // Check if user has already accepted
     if (localStorage.getItem('dsh_cookie_consent') === 'true') return;
-
-    // Create Banner Elements
     const banner = document.createElement('div');
-    banner.id = 'cookie-consent-banner';
     banner.className = 'fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-[100] animate-fade-in p-4 md:p-6';
-    
     banner.innerHTML = `
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-start gap-3">
-                <div class="bg-brand-100 text-brand-600 p-2 rounded-lg shrink-0 hidden md:block">
-                    <i data-lucide="cookie" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-slate-900 font-bold text-sm mb-1">We value your privacy</p>
-                    <p class="text-slate-600 text-xs md:text-sm leading-relaxed">
-                        We use cookies to enhance your experience, serve personalized ads, and analyze our traffic. 
-                        By clicking "Accept", you consent to our use of cookies. 
-                        <a href="/privacy.html" class="text-brand-600 underline hover:text-brand-700">Read Privacy Policy</a>.
-                    </p>
-                </div>
+                <div class="bg-brand-100 text-brand-600 p-2 rounded-lg shrink-0 hidden md:block"><i data-lucide="cookie" class="w-6 h-6"></i></div>
+                <div><p class="text-slate-900 font-bold text-sm mb-1">We value your privacy</p><p class="text-slate-600 text-xs md:text-sm leading-relaxed">We use cookies to serve personalized ads. By clicking "Accept", you consent. <a href="/privacy.html" class="text-brand-600 underline">Privacy Policy</a>.</p></div>
             </div>
             <div class="flex gap-3 w-full md:w-auto">
-                <button id="cookie-reject" class="flex-1 md:flex-none py-2 px-4 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-slate-50 transition-colors">
-                    Necessary Only
-                </button>
-                <button id="cookie-accept" class="flex-1 md:flex-none py-2 px-6 rounded-lg bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/20">
-                    Accept All
-                </button>
+                <button id="cookie-reject" class="flex-1 md:flex-none py-2 px-4 rounded-lg border border-slate-300 text-slate-700 text-sm font-bold hover:bg-slate-50">Close</button>
+                <button id="cookie-accept" class="flex-1 md:flex-none py-2 px-6 rounded-lg bg-brand-600 text-white text-sm font-bold hover:bg-brand-700 shadow-lg">Accept</button>
             </div>
-        </div>
-    `;
-
+        </div>`;
     document.body.appendChild(banner);
     if(window.lucide) window.lucide.createIcons();
-
-    // Handle Clicks
-    document.getElementById('cookie-accept').addEventListener('click', () => {
-        localStorage.setItem('dsh_cookie_consent', 'true');
-        banner.remove();
-    });
-
-    document.getElementById('cookie-reject').addEventListener('click', () => {
-        // Save choice to prevent pestering
-        localStorage.setItem('dsh_cookie_consent', 'true'); 
-        banner.remove();
-    });
+    
+    document.getElementById('cookie-accept').addEventListener('click', () => { localStorage.setItem('dsh_cookie_consent', 'true'); banner.remove(); });
+    document.getElementById('cookie-reject').addEventListener('click', () => { localStorage.setItem('dsh_cookie_consent', 'true'); banner.remove(); });
 }
