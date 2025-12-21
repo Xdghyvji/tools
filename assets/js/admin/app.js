@@ -8,6 +8,7 @@ import * as MessagesView from './messages.js'; // Inbox, Comments, Subscribers
 import * as SettingsView from './settings.js'; // Global Settings, Keys, Banners
 import * as PromptsView from './prompts.js';   // Dedicated Prompts Module
 import * as UsersView from './users.js';       // User Management Module
+import * as AutoBloggerView from './auto-blogger.js'; // <--- NEW IMPORT
 
 // Route Configuration
 // Maps a string ID (from the sidebar) to a specific JS module
@@ -22,7 +23,8 @@ const routes = {
     'keys': SettingsView,       // Sub-view handled by SettingsView
     'banners': SettingsView,    // Sub-view handled by SettingsView
     'logs': SettingsView,       // Sub-view handled by SettingsView
-    'users': UsersView          // Route for User Management
+    'users': UsersView,         // Route for User Management
+    'auto-blogger': AutoBloggerView // <--- NEW ROUTE
 };
 
 let currentSubscription = null; // Stores the unsubscribe function for realtime listeners
@@ -140,12 +142,13 @@ function setupSidebar() {
     // Menu Configuration
     const menuItems = [
         { id: 'dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
-        { id: 'users', icon: 'users', label: 'User Manager' }, // Updated Label
+        { id: 'users', icon: 'users', label: 'User Manager' }, 
         { id: 'inbox', icon: 'inbox', label: 'Inbox', badge: 'inbox-badge' },
         { id: 'subscribers', icon: 'mail', label: 'Subscribers' },
         { divider: true },
         { id: 'banners', icon: 'megaphone', label: 'Ad Banners' },
         { id: 'posts', icon: 'file-text', label: 'Blog Posts' },
+        { id: 'auto-blogger', icon: 'zap', label: 'Auto Blogger', badge: 'pro-badge' }, // <--- NEW MENU ITEM
         { id: 'prompts', icon: 'terminal', label: 'AI Prompts' },
         { id: 'comments', icon: 'message-square', label: 'Comments', badge: 'comment-badge' },
         { id: 'keys', icon: 'key', label: 'API Keys' },
@@ -160,7 +163,11 @@ function setupSidebar() {
             <button onclick="loadView('${item.id}')" id="nav-${item.id}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 group">
                 <i data-lucide="${item.icon}" class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors"></i> 
                 ${item.label}
-                ${item.badge ? `<span class="ml-auto bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden shadow-sm" id="${item.badge}">0</span>` : ''}
+                ${item.badge === 'pro-badge' 
+                    ? `<span class="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">PRO</span>` 
+                    : item.badge 
+                        ? `<span class="ml-auto bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden shadow-sm" id="${item.badge}">0</span>` 
+                        : ''}
             </button>
         `;
     }).join('');
@@ -192,8 +199,6 @@ function updateSidebarActiveState(id) {
     });
     
     // Set active button state
-    // We handle cases where sub-types (like 'keys') map to a main nav item (like 'settings') if you grouped them in sidebar
-    // But here every ID in menuItems matches a route directly.
     const active = document.getElementById(`nav-${id}`);
     if(active) {
         active.classList.add('bg-slate-800', 'text-white', 'shadow-md');
