@@ -1,13 +1,13 @@
 // ===============================================================
-// SHARED.JS - Core Logic, Auth, VIP System & UI Components
+// SHARED.JS - Config, VIP Logic, UI Loader & Cookie Consent
 // ===============================================================
 
-// 1. STABLE FIREBASE IMPORTS (v10.13.1)
+// 1. FIREBASE IMPORTS (Stable Version 10.13.1)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
-// 2. CONFIGURATION
+// 2. FIREBASE CONFIGURATION
 const firebaseConfig = {
   apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
   authDomain: "mubashir-2b7cc.firebaseapp.com",
@@ -23,27 +23,28 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const appId = "mubashir-2b7cc";
 
-console.log("Shared.js loaded successfully"); // Debugging Log
+console.log("Shared.js loaded successfully");
 
 // 4. EXPORT SERVICES
 export { app, db, auth, appId, onAuthStateChanged, signOut, doc, getDoc };
 
 // ===============================================================
-// 5. VIP SYSTEM LOGIC
+// 5. VIP SYSTEM & USER LOGIC
 // ===============================================================
 
 /**
- * Checks if a specific user object has VIP status.
+ * Checks if the user is a VIP member based on their database record.
  */
 export async function getUserStatus(user) {
-    if (!user) return { isVip: false, plan: 'free' };
+    if (!user) return { isVip: false, plan: 'free', name: 'User' };
+
     try {
         const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
         const snapshot = await getDoc(userRef);
-        
+
         if (snapshot.exists()) {
             const data = snapshot.data();
-            // Check for 'vip' or 'pro' plan
+            // Check if plan is 'vip' or 'pro'
             const isVip = data.plan === 'vip' || data.plan === 'pro';
             return { 
                 isVip, 
@@ -52,26 +53,18 @@ export async function getUserStatus(user) {
             };
         }
     } catch (error) {
-        console.error("VIP Check Error:", error);
+        console.error("Error fetching user status:", error);
     }
+    
+    // Default fallback
     return { isVip: false, plan: 'free', name: user.displayName || 'User' };
 }
 
-/**
- * Helper: Quickly check if current logged-in user is VIP.
- * Useful for locking content in other scripts.
- */
-export async function isCurrentUserVip() {
-    if (!auth.currentUser) return false;
-    const status = await getUserStatus(auth.currentUser);
-    return status.isVip;
-}
-
 // ===============================================================
-// 6. UI INJECTION (Header, Footer, Styles)
+// 6. UI COMPONENTS (Header & Footer)
 // ===============================================================
 
-// Inject Custom Styles for Animations
+// Inject Styles for Animations (Dropdowns, Fade-ins)
 const style = document.createElement('style');
 style.innerHTML = `
     .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
@@ -79,9 +72,12 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
+/**
+ * Injects the global Navigation Bar.
+ */
 export function loadHeader(activePage = '') {
     const header = document.getElementById('main-header');
-    if (!header) return; // Prevent crash if element is missing
+    if (!header) return;
 
     header.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-full flex justify-between items-center">
@@ -100,8 +96,7 @@ export function loadHeader(activePage = '') {
             </nav>
 
             <div id="auth-action-area" class="hidden md:flex items-center gap-4">
-                 <div class="animate-pulse bg-slate-200 w-24 h-9 rounded-full"></div>
-            </div>
+                 <div class="animate-pulse bg-slate-200 w-24 h-9 rounded-full"></div> </div>
 
             <button class="md:hidden text-slate-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
                 <i data-lucide="menu" class="w-6 h-6"></i>
@@ -118,15 +113,15 @@ export function loadHeader(activePage = '') {
         </div>
     `;
 
-    // Initialize Icons for new content
+    // Initialize Icons
     if (window.lucide) window.lucide.createIcons();
 
-    // Start Listening for Auth Changes
+    // Start Auth Logic
     initAuthUI();
 }
 
 /**
- * Handles the logic for swapping "Login" button with "User Profile/VIP Badge"
+ * Handles Real-time Login/Logout UI updates
  */
 function initAuthUI() {
     onAuthStateChanged(auth, async (user) => {
@@ -134,32 +129,42 @@ function initAuthUI() {
         const mobileArea = document.getElementById('mobile-auth-area');
         
         if (user) {
-            // 1. Fetch VIP Data
+            // --- USER IS LOGGED IN ---
+            
+            // 1. Fetch VIP & Profile Data
             const { isVip, name } = await getUserStatus(user);
             const initial = (name && name.length > 0) ? name[0].toUpperCase() : 'U';
 
-            // 2. VIP Badge Element
+            // 2. Create VIP Badge HTML
             const vipBadge = isVip 
-                ? `<div class="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 rounded-full border border-white shadow-sm flex items-center gap-0.5" title="VIP Member"><i data-lucide="crown" class="w-2 h-2"></i> VIP</div>` 
+                ? `<div class="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-1.5 rounded-full border border-white shadow-sm flex items-center gap-0.5"><i data-lucide="crown" class="w-2 h-2"></i> VIP</div>` 
                 : '';
 
-            // 3. Render Desktop Profile
+            // 3. Render Desktop Profile Dropdown
             if(desktopArea) {
                 desktopArea.innerHTML = `
-                    <div class="relative group cursor-pointer">
+                    <div class="relative group cursor-pointer z-50">
                         <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold border-2 border-slate-100 shadow-sm relative">
                             ${initial}
                             ${vipBadge}
                         </div>
                         
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 hidden group-hover:block animate-fade-in z-50">
-                            <div class="px-4 py-2 border-b border-slate-50 mb-1">
-                                <p class="text-xs text-slate-500">Signed in as</p>
+                        <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 py-2 hidden group-hover:block animate-fade-in z-50">
+                            <div class="px-4 py-3 border-b border-slate-50 mb-1">
+                                <p class="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Signed in as</p>
                                 <p class="font-bold text-sm truncate text-slate-900">${name}</p>
-                                ${isVip ? '<p class="text-xs text-yellow-600 font-bold mt-0.5">★ VIP Active</p>' : ''}
+                                ${isVip ? '<p class="text-xs text-yellow-600 font-bold mt-1 bg-yellow-50 inline-block px-2 py-0.5 rounded-full border border-yellow-100">★ VIP Active</p>' : ''}
                             </div>
-                            ${user.email === 'admin@dsh.online' ? '<a href="/admin/index.html" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-600">Admin Panel</a>' : ''}
-                            <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Sign Out</a>
+                            
+                            ${user.email === 'admin@dsh.online' ? `
+                                <a href="/admin/index.html" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-600">
+                                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Admin Panel
+                                </a>` : ''
+                            }
+                            
+                            <a href="#" id="logout-btn" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 mt-1">
+                                <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+                            </a>
                         </div>
                     </div>
                 `;
@@ -169,30 +174,30 @@ function initAuthUI() {
             if(mobileArea) {
                 mobileArea.innerHTML = `
                     <div class="flex items-center gap-3 border-t border-slate-100 pt-4 mt-2">
-                        <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm">${initial}</div>
+                        <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-lg">${initial}</div>
                         <div>
                             <p class="text-sm font-bold text-slate-900">${name}</p>
                             ${isVip ? '<p class="text-xs text-yellow-600 font-bold">VIP Member</p>' : '<p class="text-xs text-slate-500">Free Plan</p>'}
                         </div>
-                        <button id="mobile-logout-btn" class="ml-auto text-xs text-red-600 font-bold">Logout</button>
+                        <button id="mobile-logout-btn" class="ml-auto text-sm text-red-600 font-bold border border-red-100 px-3 py-1 rounded-lg bg-red-50">Logout</button>
                     </div>
                 `;
             }
 
-            // 5. Bind Logout
+            // 5. Attach Logout Listeners
             document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
             document.getElementById('mobile-logout-btn')?.addEventListener('click', handleLogout);
             
             // 6. Update Icons
             if (window.lucide) window.lucide.createIcons();
 
-            // 7. Pricing Page Special Logic
+            // 7. Pricing Page Logic (Mark Plan Active)
             if (window.location.pathname.includes('subscription.html') && isVip) {
                 markVipPlanActive();
             }
 
         } else {
-            // LOGGED OUT STATE
+            // --- USER IS LOGGED OUT ---
             if(desktopArea) {
                 desktopArea.innerHTML = `<a href="/login.html" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">Login</a>`;
             }
@@ -208,24 +213,24 @@ function handleLogout(e) {
     signOut(auth).then(() => window.location.href = '/index.html');
 }
 
-/**
- * Updates Pricing Page buttons if user is VIP.
- */
 function markVipPlanActive() {
     const btns = document.querySelectorAll('.vip-plan-btn');
     btns.forEach(btn => {
         btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Current Plan`;
         btn.disabled = true;
-        btn.className = "w-full py-3 px-6 rounded-xl font-bold transition-all bg-green-100 text-green-700 cursor-default flex items-center justify-center gap-2";
+        btn.className = "w-full py-3 px-6 rounded-xl font-bold transition-all bg-green-100 text-green-700 cursor-default flex items-center justify-center gap-2 border border-green-200";
     });
     if (window.lucide) window.lucide.createIcons();
 }
 
+/**
+ * Injects the global Footer.
+ */
 export function loadFooter() {
     const footer = document.getElementById('main-footer');
     if (!footer) return;
-
     const year = new Date().getFullYear();
+
     footer.innerHTML = `
         <div class="bg-slate-900 text-white py-12 border-t border-slate-800">
             <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -260,19 +265,20 @@ export function loadFooter() {
         </div>
     `;
 
-    // *** TRIGGER COOKIE CONSENT ***
+    // Trigger Cookie Consent Logic
     initCookieConsent();
     
     if (window.lucide) window.lucide.createIcons();
 }
 
 // ===============================================================
-// 7. COOKIE CONSENT POPUP
+// 7. COOKIE CONSENT POPUP (AdSense Compliant)
 // ===============================================================
 function initCookieConsent() {
-    // If already accepted, stop here.
+    // Check if user has already accepted
     if (localStorage.getItem('dsh_cookie_consent') === 'true') return;
 
+    // Create Banner Elements
     const banner = document.createElement('div');
     banner.id = 'cookie-consent-banner';
     banner.className = 'fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-[100] animate-fade-in p-4 md:p-6';
@@ -286,7 +292,7 @@ function initCookieConsent() {
                 <div>
                     <p class="text-slate-900 font-bold text-sm mb-1">We value your privacy</p>
                     <p class="text-slate-600 text-xs md:text-sm leading-relaxed">
-                        We use cookies to enhance your experience and serve personalized ads. 
+                        We use cookies to enhance your experience, serve personalized ads, and analyze our traffic. 
                         By clicking "Accept", you consent to our use of cookies. 
                         <a href="/privacy.html" class="text-brand-600 underline hover:text-brand-700">Read Privacy Policy</a>.
                     </p>
@@ -306,14 +312,15 @@ function initCookieConsent() {
     document.body.appendChild(banner);
     if(window.lucide) window.lucide.createIcons();
 
-    // Event Listeners
+    // Handle Clicks
     document.getElementById('cookie-accept').addEventListener('click', () => {
         localStorage.setItem('dsh_cookie_consent', 'true');
         banner.remove();
     });
 
     document.getElementById('cookie-reject').addEventListener('click', () => {
-        localStorage.setItem('dsh_cookie_consent', 'true'); // Save choice to prevent pestering
+        // Save choice to prevent pestering
+        localStorage.setItem('dsh_cookie_consent', 'true'); 
         banner.remove();
     });
 }
