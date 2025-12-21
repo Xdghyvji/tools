@@ -7,6 +7,7 @@ import { updateSitemap } from './posts.js';
 // ==========================================
 let isGenerating = false;
 const LOG_CONTAINER_ID = 'generation-logs';
+const STORAGE_KEY = 'dsh_auto_blogger_state'; // Key for LocalStorage
 
 const LINK_MAP = {
     "TikTok": "/tiktok.html",
@@ -26,11 +27,22 @@ export function render() {
     return `
     <div class="animate-fade-in max-w-4xl mx-auto">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">AI Auto-Blogger (Pro)</h1>
-            <p class="text-slate-500">Generates 3,000+ word, SEO-optimized articles autonomously with Smart Retries.</p>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">AI Auto-Blogger (Enterprise)</h1>
+            <p class="text-slate-500">Generates 3,000+ word articles with <strong>Auto-Resume</strong> and <strong>Anti-Crash</strong> technology.</p>
         </div>
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-6 md:p-8">
+            <div id="resume-alert" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold text-amber-800">Unfinished Post Detected</h4>
+                    <p class="text-sm text-amber-700">Found a saved session. Do you want to continue where you left off?</p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="discard-btn" class="px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-100 rounded">Discard</button>
+                    <button id="resume-btn" class="px-3 py-1.5 text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 rounded shadow-sm">Resume</button>
+                </div>
+            </div>
+
             <div class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">Topic / Keyword</label>
@@ -59,12 +71,47 @@ export function render() {
 // 3. LOGIC & EVENTS
 // ==========================================
 export function init() {
-    const btn = document.getElementById('start-auto-btn');
-    if (btn) btn.addEventListener('click', startGeneration);
+    const startBtn = document.getElementById('start-auto-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+    const discardBtn = document.getElementById('discard-btn');
+
+    if (startBtn) startBtn.addEventListener('click', () => startGeneration(false));
+    if (resumeBtn) resumeBtn.addEventListener('click', () => startGeneration(true));
+    if (discardBtn) discardBtn.addEventListener('click', clearState);
+
+    // Check for saved state
+    checkForSavedState();
+    
     if(window.lucide) window.lucide.createIcons();
 }
 
-async function startGeneration() {
+function checkForSavedState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const alert = document.getElementById('resume-alert');
+    const topicInput = document.getElementById('auto-topic');
+    const imageInput = document.getElementById('auto-image');
+
+    if (saved) {
+        const state = JSON.parse(saved);
+        alert.classList.remove('hidden');
+        if(topicInput) topicInput.value = state.topic;
+        if(imageInput) imageInput.value = state.image;
+        log(`📂 Found saved progress: ${state.progress}/${state.chapters.length} chapters completed.`, 'orange');
+    } else {
+        alert.classList.add('hidden');
+    }
+}
+
+function clearState() {
+    localStorage.removeItem(STORAGE_KEY);
+    document.getElementById('resume-alert').classList.add('hidden');
+    document.getElementById('auto-topic').value = '';
+    document.getElementById('auto-image').value = '';
+    clearLogs();
+    log("🗑️ Saved state discarded.", 'orange');
+}
+
+async function startGeneration(isResuming = false) {
     if (isGenerating) return;
     
     const topic = document.getElementById('auto-topic').value;
@@ -74,49 +121,72 @@ async function startGeneration() {
 
     isGenerating = true;
     toggleUI(true);
-    clearLogs();
+    
+    if (!isResuming) clearLogs();
+
+    // STATE VARIABLES
+    let chapters = [];
+    let fullHtmlContent = "";
+    let currentChapterIndex = 0;
 
     try {
-        log("🚀 Initializing Auto-Blogger Agent v2.1 (Resilient Mode)...");
-        log(`🎯 Target Topic: "${topic}"`);
+        if (isResuming) {
+            // LOAD STATE
+            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            chapters = state.chapters;
+            fullHtmlContent = state.fullHtmlContent;
+            currentChapterIndex = state.progress;
+            log(`🔄 Resuming from Chapter ${currentChapterIndex + 1}...`, 'blue');
+        } else {
+            // FRESH START
+            log("🚀 Initializing Auto-Blogger Agent v3.0 (Enterprise)...");
+            log(`🎯 Target Topic: "${topic}"`);
 
-        // STEP 1: GENERATE OUTLINE
-        log("🧠 Phase 1: Architecting Outline (10 Chapters)...");
-        const outline = await callAIWithRetry(`Create a comprehensive 10-chapter outline for a 3000-word blog post about "${topic}". Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]`);
-        const chapters = parseJSON(outline);
-        
-        if (!chapters || chapters.length < 5) throw new Error("Failed to generate valid outline.");
-        log(`✅ Outline Approved: ${chapters.length} Chapters locked in.`);
+            // STEP 1: GENERATE OUTLINE
+            log("🧠 Phase 1: Architecting Outline (10 Chapters)...");
+            const outline = await callAIWithRetry(`Create a comprehensive 10-chapter outline for a 3000-word blog post about "${topic}". Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]`);
+            chapters = parseJSON(outline);
+            
+            if (!chapters || chapters.length < 5) throw new Error("Failed to generate valid outline.");
+            log(`✅ Outline Approved: ${chapters.length} Chapters locked in.`);
+
+            // INTRO
+            log("✍️ Phase 2: Writing Introduction...");
+            const intro = await callAIWithRetry(`Write a powerful, hook-filled HTML introduction (approx 300 words) for a guide about "${topic}". Use <h1> for the main title (create a catchy one) and <p class="lead"> for the opening paragraph. Do not include <html> or <body> tags.`);
+            fullHtmlContent += intro;
+        }
 
         // STEP 2: WRITE CHAPTERS (The Loop)
-        let fullHtmlContent = "";
-        
-        // Intro
-        log("✍️ Phase 2: Writing Introduction...");
-        const intro = await callAIWithRetry(`Write a powerful, hook-filled HTML introduction (approx 300 words) for a guide about "${topic}". Use <h1> for the main title (create a catchy one) and <p class="lead"> for the opening paragraph. Do not include <html> or <body> tags.`);
-        fullHtmlContent += intro;
-
-        // Chapters
-        for (let i = 0; i < chapters.length; i++) {
+        for (let i = currentChapterIndex; i < chapters.length; i++) {
             const chapter = chapters[i];
             log(`✍️ Phase 2 (${i+1}/${chapters.length}): Writing "${chapter}"...`);
             
             const prompt = `
-                Write a detailed, high-value blog section (approx 400 words) for the chapter: "${chapter}".
+                Write a detailed, high-value blog section (approx 450 words) for the chapter: "${chapter}".
                 Context: This is part of a guide about "${topic}".
                 Format: Use <h2> for the chapter title. Use <p>, <ul>, <li>, <strong>.
-                Style: Professional, authoritative, data-driven. Include 1 external link reference to a high-authority site (like Wikipedia, Forbes) if relevant.
-                Output: HTML only. No markdown code blocks.
+                Style: Professional, authoritative, data-driven. Include 1 external link reference if relevant.
+                Output: HTML only. No markdown.
             `;
             
             const content = await callAIWithRetry(prompt);
             fullHtmlContent += `\n${content}\n`;
             
-            // INCREASED DELAY: Wait 5 seconds between chapters to prevent rate limits
-            await new Promise(r => setTimeout(r, 5000)); 
+            // SAVE STATE
+            const state = {
+                topic,
+                image,
+                chapters,
+                fullHtmlContent,
+                progress: i + 1
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            
+            // DELAY: Wait 10 seconds to be safe
+            await new Promise(r => setTimeout(r, 10000)); 
         }
 
-        // Conclusion
+        // CONCLUSION
         log("✍️ Phase 2: Writing Conclusion...");
         const conclusion = await callAIWithRetry(`Write a motivating conclusion for the article "${topic}". Summarize key points and end with a Call to Action to check out the "Digital Services Hub Tools". Format in HTML.`);
         fullHtmlContent += conclusion;
@@ -142,7 +212,7 @@ async function startGeneration() {
             title: meta.title,
             slug: meta.slug,
             category: "AI Generated", 
-            readTime: "25", 
+            readTime: "30", 
             image: image,
             excerpt: meta.excerpt,
             content: finalContent,
@@ -155,12 +225,19 @@ async function startGeneration() {
         await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), postData);
         await updateSitemap();
         
+        // CLEAR STATE ON SUCCESS
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('resume-alert').classList.add('hidden');
+
         log("✨ SUCCESS! Post Published Successfully.");
         alert("Blog Post Generated & Published!");
 
     } catch (error) {
-        log(`❌ CRITICAL ERROR: ${error.message}`, 'red');
+        log(`❌ ERROR: ${error.message}`, 'red');
         console.error(error);
+        
+        // On error, we DO NOT clear local storage so user can resume
+        log("💾 Progress saved locally. Refresh page to Resume.", 'orange');
     } finally {
         isGenerating = false;
         toggleUI(false);
@@ -168,12 +245,10 @@ async function startGeneration() {
 }
 
 // ==========================================
-// 4. HELPERS (WITH RETRY LOGIC)
+// 4. ROBUST API CALLER (65s Cool-Down)
 // ==========================================
-
-// ✅ NEW: Robust Retry Logic
 async function callAIWithRetry(prompt) {
-    const MAX_RETRIES = 5; // Try 5 times before failing
+    const MAX_RETRIES = 5; 
     let attempt = 0;
 
     while (attempt < MAX_RETRIES) {
@@ -186,35 +261,34 @@ async function callAIWithRetry(prompt) {
 
             const data = await response.json();
 
-            // Case 1: Success
+            // Success
             if (response.ok) {
                 let text = data.text;
                 text = text.replace(/```html/g, '').replace(/```json/g, '').replace(/```/g, '');
                 return text.trim();
             }
 
-            // Case 2: Server Busy / Rate Limit (503, 429) -> Throw to trigger catch block
+            // Server Busy
             if (response.status === 503 || response.status === 429) {
                 throw new Error("Server busy");
             }
 
-            // Case 3: Other Error -> Fatal
             throw new Error(data.error || "AI API Failed");
 
         } catch (e) {
             attempt++;
             
-            // Only retry if it's a "Server busy" error
+            // RETRY LOGIC
             if (e.message.includes("Server busy") || e.message.includes("Failed to fetch")) {
-                if (attempt >= MAX_RETRIES) throw new Error("Max retries exceeded. The AI service is currently overloaded.");
+                if (attempt >= MAX_RETRIES) throw new Error("Max retries exceeded. API exhausted.");
                 
-                // Exponential Backoff: Wait 5s, 10s, 15s, 20s...
-                const waitTime = attempt * 5000;
-                log(`⚠️ Server busy. Retrying in ${waitTime/1000}s... (Attempt ${attempt}/${MAX_RETRIES})`, 'orange');
+                // CRITICAL FIX: Wait 65 seconds to clear 1-minute quota limits
+                const waitTime = 65000; 
+                log(`⚠️ API Limit Hit. Cooling down for 65s... (Attempt ${attempt}/${MAX_RETRIES})`, 'orange');
                 
                 await new Promise(r => setTimeout(r, waitTime));
             } else {
-                throw e; // Don't retry fatal errors
+                throw e; // Fatal error
             }
         }
     }
@@ -252,8 +326,7 @@ function parseJSON(str) {
 function log(msg, color = 'green') {
     const container = document.getElementById(LOG_CONTAINER_ID);
     const div = document.createElement('div');
-    // Orange color for warnings
-    const colorCode = color === 'red' ? '#ef4444' : (color === 'orange' ? '#f59e0b' : '#4ade80');
+    const colorCode = color === 'red' ? '#ef4444' : (color === 'orange' ? '#f59e0b' : (color === 'blue' ? '#3b82f6' : '#4ade80'));
     
     div.innerHTML = `<span class="opacity-50 mr-2">[${new Date().toLocaleTimeString()}]</span> <span style="color:${colorCode}">${msg}</span>`;
     container.appendChild(div);
@@ -267,19 +340,8 @@ function clearLogs() {
 
 function toggleUI(disabled) {
     const btn = document.getElementById('start-auto-btn');
-    const input1 = document.getElementById('auto-topic');
-    const input2 = document.getElementById('auto-image');
-    
-    if (disabled) {
-        btn.disabled = true;
-        btn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Generating... (Do not close tab)`;
-        input1.disabled = true;
-        input2.disabled = true;
-    } else {
-        btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="sparkles" class="w-6 h-6"></i> Start Autonomous Agent`;
-        input1.disabled = false;
-        input2.disabled = false;
+    if(btn) {
+        btn.disabled = disabled;
+        btn.innerHTML = disabled ? `<i class="animate-spin" data-lucide="loader-2"></i> Working... (Do not close tab)` : `<i data-lucide="sparkles"></i> Start Autonomous Agent`;
     }
-    if(window.lucide) window.lucide.createIcons();
 }
