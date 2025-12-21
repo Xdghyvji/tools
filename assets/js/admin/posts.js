@@ -127,7 +127,8 @@ function createSlug(text) {
 }
 
 // --- DYNAMIC SITEMAP GENERATOR ---
-async function updateSitemap(force = false) {
+// ✅ FIX: Added 'export' so auto-blogger.js can use it
+export async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
     if(btn) { btn.innerText = "Updating..."; btn.disabled = true; }
 
@@ -148,7 +149,6 @@ async function updateSitemap(force = false) {
         q.forEach(doc => {
             const d = doc.data();
             if (d.published !== false) {
-                // *** SEO FIX: USE SLUG IF AVAILABLE, ELSE FALLBACK TO ID ***
                 const identifier = d.slug ? `slug=${d.slug}` : `id=${doc.id}`;
                 urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?${identifier}`, priority: '0.9' });
             }
@@ -316,7 +316,7 @@ async function savePost() {
     const title = document.getElementById('post-title').value;
     const content = document.getElementById('post-content-editor').innerHTML;
     
-    // *** SEO MAGIC: CREATE OR KEEP SLUG ***
+    // SEO MAGIC: CREATE OR KEEP SLUG
     let slug = document.getElementById('post-slug').value;
     if (!slug || slug === 'undefined') {
         slug = createSlug(title); // Create new slug from title
@@ -324,7 +324,7 @@ async function savePost() {
 
     const data = {
         title: title,
-        slug: slug, // Saving the clean URL
+        slug: slug, 
         category: document.getElementById('post-category').value,
         readTime: document.getElementById('post-readTime').value,
         image: document.getElementById('post-image').value,
