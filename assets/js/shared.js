@@ -44,27 +44,131 @@ let systemPrompts = {};
 // ===============================================================
 
 /**
- * Loads global site settings (SEO, Ads, etc.) from Firestore
+ * Loads global site settings and handles Ad/Analytics Injection
  */
 export async function loadGlobalSettings() {
     try {
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
         const snap = await getDoc(docRef);
+        
         if (snap.exists()) {
             globalSettings = snap.data();
             
-            // Auto-inject global scripts if present (e.g., Analytics)
+            // 1. Inject Global Head Scripts (Analytics, Pixels) - Always load these if critical, or move to loadAds for strict GDPR
             if (globalSettings.scripts) {
-                const range = document.createRange();
-                const fragment = range.createContextualFragment(globalSettings.scripts);
-                document.head.appendChild(fragment);
+                injectScript(globalSettings.scripts, document.head);
             }
+
+            // 2. Check Consent & Load Ads
+            checkConsentAndLoadAds();
+
             return globalSettings;
         }
     } catch (e) { 
         console.error("Settings Load Error:", e); 
     }
     return null;
+}
+
+/**
+ * CONSENT MANAGEMENT & AD LOADING
+ */
+function checkConsentAndLoadAds() {
+    const consent = localStorage.getItem('dsh_cookie_consent');
+
+    if (consent === 'accepted') {
+        // User previously accepted, load everything
+        loadAds();
+    } else if (!consent) {
+        // No choice made yet, show banner
+        showConsentBanner();
+    }
+    // If 'declined', we do nothing (ads remain hidden)
+}
+
+function showConsentBanner() {
+    // Create Banner HTML
+    const banner = document.createElement('div');
+    banner.id = 'cookie-consent-banner';
+    banner.className = 'fixed bottom-0 left-0 w-full bg-slate-900 text-white p-4 z-[9999] shadow-2xl animate-slide-up border-t border-slate-700';
+    banner.innerHTML = `
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-slate-300">
+                <strong class="text-white">We value your privacy.</strong> We use cookies and third-party ads (AdSense/Adsterra) to support our free tools. 
+                By clicking "Accept", you agree to our use of cookies as per our Terms.
+            </div>
+            <div class="flex gap-3">
+                <button id="btn-decline" class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">Decline</button>
+                <button id="btn-accept" class="px-6 py-2 text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20 transition-all">Accept</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(banner);
+
+    // Listeners
+    document.getElementById('btn-accept').onclick = () => {
+        localStorage.setItem('dsh_cookie_consent', 'accepted');
+        document.getElementById('cookie-consent-banner').remove();
+        loadAds(); // Trigger Ad Load
+    };
+
+    document.getElementById('btn-decline').onclick = () => {
+        localStorage.setItem('dsh_cookie_consent', 'declined');
+        document.getElementById('cookie-consent-banner').remove();
+    };
+}
+
+function loadAds() {
+    if (!globalSettings) return;
+
+    console.log("Consent granted. Loading Ads...");
+
+    // 1. Google AdSense (Auto Ads / Head Script)
+    if (globalSettings.adsense) {
+        injectScript(globalSettings.adsense, document.head);
+    }
+
+    // 2. Adsterra / Custom Units (Targeted Injection)
+    // We map the keys from settings.js to the IDs in your HTML files
+    const adMap = {
+        '728x90': 'ad-728-90',       // Top Leaderboard
+        '468x60': 'ad-468-60',       // Mid-page Banner
+        '300x250': ['ad-modal', 'ad-sidebar'], // Modals & Blog Sidebar (support multiple)
+        '160x600': 'ad-skyscraper'   // Sidebar Tall
+    };
+
+    if (globalSettings.adsterra) {
+        Object.keys(adMap).forEach(size => {
+            const adCode = globalSettings.adsterra[size];
+            if (!adCode) return;
+
+            const targetIds = Array.isArray(adMap[size]) ? adMap[size] : [adMap[size]];
+            
+            targetIds.forEach(id => {
+                const container = document.getElementById(id);
+                if (container) {
+                    // Reveal container if it was hidden
+                    const wrapper = container.parentElement;
+                    if(wrapper && wrapper.id.includes('container')) wrapper.classList.remove('hidden');
+                    if(container.parentElement.classList.contains('hidden')) container.parentElement.classList.remove('hidden');
+                    
+                    // Inject and execute script
+                    container.innerHTML = ''; // Clear placeholders
+                    injectScript(adCode, container);
+                }
+            });
+        });
+    }
+}
+
+/**
+ * Helper to safely inject and execute scripts (innerHTML <script> doesn't run by default)
+ */
+function injectScript(htmlCode, targetElement) {
+    const range = document.createRange();
+    const fragment = range.createContextualFragment(htmlCode);
+    targetElement.appendChild(fragment);
 }
 
 /**
@@ -93,7 +197,6 @@ export function getPromptForTool(toolKey, userInput) {
         console.warn(`Prompt template not found for key: ${toolKey}`);
         return `Please generate content about: ${userInput}`; // Fallback
     }
-    // Simple template replacement
     return template.replace(/\$\{topic\}/g, userInput);
 }
 
@@ -101,7 +204,7 @@ export function getPromptForTool(toolKey, userInput) {
  * Calls the backend Netlify function to generate AI content
  */
 export async function generateAIContent(prompt, toolKey = 'custom', topic = '') {
-    // 1. Log the attempt (optional: fire & forget)
+    // 1. Log usage
     if (auth.currentUser) {
         addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tool_usage_logs'), {
             user: auth.currentUser.uid,
@@ -132,7 +235,7 @@ export async function generateAIContent(prompt, toolKey = 'custom', topic = '') 
 
     } catch (error) {
         console.error("AI Error:", error);
-        throw error; // Re-throw for UI to handle
+        throw error;
     }
 }
 
@@ -180,7 +283,6 @@ export function loadHeader(activePage = '') {
         </div>
     `;
 
-    // Dynamic Auth State Update
     onAuthStateChanged(auth, (user) => {
         const container = document.getElementById('auth-container');
         if (container && user) {
