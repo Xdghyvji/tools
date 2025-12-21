@@ -1,11 +1,23 @@
 // ===============================================================
-// SHARED.JS - Global Configuration & UI Loader
+// SHARED.JS - Global Configuration, UI & Core Logic
 // ===============================================================
 
-// 1. FIREBASE IMPORTS (Using CDN for Vanilla JS)
+// 1. FIREBASE IMPORTS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    collection, 
+    getDocs, 
+    addDoc, 
+    serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signOut 
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 // 2. FIREBASE CONFIGURATION
 const firebaseConfig = {
@@ -23,17 +35,111 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const appId = "mubashir-2b7cc";
 
-// 4. EXPORT SERVICES (So other files can use them)
-export { app, db, auth, appId, onAuthStateChanged, signOut };
+// 4. STATE MANAGEMENT
+let globalSettings = {};
+let systemPrompts = {};
 
 // ===============================================================
-// 5. SHARED UI COMPONENTS (Header & Footer)
+// 5. CORE FUNCTIONS (AI & DATA)
 // ===============================================================
 
 /**
- * Injects the global Navigation Bar into the <header id="main-header"> element.
- * @param {string} activePage - The ID of the current active page (e.g., 'home', 'blog')
+ * Loads global site settings (SEO, Ads, etc.) from Firestore
  */
+export async function loadGlobalSettings() {
+    try {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+            globalSettings = snap.data();
+            
+            // Auto-inject global scripts if present (e.g., Analytics)
+            if (globalSettings.scripts) {
+                const range = document.createRange();
+                const fragment = range.createContextualFragment(globalSettings.scripts);
+                document.head.appendChild(fragment);
+            }
+            return globalSettings;
+        }
+    } catch (e) { 
+        console.error("Settings Load Error:", e); 
+    }
+    return null;
+}
+
+/**
+ * Loads all system prompts from Firestore into memory
+ */
+export async function loadSystemPrompts() {
+    try {
+        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'system_prompts');
+        const snap = await getDocs(colRef);
+        snap.forEach(doc => {
+            systemPrompts[doc.id] = doc.data().template;
+        });
+        return systemPrompts;
+    } catch (e) { 
+        console.error("Prompts Load Error:", e); 
+        return {};
+    }
+}
+
+/**
+ * Retrieves and formats a specific prompt template
+ */
+export function getPromptForTool(toolKey, userInput) {
+    const template = systemPrompts[toolKey];
+    if (!template) {
+        console.warn(`Prompt template not found for key: ${toolKey}`);
+        return `Please generate content about: ${userInput}`; // Fallback
+    }
+    // Simple template replacement
+    return template.replace(/\$\{topic\}/g, userInput);
+}
+
+/**
+ * Calls the backend Netlify function to generate AI content
+ */
+export async function generateAIContent(prompt, toolKey = 'custom', topic = '') {
+    // 1. Log the attempt (optional: fire & forget)
+    if (auth.currentUser) {
+        addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tool_usage_logs'), {
+            user: auth.currentUser.uid,
+            tool: toolKey,
+            topic: topic,
+            createdAt: serverTimestamp()
+        }).catch(e => console.warn("Logging failed:", e));
+    }
+
+    // 2. Call Serverless Function
+    try {
+        const response = await fetch('/.netlify/functions/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                prompt: prompt,
+                metadata: { tool: toolKey, topic: topic } 
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || "AI Generation Service Failed");
+        }
+        
+        return data.text;
+
+    } catch (error) {
+        console.error("AI Error:", error);
+        throw error; // Re-throw for UI to handle
+    }
+}
+
+// ===============================================================
+// 6. SHARED UI COMPONENTS
+// ===============================================================
+
 export function loadHeader(activePage = '') {
     const header = document.getElementById('main-header');
     if (!header) return;
@@ -56,7 +162,9 @@ export function loadHeader(activePage = '') {
 
             <div class="hidden md:flex items-center gap-4">
                  <a href="/subscription.html" class="text-slate-900 hover:text-brand-600 font-medium text-sm">Pricing</a>
-                 <a href="/login.html" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">Admin Login</a>
+                 <div id="auth-container">
+                    <a href="/login.html" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20">Login</a>
+                 </div>
             </div>
 
             <button class="md:hidden text-slate-600" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
@@ -68,17 +176,28 @@ export function loadHeader(activePage = '') {
             <a href="/index.html" class="text-slate-600 font-medium">Home</a>
             <a href="/blog.html" class="text-slate-600 font-medium">Blog</a>
             <a href="/about.html" class="text-slate-600 font-medium">About</a>
-            <a href="/login.html" class="text-brand-600 font-bold">Admin Login</a>
+            <a href="/login.html" class="text-brand-600 font-bold">Login / Sign Up</a>
         </div>
     `;
 
-    // Re-initialize icons for the newly injected HTML
+    // Dynamic Auth State Update
+    onAuthStateChanged(auth, (user) => {
+        const container = document.getElementById('auth-container');
+        if (container && user) {
+            container.innerHTML = `
+                <a href="/userprofile.html" class="flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-brand-600">
+                    <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center border border-brand-200">
+                        ${(user.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <span>My Account</span>
+                </a>
+            `;
+        }
+    });
+
     if (window.lucide) window.lucide.createIcons();
 }
 
-/**
- * Injects the global Footer into the <footer id="main-footer"> element.
- */
 export function loadFooter() {
     const footer = document.getElementById('main-footer');
     if (!footer) return;
@@ -128,3 +247,13 @@ export function loadFooter() {
 
     if (window.lucide) window.lucide.createIcons();
 }
+
+// 7. EXPORT EVERYTHING
+export { 
+    app, 
+    db, 
+    auth, 
+    appId, 
+    onAuthStateChanged, 
+    signOut 
+};
