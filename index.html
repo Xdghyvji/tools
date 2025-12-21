@@ -12,29 +12,16 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        }
-                    }
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.3s ease-out' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
                 }
             }
         }
@@ -42,124 +29,192 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm h-20" id="main-header">
-        </header>
+    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
 
     <main class="flex-grow pt-32 pb-20 px-4 sm:px-6">
-        
-        <section class="max-w-5xl mx-auto text-center mb-20 animate-fade-in-up">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-sm font-semibold mb-6">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
-                </span>
-                New Tools Added Weekly
-            </div>
+        <div class="max-w-4xl mx-auto">
             
-            <h1 class="text-4xl md:text-6xl font-bold font-heading text-slate-900 mb-6 leading-tight">
-                Supercharge Your Content with <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-cyan-500">AI-Powered Tools</span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Unlock viral growth on YouTube, TikTok, and Instagram. Free tools to generate titles, extract tags, and download content instantly.
-            </p>
-
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#tools" class="px-8 py-4 bg-brand-600 text-white rounded-full font-bold text-lg hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/30 flex items-center justify-center gap-2">
-                    Explore Tools <i data-lucide="arrow-down" class="w-5 h-5"></i>
-                </a>
-                <a href="/blog.html" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-bold text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                    Read Blog
-                </a>
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-sm font-bold mb-4">
+                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube Growth Suite
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold font-heading text-slate-900 mb-4">AI YouTube SEO Tools</h1>
+                <p class="text-slate-600 max-w-2xl mx-auto">Rank #1 on YouTube. Generate viral titles, trending tags, and optimized descriptions in seconds.</p>
             </div>
-        </section>
 
-        <section id="tools" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            
-            <a href="/tiktok.html" class="group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-brand-200 transition-all duration-300 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="music-2" class="w-24 h-24 text-pink-500"></i>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="flex border-b border-slate-200">
+                    <button onclick="switchTab('title')" id="tab-title" class="flex-1 py-4 text-sm font-bold text-brand-600 border-b-2 border-brand-600 bg-brand-50/50 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="type" class="w-4 h-4"></i> Title Gen
+                    </button>
+                    <button onclick="switchTab('tags')" id="tab-tags" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="hash" class="w-4 h-4"></i> Tag Extractor
+                    </button>
+                    <button onclick="switchTab('desc')" id="tab-desc" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="align-left" class="w-4 h-4"></i> Description
+                    </button>
                 </div>
-                <div class="w-14 h-14 bg-pink-50 text-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="video" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">TikTok Viral Tools</h3>
-                <p class="text-slate-500 leading-relaxed mb-4">Generate viral hashtags, extract audio, and download videos without watermark.</p>
-                <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Try Now <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
-            </a>
 
-            <a href="/instagram.html" class="group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-brand-200 transition-all duration-300 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="camera" class="w-24 h-24 text-purple-500"></i>
-                </div>
-                <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="instagram" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Instagram Downloader</h3>
-                <p class="text-slate-500 leading-relaxed mb-4">Download Reels, Stories, and Photos in HD quality instantly.</p>
-                <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Try Now <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
-            </a>
+                <div class="p-6 md:p-10 min-h-[400px]">
+                    
+                    <div id="tool-title" class="animate-fade-in">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">What is your video about?</label>
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="title-input" placeholder="e.g. iPhone 15 review, How to bake a cake..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <button onclick="generateTitles()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Generate</button>
+                        </div>
+                        
+                        <div id="title-results" class="hidden space-y-3">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Viral Suggestions</h4>
+                            </div>
+                    </div>
 
-            <a href="/youtube-tools.html" class="group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-brand-200 transition-all duration-300 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="play-circle" class="w-24 h-24 text-red-500"></i>
-                </div>
-                <div class="w-14 h-14 bg-red-50 text-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="youtube" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">YouTube SEO</h3>
-                <p class="text-slate-500 leading-relaxed mb-4">Generate click-worthy titles, optimized descriptions, and trending tags.</p>
-                <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Try Now <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
-            </a>
+                    <div id="tool-tags" class="hidden animate-fade-in">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Enter main keyword</label>
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="tags-input" placeholder="e.g. Digital Marketing..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <button onclick="generateTags()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Extract</button>
+                        </div>
+                        
+                        <div id="tags-results" class="hidden">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-700 leading-loose" id="tags-output"></div>
+                            <button onclick="copyToClipboard('tags-output')" class="mt-3 flex items-center gap-2 text-brand-600 font-bold text-sm hover:underline">
+                                <i data-lucide="copy" class="w-4 h-4"></i> Copy Tags
+                            </button>
+                        </div>
+                    </div>
 
-             <a href="/email-tools.html" class="group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-brand-200 transition-all duration-300 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="at-sign" class="w-24 h-24 text-blue-500"></i>
-                </div>
-                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="mail" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Email Extractor</h3>
-                <p class="text-slate-500 leading-relaxed mb-4">Extract valid emails from text for your marketing campaigns.</p>
-                <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Try Now <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
-            </a>
+                    <div id="tool-desc" class="hidden animate-fade-in">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Video Topic / Keywords</label>
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="desc-input" placeholder="e.g. Travel Vlog Japan 2025..." class="flex-1 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <button onclick="generateDesc()" class="bg-brand-600 text-white px-6 rounded-xl font-bold hover:bg-brand-700 transition-colors">Write</button>
+                        </div>
 
-             <a href="/blog-tools.html" class="group bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-xl hover:border-brand-200 transition-all duration-300 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i data-lucide="file-text" class="w-24 h-24 text-emerald-500"></i>
-                </div>
-                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="pen-tool" class="w-7 h-7"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">AI Blog Writer</h3>
-                <p class="text-slate-500 leading-relaxed mb-4">Create full SEO-optimized blog posts in seconds.</p>
-                <span class="text-brand-600 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Try Now <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
-            </a>
+                        <div id="desc-results" class="hidden">
+                            <textarea id="desc-output" readonly class="w-full h-48 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none resize-none"></textarea>
+                            <button onclick="copyToClipboard('desc-output')" class="mt-3 flex items-center gap-2 text-brand-600 font-bold text-sm hover:underline">
+                                <i data-lucide="copy" class="w-4 h-4"></i> Copy Description
+                            </button>
+                        </div>
+                    </div>
 
-        </section>
-
-        <section class="mt-20 max-w-4xl mx-auto bg-slate-900 rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
-            <div class="relative z-10">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Want Premium Features?</h2>
-                <p class="text-slate-300 mb-8 max-w-xl mx-auto">Get access to advanced AI models, unlimited generations, and priority support with our VIP plan.</p>
-                <a href="/subscription.html" class="inline-block bg-brand-600 hover:bg-brand-500 text-white font-bold px-8 py-3 rounded-full transition-colors">
-                    View Pricing
-                </a>
+                </div>
             </div>
-            
-            <div class="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
-                <div class="absolute -top-24 -left-24 w-64 h-64 bg-brand-500 rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-500 rounded-full blur-3xl"></div>
-            </div>
-        </section>
 
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <div class="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto mb-3"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+                    <h3 class="font-bold text-slate-900">Boost CTR</h3>
+                    <p class="text-xs text-slate-500 mt-1">High-converting titles get more clicks.</p>
+                </div>
+                <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3"><i data-lucide="search" class="w-5 h-5"></i></div>
+                    <h3 class="font-bold text-slate-900">Rank Higher</h3>
+                    <p class="text-xs text-slate-500 mt-1">SEO tags help YouTube understand your content.</p>
+                </div>
+                <div class="p-6 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                    <h3 class="font-bold text-slate-900">Save Time</h3>
+                    <p class="text-xs text-slate-500 mt-1">Generate metadata in seconds, not hours.</p>
+                </div>
+            </div>
+
+        </div>
     </main>
 
-    <footer id="main-footer">
-        </footer>
+    <footer id="main-footer"></footer>
 
     <script type="module" src="./assets/js/shared.js"></script>
 
+    <script>
+        // Tab Switching
+        function switchTab(tab) {
+            ['title', 'tags', 'desc'].forEach(t => {
+                document.getElementById(`tool-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('text-brand-600', 'border-b-2', 'border-brand-600', 'bg-brand-50/50');
+                document.getElementById(`tab-${t}`).classList.add('text-slate-500');
+            });
+
+            document.getElementById(`tool-${tab}`).classList.remove('hidden');
+            const btn = document.getElementById(`tab-${tab}`);
+            btn.classList.remove('text-slate-500');
+            btn.classList.add('text-brand-600', 'border-b-2', 'border-brand-600', 'bg-brand-50/50');
+        }
+
+        // 1. Generate Titles
+        function generateTitles() {
+            const input = document.getElementById('title-input').value;
+            if(!input) return alert("Please enter a topic.");
+            
+            const results = [
+                `${input} - Full Guide (2025)`,
+                `How to Master ${input} in 10 Minutes`,
+                `The Truth About ${input} (Don't Miss This)`,
+                `10 Secrets About ${input} No One Tells You`,
+                `Why ${input} is Changing Everything`
+            ];
+
+            const container = document.getElementById('title-results');
+            container.innerHTML = `<h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Viral Suggestions</h4>` + 
+                results.map(t => `
+                <div class="flex justify-between items-center p-3 bg-slate-50 border border-slate-200 rounded-lg group hover:border-brand-300 transition-colors">
+                    <span class="font-medium text-slate-800 text-sm">${t}</span>
+                    <button onclick="copyText('${t}')" class="text-slate-400 hover:text-brand-600"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                </div>`).join('');
+            
+            container.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        // 2. Generate Tags
+        function generateTags() {
+            const input = document.getElementById('tags-input').value;
+            if(!input) return alert("Enter a keyword.");
+            
+            // Simulating smart tag generation
+            const baseTags = input.split(' ').map(w => w.trim());
+            const tags = [
+                input, 
+                `${input} tutorial`, 
+                `how to ${input}`, 
+                `${input} 2025`, 
+                `best ${input}`, 
+                `${input} guide`, 
+                `${input} for beginners`, 
+                `${input} review`
+            ].join(', ');
+
+            document.getElementById('tags-output').innerText = tags;
+            document.getElementById('tags-results').classList.remove('hidden');
+        }
+
+        // 3. Generate Description
+        function generateDesc() {
+            const input = document.getElementById('desc-input').value;
+            if(!input) return alert("Enter a topic.");
+
+            const desc = `In this video, I'm going to show you everything you need to know about ${input}. \n\nWe will cover the best strategies, tips, and tricks to master ${input} in 2025. Whether you are a beginner or a pro, this guide is for you.\n\n🔥 Don't forget to LIKE and SUBSCRIBE for more content about ${input}!\n\n#${input.replace(/\s+/g, '')} #tutorial #guide`;
+
+            document.getElementById('desc-output').value = desc;
+            document.getElementById('desc-results').classList.remove('hidden');
+        }
+
+        // Utilities
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Copied!");
+        }
+
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            const text = el.tagName === 'TEXTAREA' ? el.value : el.innerText;
+            navigator.clipboard.writeText(text);
+            alert("Copied to clipboard!");
+        }
+
+        // Init
+        if(window.lucide) lucide.createIcons();
+    </script>
 </body>
 </html>
