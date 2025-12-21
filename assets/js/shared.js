@@ -1,5 +1,5 @@
 // ===============================================================
-// SHARED.JS - Auto-Injecting Core File
+// SHARED.JS - Auto-Injecting Core & AI Logic
 // ===============================================================
 
 console.log("🚀 Shared.js is initializing...");
@@ -25,7 +25,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const appId = "mubashir-2b7cc";
 
-// 4. EXPORT SERVICES (For other scripts that might need them)
+// 4. EXPORT SERVICES
 export { app, db, auth, appId, onAuthStateChanged, signOut, doc, getDoc };
 
 // ===============================================================
@@ -46,24 +46,61 @@ export async function getUserStatus(user) {
 }
 
 // ===============================================================
-// 6. UI INJECTION LOGIC
+// 6. AI CONTENT GENERATOR (The Missing Function)
 // ===============================================================
 
-// Inject Styles
+/**
+ * Generates text content using Google Gemini 1.5 Flash API.
+ * @param {string} prompt - The user's input prompt.
+ * @returns {Promise<string>} - The generated text.
+ */
+export async function generateAIContent(prompt) {
+    // ⚠️ CRITICAL: Replace this with your actual Gemini API Key from Google AI Studio.
+    // Get one here: https://aistudio.google.com/app/apikey
+    const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+
+    if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        alert("Please configure your API Key in shared.js to use AI features.");
+        throw new Error("API Key not configured");
+    }
+
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+
+        const data = await response.json();
+        
+        // Extract text from Gemini response structure
+        const text = data.candidates[0].content.parts[0].text;
+        return text;
+
+    } catch (error) {
+        console.error("AI Generation Failed:", error);
+        throw error;
+    }
+}
+
+// ===============================================================
+// 7. UI INJECTION LOGIC
+// ===============================================================
 const style = document.createElement('style');
 style.innerHTML = `.animate-fade-in { animation: fadeIn 0.3s ease-in-out; } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
 document.head.appendChild(style);
 
 function loadHeader() {
     const header = document.getElementById('main-header');
-    if (!header) {
-        console.warn("⚠️ Header target (#main-header) not found on this page.");
-        return;
-    }
+    if (!header) return;
 
-    console.log("✅ Injecting Header...");
-    
-    // Determine active page for highlighting
+    // Detect Active Page
     const path = window.location.pathname;
     const active = path.includes('index') || path === '/' ? 'home' 
                  : path.includes('blog') ? 'blog' 
@@ -153,16 +190,12 @@ function initAuthUI() {
     });
 }
 
-// Attach logout globally so HTML buttons can see it
-window.handleLogout = () => {
-    signOut(auth).then(() => window.location.href = '/index.html');
-};
+window.handleLogout = () => { signOut(auth).then(() => window.location.href = '/index.html'); };
 
 function loadFooter() {
     const footer = document.getElementById('main-footer');
-    if (!footer) { console.warn("⚠️ Footer target (#main-footer) not found."); return; }
+    if (!footer) return;
     
-    console.log("✅ Injecting Footer...");
     const year = new Date().getFullYear();
     footer.innerHTML = `
         <div class="bg-slate-900 text-white py-12 border-t border-slate-800">
@@ -194,16 +227,9 @@ function initCookieConsent() {
     document.getElementById('cookie-reject').addEventListener('click', () => { localStorage.setItem('dsh_cookie_consent', 'true'); banner.remove(); });
 }
 
-// 7. AUTO-EXECUTE (This runs when the script loads)
+// 8. AUTO-EXECUTE (Injects UI automatically)
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-        console.log("DOM Loaded, running shared.js injections...");
-        loadHeader();
-        loadFooter();
-    });
+    document.addEventListener("DOMContentLoaded", () => { loadHeader(); loadFooter(); });
 } else {
-    // DOM already loaded
-    console.log("DOM already loaded, running shared.js injections immediately...");
-    loadHeader();
-    loadFooter();
+    loadHeader(); loadFooter();
 }
