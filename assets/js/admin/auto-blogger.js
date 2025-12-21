@@ -1,6 +1,6 @@
 import { db, appId, auth } from '../shared.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { updateSitemap } from './posts.js'; // Reuse sitemap logic if exported, otherwise we'll handle it locally
+import { updateSitemap } from './posts.js'; 
 
 // ==========================================
 // 1. CONFIGURATION & STATE
@@ -27,7 +27,7 @@ export function render() {
     <div class="animate-fade-in max-w-4xl mx-auto">
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-slate-900 mb-2">AI Auto-Blogger (Pro)</h1>
-            <p class="text-slate-500">Generates 3,000+ word, SEO-optimized articles autonomously using a multi-agent workflow.</p>
+            <p class="text-slate-500">Generates 3,000+ word, SEO-optimized articles autonomously with Smart Retries.</p>
         </div>
 
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-6 md:p-8">
@@ -77,12 +77,12 @@ async function startGeneration() {
     clearLogs();
 
     try {
-        log("🚀 Initializing Auto-Blogger Agent v2.0...");
+        log("🚀 Initializing Auto-Blogger Agent v2.1 (Resilient Mode)...");
         log(`🎯 Target Topic: "${topic}"`);
 
         // STEP 1: GENERATE OUTLINE
         log("🧠 Phase 1: Architecting Outline (10 Chapters)...");
-        const outline = await callAI(`Create a comprehensive 10-chapter outline for a 3000-word blog post about "${topic}". Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]`);
+        const outline = await callAIWithRetry(`Create a comprehensive 10-chapter outline for a 3000-word blog post about "${topic}". Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]`);
         const chapters = parseJSON(outline);
         
         if (!chapters || chapters.length < 5) throw new Error("Failed to generate valid outline.");
@@ -93,7 +93,7 @@ async function startGeneration() {
         
         // Intro
         log("✍️ Phase 2: Writing Introduction...");
-        const intro = await callAI(`Write a powerful, hook-filled HTML introduction (approx 300 words) for a guide about "${topic}". Use <h1> for the main title (create a catchy one) and <p class="lead"> for the opening paragraph. Do not include <html> or <body> tags.`);
+        const intro = await callAIWithRetry(`Write a powerful, hook-filled HTML introduction (approx 300 words) for a guide about "${topic}". Use <h1> for the main title (create a catchy one) and <p class="lead"> for the opening paragraph. Do not include <html> or <body> tags.`);
         fullHtmlContent += intro;
 
         // Chapters
@@ -109,21 +109,21 @@ async function startGeneration() {
                 Output: HTML only. No markdown code blocks.
             `;
             
-            const content = await callAI(prompt);
+            const content = await callAIWithRetry(prompt);
             fullHtmlContent += `\n${content}\n`;
             
-            // Random delay to prevent rate limiting
-            await new Promise(r => setTimeout(r, 1000)); 
+            // INCREASED DELAY: Wait 5 seconds between chapters to prevent rate limits
+            await new Promise(r => setTimeout(r, 5000)); 
         }
 
         // Conclusion
         log("✍️ Phase 2: Writing Conclusion...");
-        const conclusion = await callAI(`Write a motivating conclusion for the article "${topic}". Summarize key points and end with a Call to Action to check out the "Digital Services Hub Tools". Format in HTML.`);
+        const conclusion = await callAIWithRetry(`Write a motivating conclusion for the article "${topic}". Summarize key points and end with a Call to Action to check out the "Digital Services Hub Tools". Format in HTML.`);
         fullHtmlContent += conclusion;
 
         // STEP 3: SEO METADATA
         log("🔍 Phase 3: Generating SEO Metadata...");
-        const metaJson = await callAI(`
+        const metaJson = await callAIWithRetry(`
             Based on the topic "${topic}", generate:
             1. A catchy Title (max 60 chars).
             2. An engaging Excerpt (max 160 chars).
@@ -141,8 +141,8 @@ async function startGeneration() {
         const postData = {
             title: meta.title,
             slug: meta.slug,
-            category: "AI Generated", // Could be dynamic
-            readTime: "25", // Estimated for 3000 words
+            category: "AI Generated", 
+            readTime: "25", 
             image: image,
             excerpt: meta.excerpt,
             content: finalContent,
@@ -153,6 +153,7 @@ async function startGeneration() {
         };
 
         await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), postData);
+        await updateSitemap();
         
         log("✨ SUCCESS! Post Published Successfully.");
         alert("Blog Post Generated & Published!");
@@ -167,37 +168,65 @@ async function startGeneration() {
 }
 
 // ==========================================
-// 4. HELPERS
+// 4. HELPERS (WITH RETRY LOGIC)
 // ==========================================
 
-async function callAI(prompt) {
-    try {
-        const response = await fetch('/.netlify/functions/generate-content', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: prompt })
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "AI API Failed");
-        
-        // Clean up markdown code blocks if present
-        let text = data.text;
-        text = text.replace(/```html/g, '').replace(/```json/g, '').replace(/```/g, '');
-        return text.trim();
-    } catch (e) {
-        throw e;
+// ✅ NEW: Robust Retry Logic
+async function callAIWithRetry(prompt) {
+    const MAX_RETRIES = 5; // Try 5 times before failing
+    let attempt = 0;
+
+    while (attempt < MAX_RETRIES) {
+        try {
+            const response = await fetch('/.netlify/functions/generate-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            const data = await response.json();
+
+            // Case 1: Success
+            if (response.ok) {
+                let text = data.text;
+                text = text.replace(/```html/g, '').replace(/```json/g, '').replace(/```/g, '');
+                return text.trim();
+            }
+
+            // Case 2: Server Busy / Rate Limit (503, 429) -> Throw to trigger catch block
+            if (response.status === 503 || response.status === 429) {
+                throw new Error("Server busy");
+            }
+
+            // Case 3: Other Error -> Fatal
+            throw new Error(data.error || "AI API Failed");
+
+        } catch (e) {
+            attempt++;
+            
+            // Only retry if it's a "Server busy" error
+            if (e.message.includes("Server busy") || e.message.includes("Failed to fetch")) {
+                if (attempt >= MAX_RETRIES) throw new Error("Max retries exceeded. The AI service is currently overloaded.");
+                
+                // Exponential Backoff: Wait 5s, 10s, 15s, 20s...
+                const waitTime = attempt * 5000;
+                log(`⚠️ Server busy. Retrying in ${waitTime/1000}s... (Attempt ${attempt}/${MAX_RETRIES})`, 'orange');
+                
+                await new Promise(r => setTimeout(r, waitTime));
+            } else {
+                throw e; // Don't retry fatal errors
+            }
+        }
     }
 }
 
 function processSEO(html, meta) {
-    // 1. Internal Linking
     let processed = html;
     Object.keys(LINK_MAP).forEach(keyword => {
         const regex = new RegExp(`(${keyword})(?![^<]*>|[^<>]*<\/a>)`, 'gi');
         processed = processed.replace(regex, `<a href="${LINK_MAP[keyword]}" class="text-brand-600 font-bold hover:underline">$1</a>`);
     });
 
-    // 2. Schema Injection
     const schema = {
         "@context": "[https://schema.org](https://schema.org)",
         "@type": "BlogPosting",
@@ -214,7 +243,6 @@ function parseJSON(str) {
     try {
         return JSON.parse(str);
     } catch (e) {
-        // Simple heuristic fix for common AI JSON errors
         const match = str.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
         if (match) return JSON.parse(match[0]);
         return null;
@@ -224,9 +252,11 @@ function parseJSON(str) {
 function log(msg, color = 'green') {
     const container = document.getElementById(LOG_CONTAINER_ID);
     const div = document.createElement('div');
-    div.innerHTML = `<span class="opacity-50 mr-2">[${new Date().toLocaleTimeString()}]</span> <span style="color:${color === 'red' ? '#ef4444' : '#4ade80'}">${msg}</span>`;
+    // Orange color for warnings
+    const colorCode = color === 'red' ? '#ef4444' : (color === 'orange' ? '#f59e0b' : '#4ade80');
+    
+    div.innerHTML = `<span class="opacity-50 mr-2">[${new Date().toLocaleTimeString()}]</span> <span style="color:${colorCode}">${msg}</span>`;
     container.appendChild(div);
-    // Auto scroll
     const window = document.getElementById('console-window');
     window.scrollTop = window.scrollHeight;
 }
@@ -242,7 +272,7 @@ function toggleUI(disabled) {
     
     if (disabled) {
         btn.disabled = true;
-        btn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Generating... (This takes ~2 mins)`;
+        btn.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Generating... (Do not close tab)`;
         input1.disabled = true;
         input2.disabled = true;
     } else {
