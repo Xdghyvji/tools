@@ -10,14 +10,15 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, addDoc, writeBatch, serverTimestamp, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-console.log("🚀 System: Initializing Core Services v2.0...");
+console.log("🚀 System: Initializing Core Services v2.1...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
 // ==========================================
-const firebaseConfig = {
+// Use environment variables if available, otherwise fall back to hardcoded production keys
+const firebaseConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : {
     apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
     authDomain: "mubashir-2b7cc.firebaseapp.com",
     projectId: "mubashir-2b7cc",
@@ -26,6 +27,8 @@ const firebaseConfig = {
     appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
     measurementId: "G-SP28C45HH4"
 };
+
+const appId = (typeof __app_id !== 'undefined') ? __app_id : 'mubashir-2b7cc';
 
 let app, db, auth;
 
@@ -47,8 +50,6 @@ try {
 } catch (e) {
     console.error("❌ Firebase: Critical Init Failure", e);
 }
-
-const appId = 'mubashir-2b7cc';
 
 // ==========================================
 // 2. AUTH MANAGER (Caching & State)
@@ -320,6 +321,14 @@ class AnalyticsEngine {
         this.sessionId = sessionStorage.getItem('dsh_session_id') || this.createSession();
         this.isTracking = false;
         this.flushInterval = null;
+        this.defaultGeo = { 
+            ip: 'Anonymous', 
+            country_name: 'Unknown', 
+            city: 'Unknown', 
+            region: 'Unknown', 
+            latitude: 0, 
+            longitude: 0 
+        };
     }
 
     createSession() {
@@ -335,7 +344,7 @@ class AnalyticsEngine {
 
         this.isTracking = true;
         
-        // Non-blocking Geo Fetch
+        // Non-blocking Geo Fetch with safe defaults
         this.fetchGeo().then(data => this.ipData = data);
 
         // Track Page View
@@ -360,10 +369,16 @@ class AnalyticsEngine {
             const id = setTimeout(() => controller.abort(), 2000);
             const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
             clearTimeout(id);
-            if(res.ok) return await res.json();
+            if(res.ok) {
+                const data = await res.json();
+                // Merge with defaultGeo to ensure no fields are undefined
+                return { ...this.defaultGeo, ...data };
+            }
         } catch (e) {
-            return { ip: 'Anonymous', country_name: 'Unknown', city: 'Unknown' };
+            console.warn("Analytics: Geo fetch skipped or failed", e);
         }
+        // Always return the default structure on failure to prevent Admin crash
+        return this.defaultGeo;
     }
 
     track(eventName, details = {}) {
@@ -373,8 +388,8 @@ class AnalyticsEngine {
             type: eventName,
             sessionId: this.sessionId,
             timestamp: serverTimestamp(),
-            // If IP data isn't ready yet, we send null, server can handle or next event will have it
-            geo: this.ipData || { ip: 'Fetching...' }, 
+            // Ensure geo has valid structure even if not fetched yet
+            geo: this.ipData || { ...this.defaultGeo, ip: 'Fetching...' }, 
             data: details,
             url: window.location.href,
             device: this.getDeviceType()
@@ -401,6 +416,10 @@ class AnalyticsEngine {
 
     async flush() {
         if (this.queue.length === 0) return;
+
+        // Ensure we have permission to write
+        // Note: For production without auth, ensure Firestore rules allow public write to traffic_logs
+        // or uncomment the anonymous auth login in initialization if strictly required.
 
         const batch = writeBatch(db);
         const eventsToSend = [...this.queue];
