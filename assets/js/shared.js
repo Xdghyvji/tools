@@ -158,7 +158,6 @@ const CookieManager = {
 // 4. UI HELPERS (loadFooter, etc.)
 // ==========================================
 
-// ✅ ADDED: The Missing loadFooter Function
 export function loadFooter() {
     const footer = document.querySelector('footer');
     if (!footer) return;
@@ -219,5 +218,5 @@ if (document.readyState === 'loading') {
     analytics.init();
 }
 
-// ✅ EXPORT EVERYTHING (Added loadFooter here)
-export { app, db, auth, appId, onAuthStateChanged, analytics, loadFooter };
+// ✅ EXPORT EVERYTHING (Note: loadFooter is NOT in this list because it was exported directly above)
+export { app, db, auth, appId, onAuthStateChanged, analytics };
