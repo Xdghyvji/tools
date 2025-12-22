@@ -22,12 +22,13 @@ const LINK_MAP = {
     "Contact": "/contact.html"
 };
 
-// Fallback Models (If one 404s, it tries the next)
+// ✅ UPDATED MODEL PRIORITY LIST
 const MODELS = [
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest", 
-    "gemini-1.5-pro",
-    "gemini-pro"
+    "gemini-2.5-flash-lite", // Priority 1 (Requested)
+    "gemini-1.5-flash",      // Fallback 2 (Standard Fast)
+    "gemini-1.5-flash-8b",   // Fallback 3 (Ultra Low Cost)
+    "gemini-1.5-pro",        // Fallback 4 (High Intelligence)
+    "gemini-pro"             // Fallback 5 (Legacy Stable)
 ];
 
 // ==========================================
@@ -38,8 +39,8 @@ export function render() {
     <div class="animate-fade-in max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v5.0</h1>
-                <p class="text-slate-500">Autonomous, Multi-Model, Anti-Crash Content Engine.</p>
+                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v5.1</h1>
+                <p class="text-slate-500">Autonomous, Multi-Model (v2.5), Anti-Crash Content Engine.</p>
             </div>
             <div id="status-indicator" class="px-4 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-sm flex items-center gap-2 border border-slate-200">
                 <div class="w-3 h-3 rounded-full bg-slate-400"></div> IDLE
@@ -258,8 +259,8 @@ async function callGeminiWithRotation(prompt) {
                 }
 
                 // Handle Specific Errors
-                if (response.status === 404) {
-                    log(`⚠️ Model ${model} not found (404). Trying next model...`, "orange");
+                if (response.status === 404 || response.status === 400) {
+                    log(`⚠️ Model ${model} not found/supported. Trying next model...`, "orange");
                     continue; // Try next model in the loop
                 }
                 
@@ -271,7 +272,7 @@ async function callGeminiWithRotation(prompt) {
 
             } catch (e) {
                 if (e.message === "RateLimit") break; // Break model loop to rotate KEY
-                if (e.message.includes("404")) continue; // Try next model
+                if (e.message.includes("404") || e.message.includes("400")) continue; // Try next model
             }
         }
 
