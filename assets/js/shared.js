@@ -8,13 +8,13 @@ console.log("🚀 Shared.js loading...");
 // 1. FIREBASE CONFIGURATION (PASTE YOUR KEYS HERE)
 // ==========================================
 const firebaseConfig = {
-    // ⚠️ REPLACE THESE VALUES WITH YOUR REAL FIREBASE CONFIG ⚠️
-    apiKey: "AIzaSy...", 
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.firebasestorage.app",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef"
+  apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
+  authDomain: "mubashir-2b7cc.firebaseapp.com",
+  projectId: "mubashir-2b7cc",
+  storageBucket: "mubashir-2b7cc.firebasestorage.app",
+  messagingSenderId: "107494735119",
+  appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
+  measurementId: "G-SP28C45HH4"
 };
 
 // Initialize Firebase
