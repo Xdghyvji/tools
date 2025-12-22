@@ -1,20 +1,21 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// ✅ FIX: Using stable version 10.12.2 instead of 11.6.1 (which doesn't exist)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 console.log("🚀 Shared.js loading...");
 
 // ==========================================
-// 1. FIREBASE CONFIGURATION (PASTE YOUR KEYS HERE)
+// 1. FIREBASE CONFIGURATION
 // ==========================================
 const firebaseConfig = {
-  apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
-  authDomain: "mubashir-2b7cc.firebaseapp.com",
-  projectId: "mubashir-2b7cc",
-  storageBucket: "mubashir-2b7cc.firebasestorage.app",
-  messagingSenderId: "107494735119",
-  appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
-  measurementId: "G-SP28C45HH4"
+    apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
+    authDomain: "mubashir-2b7cc.firebaseapp.com",
+    projectId: "mubashir-2b7cc",
+    storageBucket: "mubashir-2b7cc.firebasestorage.app",
+    messagingSenderId: "107494735119",
+    appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",
+    measurementId: "G-SP28C45HH4"
 };
 
 // Initialize Firebase
@@ -25,10 +26,11 @@ try {
     auth = getAuth(app);
     console.log("✅ Firebase Initialized");
 } catch (e) {
-    console.error("❌ Firebase Failed to Init. Did you paste your keys?", e);
+    console.error("❌ Firebase Failed to Init:", e);
 }
 
-const appId = 'mubashir-2b7cc'; // Your App ID
+// This is your Database Path ID (Not the config appId)
+const appId = 'mubashir-2b7cc'; 
 
 // ==========================================
 // 2. ANALYTICS ENGINE (Non-Blocking)
@@ -43,9 +45,9 @@ class AnalyticsEngine {
     init() {
         // Check Consent
         const consent = localStorage.getItem('dsh_cookie_consent');
-        if (consent === 'rejected') return; // User explicitly said no
+        if (consent === 'rejected') return; 
         if (consent === 'accepted') this.startTracking();
-        else CookieManager.show(); // Ask for permission
+        else CookieManager.show(); 
     }
 
     async startTracking() {
@@ -67,12 +69,11 @@ class AnalyticsEngine {
         document.addEventListener('click', (e) => this.handleClick(e));
         
         // 4. Heartbeat (Time on Page)
-        setInterval(() => this.logHeartbeat(), 30000); // Every 30s
+        setInterval(() => this.logHeartbeat(), 30000); 
     }
 
     async fetchGeoData() {
         try {
-            // Using a free IP API (might be blocked by adblockers, so we try-catch it)
             const res = await fetch('https://ipapi.co/json/');
             if(res.ok) this.ipData = await res.json();
         } catch (e) {
@@ -158,7 +159,7 @@ const CookieManager = {
         `;
         document.body.appendChild(div);
 
-        // Slide In Animation
+        // Slide In
         setTimeout(() => {
             div.classList.remove('translate-y-20', 'opacity-0');
         }, 100);
@@ -186,5 +187,5 @@ if (document.readyState === 'loading') {
     analytics.init();
 }
 
-// Export everything for other modules
+// Export everything
 export { app, db, auth, appId, onAuthStateChanged, analytics };
