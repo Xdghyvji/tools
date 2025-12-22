@@ -10,7 +10,7 @@ let apiKeys = [];
 let currentKeyIndex = 0;
 const LOG_CONTAINER_ID = 'generation-logs';
 
-// Smart Link Mapping
+// Smart Link Mapping (Internal)
 const LINK_MAP = {
     "TikTok": "/tiktok.html",
     "Instagram": "/instagram.html",
@@ -22,13 +22,13 @@ const LINK_MAP = {
     "Contact": "/contact.html"
 };
 
-// ✅ UPDATED MODEL PRIORITY LIST
+// ✅ UPDATED MODEL PRIORITY LIST (Strictly from your list)
 const MODELS = [
-    "gemini-2.5-flash-lite", // Priority 1 (Requested)
-    "gemini-1.5-flash",      // Fallback 2 (Standard Fast)
-    "gemini-1.5-flash-8b",   // Fallback 3 (Ultra Low Cost)
-    "gemini-1.5-pro",        // Fallback 4 (High Intelligence)
-    "gemini-pro"             // Fallback 5 (Legacy Stable)
+    "gemini-2.5-flash-lite", // Priority 1: High RPM (Text-out)
+    "gemini-3-flash",        // Priority 2: High RPM (Text-out)
+    "gemini-2.5-flash",      // Priority 3: Balanced
+    "gemma-3-27b-it",        // Priority 4: High Quality Open Model
+    "gemini-robotics-er-1.5-preview" // Priority 5: Other
 ];
 
 // ==========================================
@@ -39,8 +39,8 @@ export function render() {
     <div class="animate-fade-in max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v5.1</h1>
-                <p class="text-slate-500">Autonomous, Multi-Model (v2.5), Anti-Crash Content Engine.</p>
+                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v6.0</h1>
+                <p class="text-slate-500">Gemini 3 Flash Powered • In-Article Images • Deep Linking</p>
             </div>
             <div id="status-indicator" class="px-4 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-sm flex items-center gap-2 border border-slate-200">
                 <div class="w-3 h-3 rounded-full bg-slate-400"></div> IDLE
@@ -51,24 +51,24 @@ export function render() {
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Target Niche / Context</label>
-                    <textarea id="auto-niche" rows="4" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none resize-none" placeholder="e.g., Digital Marketing, SaaS Tools, AI Growth Hacking..."></textarea>
+                    <textarea id="auto-niche" rows="4" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none resize-none" placeholder="e.g., Sustainable Tech, AI Marketing Tools, Crypto Trends..."></textarea>
                     <p class="text-xs text-slate-400 mt-2">The machine will invent topics based on this context.</p>
                 </div>
 
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <h3 class="font-bold text-slate-900 mb-4">Machine Controls</h3>
-                    <button id="start-machine-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mb-3">
+                    <button id="start-machine-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-2 mb-3">
                         <i data-lucide="play" class="w-5 h-5"></i> START INFINITE LOOP
                     </button>
                     <button id="stop-machine-btn" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-2 hidden">
                         <i data-lucide="square" class="w-5 h-5"></i> EMERGENCY STOP
                     </button>
                     <div class="mt-4 text-xs text-center text-slate-500">
-                        Delay set to <span class="font-mono bg-slate-100 px-1 rounded">70s</span> to prevent rate limits.
+                        Delay: <span class="font-mono bg-slate-100 px-1 rounded">70s</span> (Rate Limit Protection)
                     </div>
                 </div>
 
-                <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs">
+                <div class="bg-slate-900 text-indigo-400 p-4 rounded-xl font-mono text-xs">
                     <div class="flex justify-between mb-2 border-b border-slate-800 pb-2">
                         <span>API Keys Loaded:</span>
                         <span id="key-count">0</span>
@@ -102,7 +102,6 @@ export async function init() {
     if (stopBtn) stopBtn.addEventListener('click', stopMachine);
 
     await loadApiKeys();
-
     if(window.lucide) window.lucide.createIcons();
 }
 
@@ -139,15 +138,14 @@ async function startMachine() {
             log("🧠 Ideation: Inventing a new blog topic...", "blue");
             const topic = await callGeminiWithRotation(`
                 Generate a single, highly click-worthy, unique blog post title related to this niche: "${niche}".
-                The title should be specific and SEO optimized. 
+                The title should be specific, evergreen, and SEO optimized.
                 Do not use quotes. Just return the title string.
             `);
             log(`🎯 New Topic Generated: "${topic}"`, "white");
 
-            // --- STEP 2: GENERATE THUMBNAIL URL ---
-            const encodedTopic = encodeURIComponent(topic.substring(0, 50));
-            const imageUrl = `https://image.pollinations.ai/prompt/realistic_4k_photo_of_${encodedTopic}?nologo=true`;
-            log(`🖼️ Thumbnail Generated.`, "blue");
+            // --- STEP 2: GENERATE COVER IMAGE ---
+            const coverImage = generateImageUrl(topic, "cinematic");
+            log(`🖼️ Cover Image Generated.`, "blue");
 
             // --- STEP 3: CREATE OUTLINE ---
             log("📝 Structuring: Creating 8-Chapter Outline...", "blue");
@@ -159,7 +157,7 @@ async function startMachine() {
             const chapters = parseJSON(outlineJson);
             if (!chapters) throw new Error("Failed to generate outline.");
 
-            // --- STEP 4: WRITE CONTENT ---
+            // --- STEP 4: WRITE CONTENT (WITH IMAGES) ---
             let fullHtml = "";
             const intro = await callGeminiWithRotation(`Write a 300-word HTML introduction for "${topic}". Use <h1> for title. HTML format only.`);
             fullHtml += intro;
@@ -168,12 +166,29 @@ async function startMachine() {
                 if (!isRunning) break;
                 log(`✍️ Writing ${i+1}/${chapters.length}: ${chapters[i]}...`, "gray");
                 
+                // A. Write Text
                 const content = await callGeminiWithRotation(`
                     Write a detailed 400-word blog section for "${chapters[i]}" in article "${topic}".
-                    Use <h2> for the title. Use HTML tags <p>, <ul>, <li>, <strong>.
-                    Make it sound human and professional.
+                    Requirements:
+                    1. Use <h2> for the title.
+                    2. Use HTML tags <p>, <ul>, <li>, <strong>.
+                    3. Include at least 2 EXTERNAL links to high-authority sites (Wikipedia, Forbes, NYT) relevant to the keywords.
+                    4. Make it data-driven and professional.
                 `);
-                fullHtml += `\n${content}\n`;
+
+                // B. Generate Contextual Image for this Chapter
+                // We inject an image every 2 chapters to keep it balanced, or every chapter if desired.
+                // Let's do every chapter for "high quality" feel.
+                const chapterImage = generateImageUrl(chapters[i] + " " + topic, "diagram");
+                
+                const imageHtml = `
+                    <figure class="my-8">
+                        <img src="${chapterImage}" alt="${chapters[i]}" class="w-full rounded-xl shadow-md" loading="lazy">
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">Figure: Visual representation of ${chapters[i]}</figcaption>
+                    </figure>
+                `;
+
+                fullHtml += `\n${content}\n${imageHtml}\n`;
                 
                 await new Promise(r => setTimeout(r, 5000)); 
             }
@@ -193,8 +208,8 @@ async function startMachine() {
                 title: topic,
                 slug: meta?.slug || createSlug(topic),
                 category: "AI Auto-Blog",
-                readTime: "20",
-                image: imageUrl,
+                readTime: "25",
+                image: coverImage,
                 excerpt: meta?.excerpt || "",
                 content: finalContent,
                 published: true,
@@ -233,14 +248,11 @@ async function callGeminiWithRotation(prompt) {
     let attempts = 0;
     
     while (attempts < maxAttempts) {
-        // Round Robin: Rotate keys first, then models
         const apiKey = apiKeys[currentKeyIndex];
         
-        // Try current model (if it fails 404, we switch model)
         for (const model of MODELS) {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             
-            // Update UI
             const modelBadge = document.getElementById('active-model');
             if(modelBadge) modelBadge.innerText = model;
 
@@ -258,14 +270,14 @@ async function callGeminiWithRotation(prompt) {
                     return text.replace(/```html|```json|```/g, '').trim();
                 }
 
-                // Handle Specific Errors
+                // Handle Errors
                 if (response.status === 404 || response.status === 400) {
-                    log(`⚠️ Model ${model} not found/supported. Trying next model...`, "orange");
-                    continue; // Try next model in the loop
+                    log(`⚠️ Model ${model} not found/supported. Trying next...`, "orange");
+                    continue; 
                 }
                 
-                if (response.status === 429) {
-                    throw new Error("RateLimit"); // Throw to trigger Key Rotation
+                if (response.status === 429 || response.status === 503) {
+                    throw new Error("RateLimit"); 
                 }
 
                 throw new Error(`API ${response.status}`);
@@ -276,7 +288,6 @@ async function callGeminiWithRotation(prompt) {
             }
         }
 
-        // If we get here, either RateLimit hit OR all models failed for this key
         log(`⚠️ Key ...${apiKey.slice(-4)} exhausted. Switching keys...`, "orange");
         currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
         attempts++;
@@ -286,13 +297,25 @@ async function callGeminiWithRotation(prompt) {
 }
 
 // ==========================================
-// 6. HELPERS
+// 6. IMAGE ENGINE (Pollinations AI)
+// ==========================================
+function generateImageUrl(prompt, style = "cinematic") {
+    // Clean prompt to be URL safe
+    const cleanPrompt = prompt.replace(/[^a-zA-Z0-9 ]/g, "").substring(0, 100);
+    const encoded = encodeURIComponent(`${style} view of ${cleanPrompt}`);
+    // Random seed to ensure unique images even for similar topics
+    const seed = Math.floor(Math.random() * 1000); 
+    return `https://image.pollinations.ai/prompt/${encoded}?nologo=true&seed=${seed}&width=1200&height=630`;
+}
+
+// ==========================================
+// 7. HELPERS
 // ==========================================
 function processSEO(html, title, excerpt) {
     let processed = html;
     Object.keys(LINK_MAP).forEach(keyword => {
         const regex = new RegExp(`(${keyword})(?![^<]*>|[^<>]*<\/a>)`, 'gi');
-        processed = processed.replace(regex, `<a href="${LINK_MAP[keyword]}" class="text-brand-600 font-bold hover:underline">$1</a>`);
+        processed = processed.replace(regex, `<a href="${LINK_MAP[keyword]}" class="text-indigo-600 font-bold hover:underline">$1</a>`);
     });
 
     const schema = {
