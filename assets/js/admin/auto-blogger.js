@@ -1,66 +1,81 @@
 import { db, appId, auth } from '../shared.js';
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { updateSitemap } from './posts.js'; 
 
 // ==========================================
-// 1. CONFIGURATION & STATE
+// 1. STATE & CONFIGURATION
 // ==========================================
-let isGenerating = false;
+let isRunning = false;
+let apiKeys = [];
+let currentKeyIndex = 0;
 const LOG_CONTAINER_ID = 'generation-logs';
-const STORAGE_KEY = 'dsh_auto_blogger_state'; // Key for LocalStorage
 
+// Smart Link Mapping
 const LINK_MAP = {
     "TikTok": "/tiktok.html",
     "Instagram": "/instagram.html",
     "Email Extractor": "/email-tools.html",
     "Blog Writer": "/blog-tools.html",
-    "SEO Tools": "/blog-tools.html",
+    "SEO": "/blog-tools.html",
     "Twitter": "/twitter-tools.html",
     "Pricing": "/subscription.html",
     "Contact": "/contact.html"
 };
 
 // ==========================================
-// 2. RENDER UI
+// 2. UI RENDERER
 // ==========================================
 export function render() {
     return `
-    <div class="animate-fade-in max-w-4xl mx-auto">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">AI Auto-Blogger (Enterprise)</h1>
-            <p class="text-slate-500">Generates 3,000+ word articles with <strong>Auto-Resume</strong> and <strong>Anti-Crash</strong> technology.</p>
+    <div class="animate-fade-in max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v4.0</h1>
+                <p class="text-slate-500">Fully autonomous, multi-key, infinite content generator.</p>
+            </div>
+            <div id="status-indicator" class="px-4 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-sm flex items-center gap-2 border border-slate-200">
+                <div class="w-3 h-3 rounded-full bg-slate-400"></div> IDLE
+            </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden p-6 md:p-8">
-            <div id="resume-alert" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-center justify-between">
-                <div>
-                    <h4 class="font-bold text-amber-800">Unfinished Post Detected</h4>
-                    <p class="text-sm text-amber-700">Found a saved session. Do you want to continue where you left off?</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Target Niche / Context</label>
+                    <textarea id="auto-niche" rows="4" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none resize-none" placeholder="e.g., Digital Marketing, SaaS Tools, AI Growth Hacking, YouTube Automation..."></textarea>
+                    <p class="text-xs text-slate-400 mt-2">The machine will invent topics based on this context.</p>
                 </div>
-                <div class="flex gap-2">
-                    <button id="discard-btn" class="px-3 py-1.5 text-xs font-bold text-amber-700 hover:bg-amber-100 rounded">Discard</button>
-                    <button id="resume-btn" class="px-3 py-1.5 text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 rounded shadow-sm">Resume</button>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 mb-4">Machine Controls</h3>
+                    <button id="start-machine-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 mb-3">
+                        <i data-lucide="play" class="w-5 h-5"></i> START INFINITE LOOP
+                    </button>
+                    <button id="stop-machine-btn" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-2 hidden">
+                        <i data-lucide="square" class="w-5 h-5"></i> EMERGENCY STOP
+                    </button>
+                    <div class="mt-4 text-xs text-center text-slate-500">
+                        Delay set to <span class="font-mono bg-slate-100 px-1 rounded">70s</span> to prevent rate limits.
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-green-400 p-4 rounded-xl font-mono text-xs">
+                    <div class="flex justify-between mb-2 border-b border-slate-800 pb-2">
+                        <span>API Keys Loaded:</span>
+                        <span id="key-count">0</span>
+                    </div>
+                    <div>Current Model: <span class="text-white">Gemini 1.5 Flash</span></div>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Topic / Keyword</label>
-                    <input type="text" id="auto-topic" class="w-full p-3 border border-slate-200 rounded-lg text-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="e.g., The Future of Affiliate Marketing in 2025">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Featured Image URL</label>
-                    <input type="text" id="auto-image" class="w-full p-3 border border-slate-200 rounded-lg font-mono text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="https://source.unsplash.com/...">
-                </div>
-
-                <button id="start-auto-btn" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-3">
-                    <i data-lucide="sparkles" class="w-6 h-6"></i> Start Autonomous Agent
-                </button>
-
-                <div class="mt-8 bg-slate-900 rounded-xl p-6 font-mono text-sm text-green-400 h-96 overflow-y-auto shadow-inner" id="console-window">
-                    <div class="text-slate-500 italic mb-2">// Agent logs will appear here...</div>
-                    <div id="${LOG_CONTAINER_ID}" class="space-y-2"></div>
+            <div class="lg:col-span-2">
+                <div class="bg-slate-950 rounded-xl p-6 font-mono text-sm text-slate-300 h-[600px] overflow-y-auto shadow-inner border border-slate-800 relative" id="console-window">
+                    <div class="absolute top-0 left-0 w-full h-8 bg-slate-900 border-b border-slate-800 flex items-center px-4 text-xs text-slate-500">
+                        TERMINAL OUTPUT
+                    </div>
+                    <div id="${LOG_CONTAINER_ID}" class="mt-6 space-y-2">
+                        <div class="opacity-50">System Ready... Waiting for input.</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,233 +83,202 @@ export function render() {
 }
 
 // ==========================================
-// 3. LOGIC & EVENTS
+// 3. INITIALIZATION & EVENTS
 // ==========================================
-export function init() {
-    const startBtn = document.getElementById('start-auto-btn');
-    const resumeBtn = document.getElementById('resume-btn');
-    const discardBtn = document.getElementById('discard-btn');
+export async function init() {
+    const startBtn = document.getElementById('start-machine-btn');
+    const stopBtn = document.getElementById('stop-machine-btn');
 
-    if (startBtn) startBtn.addEventListener('click', () => startGeneration(false));
-    if (resumeBtn) resumeBtn.addEventListener('click', () => startGeneration(true));
-    if (discardBtn) discardBtn.addEventListener('click', clearState);
+    if (startBtn) startBtn.addEventListener('click', startMachine);
+    if (stopBtn) stopBtn.addEventListener('click', stopMachine);
 
-    // Check for saved state
-    checkForSavedState();
-    
+    // Load API Keys immediately
+    await loadApiKeys();
+
     if(window.lucide) window.lucide.createIcons();
 }
 
-function checkForSavedState() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const alert = document.getElementById('resume-alert');
-    const topicInput = document.getElementById('auto-topic');
-    const imageInput = document.getElementById('auto-image');
-
-    if (saved) {
-        const state = JSON.parse(saved);
-        alert.classList.remove('hidden');
-        if(topicInput) topicInput.value = state.topic;
-        if(imageInput) imageInput.value = state.image;
-        log(`📂 Found saved progress: ${state.progress}/${state.chapters.length} chapters completed.`, 'orange');
-    } else {
-        alert.classList.add('hidden');
-    }
-}
-
-function clearState() {
-    localStorage.removeItem(STORAGE_KEY);
-    document.getElementById('resume-alert').classList.add('hidden');
-    document.getElementById('auto-topic').value = '';
-    document.getElementById('auto-image').value = '';
-    clearLogs();
-    log("🗑️ Saved state discarded.", 'orange');
-}
-
-async function startGeneration(isResuming = false) {
-    if (isGenerating) return;
-    
-    const topic = document.getElementById('auto-topic').value;
-    const image = document.getElementById('auto-image').value;
-    
-    if (!topic || !image) return alert("Please provide both a Topic and an Image URL.");
-
-    isGenerating = true;
-    toggleUI(true);
-    
-    if (!isResuming) clearLogs();
-
-    // STATE VARIABLES
-    let chapters = [];
-    let fullHtmlContent = "";
-    let currentChapterIndex = 0;
-
+async function loadApiKeys() {
     try {
-        if (isResuming) {
-            // LOAD STATE
-            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            chapters = state.chapters;
-            fullHtmlContent = state.fullHtmlContent;
-            currentChapterIndex = state.progress;
-            log(`🔄 Resuming from Chapter ${currentChapterIndex + 1}...`, 'blue');
-        } else {
-            // FRESH START
-            log("🚀 Initializing Auto-Blogger Agent v3.0 (Enterprise)...");
-            log(`🎯 Target Topic: "${topic}"`);
-
-            // STEP 1: GENERATE OUTLINE
-            log("🧠 Phase 1: Architecting Outline (10 Chapters)...");
-            const outline = await callAIWithRetry(`Create a comprehensive 10-chapter outline for a 3000-word blog post about "${topic}". Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]`);
-            chapters = parseJSON(outline);
-            
-            if (!chapters || chapters.length < 5) throw new Error("Failed to generate valid outline.");
-            log(`✅ Outline Approved: ${chapters.length} Chapters locked in.`);
-
-            // INTRO
-            log("✍️ Phase 2: Writing Introduction...");
-            const intro = await callAIWithRetry(`Write a powerful, hook-filled HTML introduction (approx 300 words) for a guide about "${topic}". Use <h1> for the main title (create a catchy one) and <p class="lead"> for the opening paragraph. Do not include <html> or <body> tags.`);
-            fullHtmlContent += intro;
-        }
-
-        // STEP 2: WRITE CHAPTERS (The Loop)
-        for (let i = currentChapterIndex; i < chapters.length; i++) {
-            const chapter = chapters[i];
-            log(`✍️ Phase 2 (${i+1}/${chapters.length}): Writing "${chapter}"...`);
-            
-            const prompt = `
-                Write a detailed, high-value blog section (approx 450 words) for the chapter: "${chapter}".
-                Context: This is part of a guide about "${topic}".
-                Format: Use <h2> for the chapter title. Use <p>, <ul>, <li>, <strong>.
-                Style: Professional, authoritative, data-driven. Include 1 external link reference if relevant.
-                Output: HTML only. No markdown.
-            `;
-            
-            const content = await callAIWithRetry(prompt);
-            fullHtmlContent += `\n${content}\n`;
-            
-            // SAVE STATE
-            const state = {
-                topic,
-                image,
-                chapters,
-                fullHtmlContent,
-                progress: i + 1
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            
-            // DELAY: Wait 10 seconds to be safe
-            await new Promise(r => setTimeout(r, 10000)); 
-        }
-
-        // CONCLUSION
-        log("✍️ Phase 2: Writing Conclusion...");
-        const conclusion = await callAIWithRetry(`Write a motivating conclusion for the article "${topic}". Summarize key points and end with a Call to Action to check out the "Digital Services Hub Tools". Format in HTML.`);
-        fullHtmlContent += conclusion;
-
-        // STEP 3: SEO METADATA
-        log("🔍 Phase 3: Generating SEO Metadata...");
-        const metaJson = await callAIWithRetry(`
-            Based on the topic "${topic}", generate:
-            1. A catchy Title (max 60 chars).
-            2. An engaging Excerpt (max 160 chars).
-            3. A SEO-friendly Slug (kebab-case).
-            Return JSON: { "title": "...", "excerpt": "...", "slug": "..." }
-        `);
-        const meta = parseJSON(metaJson);
-
-        // STEP 4: SMART LINKING & SCHEMA
-        log("🔗 Phase 4: Injecting Internal Links & Schema...");
-        const finalContent = processSEO(fullHtmlContent, meta);
-
-        // STEP 5: UPLOAD
-        log("💾 Phase 5: Saving to Firestore...");
-        const postData = {
-            title: meta.title,
-            slug: meta.slug,
-            category: "AI Generated", 
-            readTime: "30", 
-            image: image,
-            excerpt: meta.excerpt,
-            content: finalContent,
-            published: true,
-            author: "AI Editor",
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            createdAt: serverTimestamp()
-        };
-
-        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), postData);
-        await updateSitemap();
-        
-        // CLEAR STATE ON SUCCESS
-        localStorage.removeItem(STORAGE_KEY);
-        document.getElementById('resume-alert').classList.add('hidden');
-
-        log("✨ SUCCESS! Post Published Successfully.");
-        alert("Blog Post Generated & Published!");
-
-    } catch (error) {
-        log(`❌ ERROR: ${error.message}`, 'red');
-        console.error(error);
-        
-        // On error, we DO NOT clear local storage so user can resume
-        log("💾 Progress saved locally. Refresh page to Resume.", 'orange');
-    } finally {
-        isGenerating = false;
-        toggleUI(false);
+        const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'api_keys'));
+        apiKeys = [];
+        snapshot.forEach(doc => {
+            if (doc.data().key) apiKeys.push(doc.data().key);
+        });
+        document.getElementById('key-count').innerText = apiKeys.length;
+        if(apiKeys.length === 0) log("⚠️ WARNING: No API Keys found in Firebase. Please add keys in Settings.", "orange");
+    } catch (e) {
+        log("❌ Error loading API Keys: " + e.message, "red");
     }
 }
 
 // ==========================================
-// 4. ROBUST API CALLER (65s Cool-Down)
+// 4. THE INFINITE MACHINE LOOP
 // ==========================================
-async function callAIWithRetry(prompt) {
-    const MAX_RETRIES = 5; 
-    let attempt = 0;
+async function startMachine() {
+    const niche = document.getElementById('auto-niche').value;
+    if (!niche) return alert("Please enter a Niche/Context.");
+    if (apiKeys.length === 0) return alert("No API Keys available.");
 
-    while (attempt < MAX_RETRIES) {
+    isRunning = true;
+    updateStatus("RUNNING", "emerald");
+    toggleControls(true);
+    log("🚀 MACHINE STARTED. Infinite Loop Engaged.", "emerald");
+
+    while (isRunning) {
         try {
-            const response = await fetch('/.netlify/functions/generate-content', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: prompt })
+            // --- STEP 1: GENERATE TOPIC ---
+            log("🧠 Ideation: Inventing a new blog topic...", "blue");
+            const topic = await callGeminiWithRotation(`
+                Generate a single, highly click-worthy, unique blog post title related to this niche: "${niche}".
+                The title should be specific and SEO optimized. 
+                Do not use quotes. Just return the title string.
+            `);
+            log(`🎯 New Topic Generated: "${topic}"`, "white");
+
+            // --- STEP 2: GENERATE THUMBNAIL URL ---
+            // We use Pollinations AI for dynamic generation - No API key needed
+            const encodedTopic = encodeURIComponent(topic.substring(0, 50)); // Truncate for URL safety
+            const imageUrl = `https://image.pollinations.ai/prompt/realistic_4k_photo_of_${encodedTopic}?nologo=true`;
+            log(`🖼️ Thumbnail Generated.`, "blue");
+
+            // --- STEP 3: CREATE OUTLINE ---
+            log("📝 Structuring: Creating 8-Chapter Outline...", "blue");
+            const outlineJson = await callGeminiWithRotation(`
+                Create an 8-chapter outline for a 3000-word article titled "${topic}".
+                Return ONLY a JSON array of strings. Example: ["Chapter 1: Title", "Chapter 2: Title"]
+                Strict JSON format.
+            `);
+            const chapters = parseJSON(outlineJson);
+            if (!chapters) throw new Error("Failed to generate outline.");
+
+            // --- STEP 4: WRITE CONTENT (The Heavy Lift) ---
+            let fullHtml = "";
+            
+            // Intro
+            const intro = await callGeminiWithRotation(`Write a 300-word HTML introduction for "${topic}". Use <h1> for title. HTML format only.`);
+            fullHtml += intro;
+
+            // Chapters
+            for (let i = 0; i < chapters.length; i++) {
+                if (!isRunning) break; // Check stop signal inside loop
+                log(`✍️ Writing ${i+1}/${chapters.length}: ${chapters[i]}...`, "gray");
+                
+                const content = await callGeminiWithRotation(`
+                    Write a detailed 400-word blog section for "${chapters[i]}" in article "${topic}".
+                    Use <h2> for the title. Use HTML tags <p>, <ul>, <li>, <strong>.
+                    Make it sound human and professional.
+                `);
+                fullHtml += `\n${content}\n`;
+                
+                // Mini-delay between chapters to prevent rapid-fire token exhaustion
+                await new Promise(r => setTimeout(r, 5000)); 
+            }
+
+            if (!isRunning) { log("🛑 Machine Stopped mid-write.", "red"); break; }
+
+            // Conclusion
+            const conclusion = await callGeminiWithRotation(`Write a conclusion for "${topic}" with a CTA.`);
+            fullHtml += conclusion;
+
+            // --- STEP 5: METADATA & LINKING ---
+            log("🔗 Optimizing: SEO & Internal Links...", "blue");
+            const metaJson = await callGeminiWithRotation(`
+                Generate SEO data for "${topic}".
+                Return JSON: { "excerpt": "150 chars", "slug": "kebab-case-slug" }
+            `);
+            const meta = parseJSON(metaJson);
+            const finalContent = processSEO(fullHtml, topic, meta?.excerpt || "");
+
+            // --- STEP 6: PUBLISH ---
+            log("💾 Publishing to Database...", "blue");
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), {
+                title: topic,
+                slug: meta?.slug || createSlug(topic),
+                category: "AI Auto-Blog",
+                readTime: "20",
+                image: imageUrl,
+                excerpt: meta?.excerpt || "",
+                content: finalContent,
+                published: true,
+                author: "Auto-Vlogger",
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                createdAt: serverTimestamp()
             });
 
-            const data = await response.json();
+            await updateSitemap();
+            log(`✨ POST PUBLISHED: "${topic}"`, "emerald");
 
-            // Success
-            if (response.ok) {
-                let text = data.text;
-                text = text.replace(/```html/g, '').replace(/```json/g, '').replace(/```/g, '');
-                return text.trim();
-            }
+            // --- STEP 7: THE COOL DOWN (1m 10s) ---
+            log("⏳ Cooling down for 70 seconds to reset Rate Limits...", "orange");
+            await wait(70000); // 70 Seconds
 
-            // Server Busy
-            if (response.status === 503 || response.status === 429) {
-                throw new Error("Server busy");
-            }
-
-            throw new Error(data.error || "AI API Failed");
-
-        } catch (e) {
-            attempt++;
-            
-            // RETRY LOGIC
-            if (e.message.includes("Server busy") || e.message.includes("Failed to fetch")) {
-                if (attempt >= MAX_RETRIES) throw new Error("Max retries exceeded. API exhausted.");
-                
-                // CRITICAL FIX: Wait 65 seconds to clear 1-minute quota limits
-                const waitTime = 65000; 
-                log(`⚠️ API Limit Hit. Cooling down for 65s... (Attempt ${attempt}/${MAX_RETRIES})`, 'orange');
-                
-                await new Promise(r => setTimeout(r, waitTime));
-            } else {
-                throw e; // Fatal error
-            }
+        } catch (error) {
+            log(`❌ ERROR: ${error.message}. Retrying loop in 30s...`, "red");
+            await wait(30000);
         }
     }
+
+    updateStatus("IDLE", "slate");
+    toggleControls(false);
 }
 
-function processSEO(html, meta) {
+function stopMachine() {
+    isRunning = false;
+    log("🛑 STOP COMMAND RECEIVED. Finishing current step then halting...", "red");
+    document.getElementById('stop-machine-btn').innerText = "STOPPING...";
+}
+
+// ==========================================
+// 5. API KEY ROTATION ENGINE (DIRECT CALL)
+// ==========================================
+async function callGeminiWithRotation(prompt) {
+    // Try each key until one works
+    const maxAttempts = apiKeys.length * 2; // Try cycling through twice
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+        const apiKey = apiKeys[currentKeyIndex];
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+
+            if (!response.ok) {
+                // If 429 (Too Many Requests), throw specific error to trigger rotation
+                if (response.status === 429) throw new Error("RateLimit");
+                throw new Error(`API Error ${response.status}`);
+            }
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            // Clean markdown
+            return text.replace(/```html|```json|```/g, '').trim();
+
+        } catch (e) {
+            log(`⚠️ Key ...${apiKey.slice(-4)} failed (${e.message}). Switching keys...`, "orange");
+            
+            // Rotate Key Index
+            currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+            attempts++;
+            
+            // Small pause before retry
+            await new Promise(r => setTimeout(r, 2000));
+        }
+    }
+    throw new Error("ALL API KEYS EXHAUSTED.");
+}
+
+// ==========================================
+// 6. HELPERS
+// ==========================================
+function processSEO(html, title, excerpt) {
     let processed = html;
     Object.keys(LINK_MAP).forEach(keyword => {
         const regex = new RegExp(`(${keyword})(?![^<]*>|[^<>]*<\/a>)`, 'gi');
@@ -304,8 +288,8 @@ function processSEO(html, meta) {
     const schema = {
         "@context": "[https://schema.org](https://schema.org)",
         "@type": "BlogPosting",
-        "headline": meta.title,
-        "description": meta.excerpt,
+        "headline": title,
+        "description": excerpt,
         "datePublished": new Date().toISOString(),
         "author": { "@type": "Organization", "name": "DigitalServicesHub" }
     };
@@ -314,34 +298,68 @@ function processSEO(html, meta) {
 }
 
 function parseJSON(str) {
-    try {
-        return JSON.parse(str);
-    } catch (e) {
+    try { return JSON.parse(str); } 
+    catch (e) { 
         const match = str.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-        if (match) return JSON.parse(match[0]);
-        return null;
+        return match ? JSON.parse(match[0]) : null;
     }
 }
 
-function log(msg, color = 'green') {
-    const container = document.getElementById(LOG_CONTAINER_ID);
-    const div = document.createElement('div');
-    const colorCode = color === 'red' ? '#ef4444' : (color === 'orange' ? '#f59e0b' : (color === 'blue' ? '#3b82f6' : '#4ade80'));
+function createSlug(text) {
+    return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+}
+
+function wait(ms) {
+    return new Promise(resolve => {
+        // Break wait if stopped, checking every 1s
+        const interval = setInterval(() => {
+            if (!isRunning) { clearInterval(interval); resolve(); }
+        }, 1000);
+        setTimeout(() => { clearInterval(interval); resolve(); }, ms);
+    });
+}
+
+// UI LOGGING
+function log(msg, color) {
+    const c = document.getElementById(LOG_CONTAINER_ID);
+    if (!c) return;
     
-    div.innerHTML = `<span class="opacity-50 mr-2">[${new Date().toLocaleTimeString()}]</span> <span style="color:${colorCode}">${msg}</span>`;
-    container.appendChild(div);
-    const window = document.getElementById('console-window');
-    window.scrollTop = window.scrollHeight;
+    // Tailwind text colors
+    const colorClass = {
+        'emerald': 'text-emerald-400',
+        'blue': 'text-blue-400',
+        'red': 'text-rose-400',
+        'orange': 'text-amber-400',
+        'gray': 'text-slate-400',
+        'white': 'text-white'
+    }[color] || 'text-slate-300';
+
+    c.innerHTML += `<div class="font-mono text-xs py-1 border-l-2 border-slate-800 pl-2 ml-1 ${colorClass}">
+        <span class="opacity-30 mr-2">${new Date().toLocaleTimeString()}</span> ${msg}
+    </div>`;
+    document.getElementById('console-window').scrollTop = 99999;
 }
 
-function clearLogs() {
-    document.getElementById(LOG_CONTAINER_ID).innerHTML = '';
+function updateStatus(text, color) {
+    const el = document.getElementById('status-indicator');
+    if(color === 'emerald') {
+        el.innerHTML = `<div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div> RUNNING`;
+        el.className = "px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center gap-2 border border-emerald-200 shadow-sm";
+    } else {
+        el.innerHTML = `<div class="w-3 h-3 rounded-full bg-slate-400"></div> IDLE`;
+        el.className = "px-4 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-sm flex items-center gap-2 border border-slate-200";
+    }
 }
 
-function toggleUI(disabled) {
-    const btn = document.getElementById('start-auto-btn');
-    if(btn) {
-        btn.disabled = disabled;
-        btn.innerHTML = disabled ? `<i class="animate-spin" data-lucide="loader-2"></i> Working... (Do not close tab)` : `<i data-lucide="sparkles"></i> Start Autonomous Agent`;
+function toggleControls(active) {
+    const start = document.getElementById('start-machine-btn');
+    const stop = document.getElementById('stop-machine-btn');
+    if (active) {
+        start.classList.add('hidden');
+        stop.classList.remove('hidden');
+        stop.innerText = "EMERGENCY STOP";
+    } else {
+        start.classList.remove('hidden');
+        stop.classList.add('hidden');
     }
 }
