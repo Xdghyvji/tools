@@ -40,6 +40,9 @@ export function loadHeader() {
     const header = document.querySelector('header');
     if (!header) return;
 
+    // Ensure header sticks to top
+    header.className = "sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200";
+
     header.innerHTML = `
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2 group">
@@ -102,10 +105,13 @@ export function loadHeader() {
     if(window.lucide) window.lucide.createIcons();
 }
 
-// ✅ EXPORTED: Footer Loader
+// ✅ EXPORTED: Footer Loader (Dark Theme Fixed)
 export function loadFooter() {
     const footer = document.querySelector('footer');
     if (!footer) return;
+
+    // Apply Dark Theme Classes
+    footer.className = "bg-slate-900 text-slate-300 border-t border-slate-800";
 
     footer.innerHTML = `
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -113,36 +119,37 @@ export function loadFooter() {
                 <div class="col-span-1 md:col-span-2">
                     <a href="/" class="flex items-center gap-2 mb-4">
                         <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">D</div>
-                        <span class="font-bold text-xl text-slate-900">DigitalServicesHub</span>
+                        <span class="font-bold text-xl text-white">DigitalServicesHub</span>
                     </a>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-6 max-w-sm">
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
                         Free, professional-grade tools for digital marketers, content creators, and developers. No credit card required.
                     </p>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 mb-4">Tools</h3>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li><a href="/tiktok.html" class="hover:text-brand-600">TikTok Downloader</a></li>
-                        <li><a href="/instagram.html" class="hover:text-brand-600">Instagram Tools</a></li>
-                        <li><a href="/email-tools.html" class="hover:text-brand-600">Email Extractor</a></li>
-                        <li><a href="/blog-tools.html" class="hover:text-brand-600">AI Blog Writer</a></li>
+                    <h3 class="font-bold text-white mb-4">Tools</h3>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="/tiktok.html" class="hover:text-white transition-colors">TikTok Downloader</a></li>
+                        <li><a href="/instagram.html" class="hover:text-white transition-colors">Instagram Tools</a></li>
+                        <li><a href="/email-tools.html" class="hover:text-white transition-colors">Email Extractor</a></li>
+                        <li><a href="/blog-tools.html" class="hover:text-white transition-colors">AI Blog Writer</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900 mb-4">Legal</h3>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li><a href="/privacy.html" class="hover:text-brand-600">Privacy Policy</a></li>
-                        <li><a href="/terms.html" class="hover:text-brand-600">Terms of Service</a></li>
-                        <li><a href="/contact.html" class="hover:text-brand-600">Contact Us</a></li>
-                        <li><a href="/admin/login.html" class="hover:text-brand-600">Admin Login</a></li>
+                    <h3 class="font-bold text-white mb-4">Legal</h3>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="/privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="/terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="/contact.html" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="/login.html" class="hover:text-white transition-colors">Login</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-slate-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-slate-400 text-sm">© ${new Date().getFullYear()} Digital Services Hub. All rights reserved.</p>
+            <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-500 text-sm">© ${new Date().getFullYear()} Digital Services Hub. All rights reserved.</p>
                 <div class="flex gap-4">
-                    <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="twitter" class="w-5 h-5"></i></a>
-                    <a href="#" class="text-slate-400 hover:text-brand-600"><i data-lucide="github" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
                 </div>
             </div>
         </div>
@@ -284,5 +291,5 @@ if (document.readyState === 'loading') {
     analytics.init();
 }
 
-// ✅ FINAL EXPORT (Variables Only - Functions exported inline above)
+// ✅ EXPORT EVERYTHING (Note: loadHeader/loadFooter exported inline above)
 export { app, db, auth, appId, onAuthStateChanged, analytics };
