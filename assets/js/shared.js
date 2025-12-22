@@ -6,13 +6,14 @@
  * - Session-Based High Quality Cookie Consent
  * - Global Adsterra Ad Injection System
  * - Dynamic Header/Footer Injection
+ * - Mobile App Integration
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, addDoc, writeBatch, serverTimestamp, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-console.log("🚀 System: Initializing Core Services v2.3 (Fixes & Stability)...");
+console.log("🚀 System: Initializing Core Services v2.4 (App Integration)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -151,6 +152,7 @@ export function loadHeader(activePage = '') {
                 <span class="font-bold text-xl text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">DigitalServices<span class="text-brand-600">Hub</span></span>
             </a>
 
+            <!-- Desktop Nav -->
             <div class="hidden md:flex items-center gap-2">
                 <a href="/index.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('home')}">Home</a>
                 <div class="relative group">
@@ -171,13 +173,21 @@ export function loadHeader(activePage = '') {
                 <a href="/contact.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">Contact</a>
             </div>
 
+            <!-- Action Buttons -->
             <div class="flex items-center gap-3">
+                <!-- App Download Button (Desktop) -->
+                <a href="/app-release.apk" class="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:-translate-y-0.5" title="Download mobile app for a better version">
+                    <i data-lucide="smartphone" class="w-4 h-4"></i>
+                    <span>Get App</span>
+                </a>
+
                 <a href="/login.html" id="nav-auth-btn" class="hidden md:flex px-4 py-2 text-sm font-bold text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">Log in</a>
                 <a href="/subscription.html" class="px-5 py-2.5 bg-slate-900 hover:bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-slate-900/20 hover:shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-0.5">Get Started</a>
                 <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
             </div>
         </nav>
 
+        <!-- Mobile Menu Overlay -->
         <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-[60] bg-white">
             <div class="flex justify-between items-center p-4 border-b border-slate-100">
                 <span class="font-bold text-xl text-slate-900">Menu</span>
@@ -197,7 +207,14 @@ export function loadHeader(activePage = '') {
                 <a href="/blog.html" class="p-3 text-sm font-bold rounded-lg ${isActive('blog')}">Blog</a>
                 <a href="/subscription.html" class="p-3 text-sm font-bold rounded-lg ${isActive('pricing')}">Pricing</a>
                 <a href="/contact.html" class="p-3 text-sm font-bold rounded-lg ${isActive('contact')}">Contact</a>
+                
                 <div class="h-px bg-slate-100 my-2"></div>
+                
+                <!-- App Download Button (Mobile) -->
+                <a href="/app-release.apk" class="flex items-center justify-center gap-2 p-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-md hover:shadow-lg transition-all">
+                    <i data-lucide="smartphone" class="w-5 h-5"></i> Download Mobile App
+                </a>
+
                 <a href="/login.html" id="mobile-nav-auth-btn" class="p-3 text-center text-sm font-bold text-brand-600 bg-brand-50 rounded-lg">Log in</a>
             </div>
         </div>
