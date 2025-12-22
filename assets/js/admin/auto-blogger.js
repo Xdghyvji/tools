@@ -22,6 +22,14 @@ const LINK_MAP = {
     "Contact": "/contact.html"
 };
 
+// Fallback Models (If one 404s, it tries the next)
+const MODELS = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest", 
+    "gemini-1.5-pro",
+    "gemini-pro"
+];
+
 // ==========================================
 // 2. UI RENDERER
 // ==========================================
@@ -30,8 +38,8 @@ export function render() {
     <div class="animate-fade-in max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v4.0</h1>
-                <p class="text-slate-500">Fully autonomous, multi-key, infinite content generator.</p>
+                <h1 class="text-3xl font-bold text-slate-900 mb-1">Infinity Vlogger Machine v5.0</h1>
+                <p class="text-slate-500">Autonomous, Multi-Model, Anti-Crash Content Engine.</p>
             </div>
             <div id="status-indicator" class="px-4 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-sm flex items-center gap-2 border border-slate-200">
                 <div class="w-3 h-3 rounded-full bg-slate-400"></div> IDLE
@@ -42,7 +50,7 @@ export function render() {
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Target Niche / Context</label>
-                    <textarea id="auto-niche" rows="4" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none resize-none" placeholder="e.g., Digital Marketing, SaaS Tools, AI Growth Hacking, YouTube Automation..."></textarea>
+                    <textarea id="auto-niche" rows="4" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none resize-none" placeholder="e.g., Digital Marketing, SaaS Tools, AI Growth Hacking..."></textarea>
                     <p class="text-xs text-slate-400 mt-2">The machine will invent topics based on this context.</p>
                 </div>
 
@@ -64,7 +72,7 @@ export function render() {
                         <span>API Keys Loaded:</span>
                         <span id="key-count">0</span>
                     </div>
-                    <div>Current Model: <span class="text-white">Gemini 1.5 Flash</span></div>
+                    <div>Active Model: <span id="active-model" class="text-white">Auto-Detecting...</span></div>
                 </div>
             </div>
 
@@ -92,7 +100,6 @@ export async function init() {
     if (startBtn) startBtn.addEventListener('click', startMachine);
     if (stopBtn) stopBtn.addEventListener('click', stopMachine);
 
-    // Load API Keys immediately
     await loadApiKeys();
 
     if(window.lucide) window.lucide.createIcons();
@@ -106,7 +113,7 @@ async function loadApiKeys() {
             if (doc.data().key) apiKeys.push(doc.data().key);
         });
         document.getElementById('key-count').innerText = apiKeys.length;
-        if(apiKeys.length === 0) log("⚠️ WARNING: No API Keys found in Firebase. Please add keys in Settings.", "orange");
+        if(apiKeys.length === 0) log("⚠️ WARNING: No API Keys found. Please add keys in Settings.", "orange");
     } catch (e) {
         log("❌ Error loading API Keys: " + e.message, "red");
     }
@@ -137,8 +144,7 @@ async function startMachine() {
             log(`🎯 New Topic Generated: "${topic}"`, "white");
 
             // --- STEP 2: GENERATE THUMBNAIL URL ---
-            // We use Pollinations AI for dynamic generation - No API key needed
-            const encodedTopic = encodeURIComponent(topic.substring(0, 50)); // Truncate for URL safety
+            const encodedTopic = encodeURIComponent(topic.substring(0, 50));
             const imageUrl = `https://image.pollinations.ai/prompt/realistic_4k_photo_of_${encodedTopic}?nologo=true`;
             log(`🖼️ Thumbnail Generated.`, "blue");
 
@@ -152,16 +158,13 @@ async function startMachine() {
             const chapters = parseJSON(outlineJson);
             if (!chapters) throw new Error("Failed to generate outline.");
 
-            // --- STEP 4: WRITE CONTENT (The Heavy Lift) ---
+            // --- STEP 4: WRITE CONTENT ---
             let fullHtml = "";
-            
-            // Intro
             const intro = await callGeminiWithRotation(`Write a 300-word HTML introduction for "${topic}". Use <h1> for title. HTML format only.`);
             fullHtml += intro;
 
-            // Chapters
             for (let i = 0; i < chapters.length; i++) {
-                if (!isRunning) break; // Check stop signal inside loop
+                if (!isRunning) break;
                 log(`✍️ Writing ${i+1}/${chapters.length}: ${chapters[i]}...`, "gray");
                 
                 const content = await callGeminiWithRotation(`
@@ -171,27 +174,20 @@ async function startMachine() {
                 `);
                 fullHtml += `\n${content}\n`;
                 
-                // Mini-delay between chapters to prevent rapid-fire token exhaustion
                 await new Promise(r => setTimeout(r, 5000)); 
             }
 
             if (!isRunning) { log("🛑 Machine Stopped mid-write.", "red"); break; }
 
-            // Conclusion
             const conclusion = await callGeminiWithRotation(`Write a conclusion for "${topic}" with a CTA.`);
             fullHtml += conclusion;
 
-            // --- STEP 5: METADATA & LINKING ---
-            log("🔗 Optimizing: SEO & Internal Links...", "blue");
-            const metaJson = await callGeminiWithRotation(`
-                Generate SEO data for "${topic}".
-                Return JSON: { "excerpt": "150 chars", "slug": "kebab-case-slug" }
-            `);
+            // --- STEP 5: SEO & PUBLISH ---
+            log("💾 Publishing...", "blue");
+            const metaJson = await callGeminiWithRotation(`Generate JSON: { "excerpt": "150 chars", "slug": "kebab-case-slug" } for "${topic}"`);
             const meta = parseJSON(metaJson);
             const finalContent = processSEO(fullHtml, topic, meta?.excerpt || "");
 
-            // --- STEP 6: PUBLISH ---
-            log("💾 Publishing to Database...", "blue");
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), {
                 title: topic,
                 slug: meta?.slug || createSlug(topic),
@@ -209,9 +205,8 @@ async function startMachine() {
             await updateSitemap();
             log(`✨ POST PUBLISHED: "${topic}"`, "emerald");
 
-            // --- STEP 7: THE COOL DOWN (1m 10s) ---
-            log("⏳ Cooling down for 70 seconds to reset Rate Limits...", "orange");
-            await wait(70000); // 70 Seconds
+            log("⏳ Cooling down for 70 seconds...", "orange");
+            await wait(70000); 
 
         } catch (error) {
             log(`❌ ERROR: ${error.message}. Retrying loop in 30s...`, "red");
@@ -225,54 +220,68 @@ async function startMachine() {
 
 function stopMachine() {
     isRunning = false;
-    log("🛑 STOP COMMAND RECEIVED. Finishing current step then halting...", "red");
+    log("🛑 STOP COMMAND RECEIVED. Finishing current step...", "red");
     document.getElementById('stop-machine-btn').innerText = "STOPPING...";
 }
 
 // ==========================================
-// 5. API KEY ROTATION ENGINE (DIRECT CALL)
+// 5. ROBUST API ENGINE (Multi-Model + Multi-Key)
 // ==========================================
 async function callGeminiWithRotation(prompt) {
-    // Try each key until one works
-    const maxAttempts = apiKeys.length * 2; // Try cycling through twice
+    const maxAttempts = apiKeys.length * MODELS.length; 
     let attempts = 0;
-
+    
     while (attempts < maxAttempts) {
+        // Round Robin: Rotate keys first, then models
         const apiKey = apiKeys[currentKeyIndex];
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        
+        // Try current model (if it fails 404, we switch model)
+        for (const model of MODELS) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            
+            // Update UI
+            const modelBadge = document.getElementById('active-model');
+            if(modelBadge) modelBadge.innerText = model;
 
-        try {
-            const response = await fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }]
-                })
-            });
+            try {
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
 
-            if (!response.ok) {
-                // If 429 (Too Many Requests), throw specific error to trigger rotation
-                if (response.status === 429) throw new Error("RateLimit");
-                throw new Error(`API Error ${response.status}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) throw new Error("Empty Response");
+                    return text.replace(/```html|```json|```/g, '').trim();
+                }
+
+                // Handle Specific Errors
+                if (response.status === 404) {
+                    log(`⚠️ Model ${model} not found (404). Trying next model...`, "orange");
+                    continue; // Try next model in the loop
+                }
+                
+                if (response.status === 429) {
+                    throw new Error("RateLimit"); // Throw to trigger Key Rotation
+                }
+
+                throw new Error(`API ${response.status}`);
+
+            } catch (e) {
+                if (e.message === "RateLimit") break; // Break model loop to rotate KEY
+                if (e.message.includes("404")) continue; // Try next model
             }
-
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-            // Clean markdown
-            return text.replace(/```html|```json|```/g, '').trim();
-
-        } catch (e) {
-            log(`⚠️ Key ...${apiKey.slice(-4)} failed (${e.message}). Switching keys...`, "orange");
-            
-            // Rotate Key Index
-            currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-            attempts++;
-            
-            // Small pause before retry
-            await new Promise(r => setTimeout(r, 2000));
         }
+
+        // If we get here, either RateLimit hit OR all models failed for this key
+        log(`⚠️ Key ...${apiKey.slice(-4)} exhausted. Switching keys...`, "orange");
+        currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+        attempts++;
+        await new Promise(r => setTimeout(r, 2000));
     }
-    throw new Error("ALL API KEYS EXHAUSTED.");
+    throw new Error("ALL KEYS & MODELS FAILED");
 }
 
 // ==========================================
@@ -311,7 +320,6 @@ function createSlug(text) {
 
 function wait(ms) {
     return new Promise(resolve => {
-        // Break wait if stopped, checking every 1s
         const interval = setInterval(() => {
             if (!isRunning) { clearInterval(interval); resolve(); }
         }, 1000);
@@ -319,24 +327,11 @@ function wait(ms) {
     });
 }
 
-// UI LOGGING
 function log(msg, color) {
     const c = document.getElementById(LOG_CONTAINER_ID);
     if (!c) return;
-    
-    // Tailwind text colors
-    const colorClass = {
-        'emerald': 'text-emerald-400',
-        'blue': 'text-blue-400',
-        'red': 'text-rose-400',
-        'orange': 'text-amber-400',
-        'gray': 'text-slate-400',
-        'white': 'text-white'
-    }[color] || 'text-slate-300';
-
-    c.innerHTML += `<div class="font-mono text-xs py-1 border-l-2 border-slate-800 pl-2 ml-1 ${colorClass}">
-        <span class="opacity-30 mr-2">${new Date().toLocaleTimeString()}</span> ${msg}
-    </div>`;
+    const colorClass = { 'emerald': 'text-emerald-400', 'blue': 'text-blue-400', 'red': 'text-rose-400', 'orange': 'text-amber-400', 'gray': 'text-slate-400', 'white': 'text-white' }[color] || 'text-slate-300';
+    c.innerHTML += `<div class="font-mono text-xs py-1 border-l-2 border-slate-800 pl-2 ml-1 ${colorClass}"><span class="opacity-30 mr-2">${new Date().toLocaleTimeString()}</span> ${msg}</div>`;
     document.getElementById('console-window').scrollTop = 99999;
 }
 
@@ -354,12 +349,6 @@ function updateStatus(text, color) {
 function toggleControls(active) {
     const start = document.getElementById('start-machine-btn');
     const stop = document.getElementById('stop-machine-btn');
-    if (active) {
-        start.classList.add('hidden');
-        stop.classList.remove('hidden');
-        stop.innerText = "EMERGENCY STOP";
-    } else {
-        start.classList.remove('hidden');
-        stop.classList.add('hidden');
-    }
+    if (active) { start.classList.add('hidden'); stop.classList.remove('hidden'); stop.innerText = "EMERGENCY STOP"; } 
+    else { start.classList.remove('hidden'); stop.classList.add('hidden'); }
 }
