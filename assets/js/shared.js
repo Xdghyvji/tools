@@ -266,6 +266,7 @@ export function loadFooter() {
                     <ul class="space-y-3 text-sm text-slate-400">
                         <li><a href="/privacy.html" class="hover:text-brand-400 transition-colors">Privacy Policy</a></li>
                         <li><a href="/terms.html" class="hover:text-brand-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="/about.html" class="hover:text-brand-400 transition-colors">about us</a></li>
                         <li><a href="/contact.html" class="hover:text-brand-400 transition-colors">Contact Support</a></li>
                     </ul>
                 </div>
