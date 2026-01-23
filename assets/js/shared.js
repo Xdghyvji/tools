@@ -171,6 +171,7 @@ export function loadHeader(activePage = '') {
                 </div>
                 <a href="/blog.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('blog')}">Blog</a>
                 <a href="/subscription.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('pricing')}">Pricing</a>
+                <a href="/about.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">about</a>
                 <a href="/contact.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">Contact</a>
             </div>
 
