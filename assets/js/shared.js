@@ -140,7 +140,8 @@ export function loadHeader(activePage = '') {
     const path = window.location.pathname;
     const current = activePage || (path === '/' || path.includes('index') ? 'home' : 
                                   path.includes('blog') ? 'blog' : 
-                                  path.includes('pricing') || path.includes('subscription') ? 'pricing' : 
+                                  path.includes('pricing') || path.includes('subscription') ? 'pricing' :
+                                  path.includes('about') ? 'about' :
                                   path.includes('contact') ? 'contact' : '');
 
     const isActive = (name) => current === name ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50';
