@@ -6,6 +6,8 @@
     <title>About Us - Meet the Founder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Lucide Icons for shared navigation -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .glass-effect {
             background: rgba(255, 255, 255, 0.95);
@@ -16,17 +18,19 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        /* Match Brand Colors from shared.js */
+        .text-brand-600 { color: #2563eb; }
+        .bg-brand-50 { background-color: #f0f9ff; }
+        .bg-brand-600 { background-color: #2563eb; }
     </style>
-    <!-- Use defer to ensure the script executes after the HTML is parsed -->
-    <script src="assets/js/shared.js" defer></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-700">
 
-    <!-- Shared Header Container -->
-    <div id="header-container"></div>
+    <!-- Containers matching shared.js IDs -->
+    <header id="main-header" class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200"></header>
 
     <!-- Hero Section -->
-    <header class="bg-white border-b border-slate-200">
+    <div class="bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
                 Empowering Creators with <span class="gradient-text">Digital Excellence</span>
@@ -35,29 +39,26 @@
                 Our mission is to simplify your digital workflow through innovative, accessible, and powerful web tools.
             </p>
         </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        <!-- Authority & Transparency Section (Crucial for AdSense) -->
+        <!-- Authority & Transparency Section -->
         <section class="mb-20">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
                     <h2 class="text-3xl font-bold text-slate-900 mb-6">Who We Are</h2>
                     <div class="prose prose-lg text-slate-600">
                         <p class="mb-4">
-                            Welcome to our platform, a premier destination for digital utility tools and insightful tech content. We believe in the power of automation and efficiency.
+                            Welcome to <strong>Digital Services Hub</strong>, a premier destination for digital utility tools and insightful tech content. We believe in the power of automation and efficiency.
                         </p>
                         <p class="mb-4">
                             Transparency is our core value. Unlike faceless corporations, this platform is the result of dedicated craftsmanship and individual expertise. Every tool, line of code, and blog post is curated to ensure accuracy, safety, and utility for our users.
                         </p>
-                        <p>
-                            We adhere to strict editorial standards and privacy policies to ensure a safe environment for all our visitors.
-                        </p>
                     </div>
                 </div>
-                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
+                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100 shadow-sm">
                     <h3 class="text-xl font-bold text-blue-900 mb-4">Why Trust Us?</h3>
                     <ul class="space-y-4">
                         <li class="flex items-start">
@@ -104,10 +105,7 @@
                             I am an <strong>18-year-old tech entrepreneur and Full-Stack Web Developer</strong> from Pakistan. With a passion for code that began early, I have cultivated a diverse set of multi-digital skills ranging from server-side architecture to authority building and digital marketing.
                         </p>
                         <p>
-                            As the sole architect behind this platform, I wear many hats: <strong>CEO, Lead Developer, and Chief Editor</strong>. This holistic approach allows me to maintain strict quality control over every tool and article published here. My goal is to bridge the gap between complex technology and everyday user needs.
-                        </p>
-                        <p>
-                            My journey is defined by a relentless pursuit of innovation and a commitment to providing value to the global digital community.
+                            As the sole architect behind this platform, I wear many hats: <strong>CEO, Lead Developer, and Chief Editor</strong>. This holistic approach allows me to maintain strict quality control over every tool and article published here.
                         </p>
                     </div>
 
@@ -121,12 +119,6 @@
 
                     <!-- Social Links -->
                     <div class="flex space-x-4">
-                        <a href="https://twitter.com" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition duration-300">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-800 hover:text-white transition duration-300">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
                         <a href="https://github.com/Xdghyvji" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-black hover:text-white transition duration-300">
                             <i class="fab fa-github"></i>
                         </a>
@@ -141,45 +133,21 @@
     </main>
 
     <!-- Shared Footer Container -->
-    <div id="footer-container"></div>
+    <footer id="main-footer"></footer>
 
-    <!-- Scripts for Shared Header/Footer -->
-    <script>
-        /**
-         * Robust injection script.
-         * Runs immediately to attempt initialization and sets up polling.
-         */
-        (function() {
-            function init() {
-                if (typeof initSharedComponents === 'function') {
-                    initSharedComponents();
-                    console.log("Shared components initialized successfully.");
-                    return true;
-                }
-                return false;
+    <!-- Bridge to Module-based shared.js -->
+    <script type="module">
+        import { loadHeader, loadFooter } from './assets/js/shared.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Initialize components from your production-grade shared.js
+                loadHeader('about');
+                loadFooter();
+            } catch (err) {
+                console.error("Shared components failed to load:", err);
             }
-
-            // Attempt 1: Immediate
-            if (!init()) {
-                // Attempt 2: On DOMContentLoaded
-                document.addEventListener('DOMContentLoaded', init);
-                
-                // Attempt 3: On Window Load
-                window.addEventListener('load', init);
-
-                // Attempt 4: Polling (Every 100ms for 3 seconds)
-                let attempts = 0;
-                const interval = setInterval(() => {
-                    attempts++;
-                    if (init() || attempts > 30) {
-                        clearInterval(interval);
-                        if (attempts > 30) {
-                            console.error("shared.js components could not be initialized. Check file path: assets/js/shared.js");
-                        }
-                    }
-                }, 100);
-            }
-        })();
+        });
     </script>
 
 </body>
