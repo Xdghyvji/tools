@@ -3,274 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Rank #1 on Google with DigitalServicesHub. AI tools to generate long-form blog posts, SEO outlines, paraphrase content, and discover high-volume keywords.">
-    <title>Blog & SEO Tools | DigitalServicesHub.online</title>
+    <title>Free AI Blog Writer & SEO Tools: Generator, Outlines & Keywords | DigitalServicesHub</title>
+    <meta name="description" content="Rank higher on Google with our free AI blog writer. Generate SEO-optimized articles, structured outlines, and find high-volume LSI keywords instantly.">
+    <meta name="keywords" content="free ai blog writer, seo content generator, blog outline creator, keyword research tool, article rewriter, content marketing ai">
+    <meta name="author" content="DigitalServicesHub">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://digitalserviceshub.online/blog-tools.html">
+    <meta property="og:title" content="Free AI Blog Writer | SEO Content Generator">
+    <meta property="og:description" content="Create long-form, SEO-optimized blog posts and outlines in seconds with our free AI tools.">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+    <!-- Schema Markup for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "DigitalServicesHub SEO Writer",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A suite of free AI tools for blog writing, SEO outlining, and keyword research."
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }, seo: { 500: '#22c55e', 600: '#16a34a', indigo: '#4f46e5' } }
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        heading: ['Plus Jakarta Sans', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }, 
+                        indigo: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' }
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
-        
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .tool-tab.active { background-color: #e0e7ff; color: #4338ca; border-bottom: 2px solid #4f46e5; }
+        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        .tool-tab { transition: all 0.2s ease; position: relative; }
+        .tool-tab.active { color: #4338ca; background-color: #eef2ff; font-weight: 600; }
+        .tool-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background-color: #4f46e5; border-top-left-radius: 2px; border-top-right-radius: 2px; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+        .prose h3 { margin-top: 2em; margin-bottom: 0.75em; font-weight: 700; color: #1e293b; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.75; color: #475569; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
+        .prose li { margin-bottom: 0.5em; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
     <!-- Header Container (Loaded via JS) -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
+    <header class="fixed w-full top-0 z-50 glass-header h-20" id="main-header"></header>
 
-    <!-- Secondary Tool Nav (Fixed Layout) -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm h-16 flex items-center">
-        <div class="max-w-7xl mx-auto w-full">
-            <div class="flex items-center overflow-x-auto px-4 space-x-4 custom-scrollbar flex-nowrap">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
+    <!-- Secondary Navigation -->
+    <nav class="fixed top-20 w-full z-40 bg-white/95 backdrop-blur border-b border-slate-200 h-14 flex items-center">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto custom-scrollbar">
+            <div class="flex items-center space-x-2 h-full">
+                <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> All Tools
                 </a>
-                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                <a href="email-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Email Marketing
                 </a>
-                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
+                <a href="blog-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-md whitespace-nowrap border border-indigo-100">
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Blog & SEO
                 </a>
-                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 font-semibold whitespace-nowrap shadow-sm transition-colors">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
-                </a>
-                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="mail" class="w-4 h-4"></i> Email
-                </a>
-                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
+                <a href="instagram.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="instagram" class="w-4 h-4"></i> Social Media
                 </a>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- AD SPACE -->
-    <div class="pt-48 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
-        <p class="text-[10px] text-slate-400 text-center uppercase tracking-wider mb-1">Advertisement</p>
-        <div id="ad-728-90" class="w-[728px] h-[90px] mx-auto bg-slate-50 border border-slate-200 flex items-center justify-center"></div>
-    </div>
-
-    <!-- HERO SECTION -->
-    <section class="pt-48 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="tools">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            
-            <!-- Left: Content -->
-            <div class="text-center lg:text-left animate-fade-in">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold mb-6 border border-indigo-200">
-                    <i data-lucide="trending-up" class="w-3 h-3"></i> SEO Optimized Content
-                </div>
-                <h1 class="text-4xl lg:text-6xl font-bold font-heading text-slate-900 leading-tight mb-6">
-                    Rank #1 on Google with <span class="text-indigo-600">AI-Powered Content</span>
-                </h1>
-                <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    Generate high-quality, plagiarism-free blog posts, detailed SEO outlines, and LSI keywords in seconds.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start text-sm font-medium text-slate-500">
-                    <div class="flex items-center gap-2"><i data-lucide="search" class="w-5 h-5 text-indigo-600"></i> Keyword Research</div>
-                    <div class="flex items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 text-green-600"></i> Auto-Writer</div>
-                    <div class="flex items-center gap-2"><i data-lucide="refresh-cw" class="w-5 h-5 text-purple-600"></i> Rewriter</div>
-                </div>
-            </div>
-
-            <!-- Right: Tool Interface -->
-            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-slide-up relative z-10">
-                <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar">
-                    <button onclick="setTool('writer')" class="tool-tab active flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Writer</button>
-                    <button onclick="setTool('outline')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Outline</button>
-                    <button onclick="setTool('rewrite')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Rewriter</button>
-                    <button onclick="setTool('keywords')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Keywords</button>
-                </div>
-                <div class="p-8">
-                    <div class="mb-6">
-                        <h3 class="font-bold text-slate-900 mb-2 text-xl" id="tool-title">AI Blog Post Writer</h3>
-                        <p class="text-sm text-slate-500" id="tool-desc">Generate comprehensive, human-like articles from a single topic.</p>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Topic / Keywords</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="edit-3" class="h-5 w-5 text-slate-400"></i>
-                                </div>
-                                <input type="text" id="user-input" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all" placeholder="e.g., The Future of Remote Work">
-                            </div>
-                        </div>
-                        <button id="generate-btn" class="w-full py-3.5 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/30">
-                            <i data-lucide="sparkles" class="w-4 h-4"></i> <span>Generate Article</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- STATS SECTION -->
-    <section class="bg-white py-16 border-y border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">2M+</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Words Written</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">5x</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Faster Production</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">#1</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Rankings Achieved</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">100%</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Plagiarism Free</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <script async="async" data-cfasync="false" src="//chapturnjut.com/44285d75d83bd85e96d6a8f42f720f48/invoke.js"></script>
-    <div id="container-44285d75d83bd85e96d6a8f42f720f48"></div>
-    <!-- FEATURES SECTION -->
-    <section class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4 font-heading">Content That Converts & Ranks</h2>
-                <p class="text-slate-600 text-lg">
-                    Building a blog is hard. Our AI tools handle the heavy lifting—from research to writing—so you can focus on strategy and monetization.
-                </p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6">
-                        <i data-lucide="layout" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Structured Outlines</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        Never face writer's block again. Generate detailed outlines with H2s and H3s that cover search intent comprehensively.
-                    </p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
-                        <i data-lucide="search" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">LSI Keywords</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        Discover latent semantic indexing (LSI) keywords to help Google understand your content context and boost your rankings.
-                    </p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
-                        <i data-lucide="refresh-ccw" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Content Refinement</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        Refresh old content or rewrite competitor snippets with our advanced paraphrasing tool to make it unique and engaging.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HOW IT WORKS SECTION -->
-    <section class="py-20 bg-white border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-indigo-100 to-green-100 rounded-full blur-3xl opacity-50"></div>
-                    <img src="https://images.unsplash.com/photo-1499750310159-5b5f43475139?q=80&w=1770&auto=format&fit=crop" alt="Blogging Workspace" class="relative rounded-2xl shadow-2xl border border-slate-200 transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                </div>
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-40 pb-16">
+        
+        <!-- Hero & Tool Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+            <div class="grid lg:grid-cols-12 gap-12 items-start">
                 
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-8 font-heading">Publish 10x More Content</h2>
-                    <div class="space-y-8">
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">1</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Research & Outline</h4>
-                                <p class="text-slate-600">Use the Keyword and Outline tools to plan a solid foundation for your article.</p>
+                <!-- Left Column: Copy -->
+                <div class="lg:col-span-5 pt-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-6 border border-indigo-200">
+                        <i data-lucide="trending-up" class="w-3 h-3"></i> SEO Optimized Content
+                    </div>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold font-heading text-slate-900 leading-tight mb-6">
+                        Rank #1 on Google with <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">AI-Powered Content</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Consistency is the key to organic traffic. Generate plagiarism-free blog posts, detailed SEO outlines, and find high-volume keywords in seconds to scale your content marketing.
+                    </p>
+                    
+                    <!-- Compliance Fix: Benefit-driven stats replacement -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="infinity" class="w-5 h-5 text-indigo-500"></i> Unlimited Writing
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="search" class="w-5 h-5 text-indigo-500"></i> SEO Native
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-indigo-500"></i> Unique Content
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: The Tool Interface -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative z-10 ring-1 ring-slate-900/5">
+                        
+                        <!-- Tool Tabs -->
+                        <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar no-scrollbar">
+                            <button onclick="setTool('writer')" class="tool-tab active flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="pen-tool" class="w-4 h-4"></i> Writer
+                            </button>
+                            <button onclick="setTool('outline')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="list" class="w-4 h-4"></i> Outline
+                            </button>
+                            <button onclick="setTool('rewrite')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Rewriter
+                            </button>
+                            <button onclick="setTool('keywords')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="search" class="w-4 h-4"></i> Keywords
+                            </button>
+                        </div>
+
+                        <!-- Tool Input Area -->
+                        <div class="p-8">
+                            <div class="mb-6">
+                                <h3 class="font-bold text-slate-900 mb-2 text-xl flex items-center gap-2" id="tool-title">
+                                    AI Blog Post Writer
+                                </h3>
+                                <p class="text-slate-500" id="tool-desc">Generate comprehensive, human-like articles from a single topic.</p>
+                            </div>
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Topic / Keywords</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i data-lucide="edit-3" class="h-5 w-5 text-slate-400"></i>
+                                        </div>
+                                        <input type="text" id="user-input" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-slate-50 focus:bg-white" placeholder="e.g., The Future of Remote Work">
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-2 text-right">More specific inputs yield better results.</p>
+                                </div>
+                                
+                                <button id="generate-btn" class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 text-lg group">
+                                    <i data-lucide="sparkles" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> 
+                                    <span>Generate Content</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">2</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Generate Draft</h4>
-                                <p class="text-slate-600">Use the Writer tool to generate a comprehensive first draft in seconds.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">3</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Refine & Publish</h4>
-                                <p class="text-slate-600">Use the Paraphraser to tweak tone, add your voice, and hit publish.</p>
-                            </div>
+                        
+                        <!-- AI Badge -->
+                        <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
+                            <span>Powered by Advanced AI Models</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> System Online</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- VISUAL CONTEXT: Workflow -->
+        <section class="bg-white py-20 border-y border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">Streamline Your Content Workflow</h2>
+                    <p class="text-lg text-slate-600">Building a blog is hard. Our AI tools handle the heavy lifting—from research to writing—so you can focus on strategy and monetization.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-400 to-indigo-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-indigo-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="layout" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">1. Structure & Outline</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Never face writer's block again. Generate detailed outlines with H2s and H3s that cover search intent comprehensively.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-green-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="search" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">2. LSI Integration</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Discover latent semantic indexing (LSI) keywords to help Google understand your context and boost your rankings.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-purple-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="refresh-ccw" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">3. Refine & Publish</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Refresh old content or rewrite competitor snippets with our advanced paraphrasing tool to make it unique.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Long-Form Educational Content (SEO Boost) -->
+        <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="prose prose-lg prose-slate max-w-none">
+                
+                <h2 class="font-heading text-3xl font-bold text-slate-900">How to Write Content That Google Loves (and Ranks)</h2>
+                <p>
+                    Search engines have evolved. In the past, "keyword stuffing" (repeating your target phrase 50 times) was enough to rank. Today, Google's algorithms, like RankBrain and BERT, prioritize <strong>User Experience</strong> and <strong>Topical Authority</strong>.
+                </p>
+                <p>
+                    To rank in 2025, your content needs to answer the user's query faster and better than anyone else. Our AI Writer is designed to create content that adheres to Google's "Helpful Content" guidelines by structuring information logically and covering sub-topics deeply.
+                </p>
+
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">The Secret Weapon: LSI Keywords</h2>
+                <p>
+                    LSI (Latent Semantic Indexing) keywords are conceptually related terms that search engines use to understand the content of a webpage deeply. For example, if you are writing about "Apple," LSI keywords help Google know if you mean the <em>fruit</em> (keywords: pie, recipe, orchard) or the <em>tech company</em> (keywords: iPhone, Mac, Steve Jobs).
+                </p>
+                <p>
+                    Using our <strong>Keywords Tool</strong> helps you find these hidden phrases. Sprinkle them naturally throughout your post to signal high relevance to search engines without looking spammy.
+                </p>
+
+                <div class="bg-indigo-50 p-6 rounded-xl my-8 border-l-4 border-indigo-500">
+                    <h4 class="font-bold text-slate-900 mb-2 no-margin">On-Page SEO Checklist</h4>
+                    <ul class="text-sm mb-0">
+                        <li>Include target keyword in the H1 title tag.</li>
+                        <li>Use the keyword in the first 100 words.</li>
+                        <li>Break text with H2 and H3 subheaders.</li>
+                        <li>Keep paragraphs short (2-3 sentences max).</li>
+                        <li>Add internal links to other relevant pages.</li>
+                    </ul>
+                </div>
+
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">Why Long-Form Content Wins</h2>
+                <p>
+                    Studies consistently show that longer content (1,500+ words) tends to rank higher on Google's first page. Why? Because long-form content is more likely to provide a comprehensive answer, keeping users on your page longer (Dwell Time).
+                </p>
+                <p>
+                    However, length alone isn't enough. It must be <em>valuable</em> length. Our <strong>Outline Generator</strong> helps you map out a long-form structure that doesn't just ramble, but adds value in every section.
+                </p>
+
+            </div>
+        </article>
+
+        <!-- FAQ Section (Compliance Fix) -->
+        <section class="bg-slate-50 py-20 border-t border-slate-200">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold font-heading text-center text-slate-900 mb-12">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            Will Google penalize AI-written content?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            No. Google's official stance is that they reward high-quality content, regardless of how it is produced. As long as the content is helpful, accurate, and satisfies the user's intent, it can rank well. We recommend reviewing and adding your personal touch to AI drafts.
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            Is the generated content unique?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Yes. Our AI generates content word-by-word based on your specific inputs, creating a unique output every time. It does not copy-paste from existing articles. However, for academic or strictly professional use, we always recommend running a plagiarism check.
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            Is this tool really free?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Yes, all tools on DigitalServicesHub, including the Blog Writer and Keyword Researcher, are completely free to use. There are no paywalls or subscription fees.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Container -->
+    <footer id="main-footer"></footer>
 
     <!-- Result Modal -->
-    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl m-4 flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="result-modal-content">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl m-4 flex flex-col max-h-[85vh] animate-in fade-in zoom-in duration-300" id="result-modal-content">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
                 <div>
                     <h3 class="font-bold text-xl text-slate-900" id="modal-title">Generated Content</h3>
-                    <p class="text-xs text-slate-500">SEO Optimized</p>
+                    <p class="text-xs text-slate-500 mt-1">SEO Optimized</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="copyContent()" class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700">
-                        <i data-lucide="copy" class="w-4 h-4"></i> Copy
-                    </button>
                     <button onclick="closeModal()" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
-            <div class="flex-1 p-8 overflow-y-auto">
-                <div id="result-content" class="prose prose-slate max-w-none text-slate-800 leading-relaxed"></div>
+            <div class="flex-1 p-8 overflow-y-auto custom-scrollbar bg-white">
+                <div id="result-content" class="prose prose-indigo max-w-none text-slate-800 leading-relaxed"></div>
             </div>
-            <!-- AD SPACE -->
-            <div class="p-4 border-t border-slate-100 flex justify-center bg-slate-50 rounded-b-2xl hidden" id="ad-modal-container">
-                <div id="ad-modal" class="w-[300px] h-[250px] bg-white border border-slate-200 flex items-center justify-center"></div>
+            <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-b-2xl">
+                <span class="text-xs text-slate-400">Content generated by AI. Fact-check before publishing.</span>
+                <button onclick="copyContent()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy to Clipboard
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Footer Injection Point -->
-    <footer id="main-footer"></footer>
-
-    <!-- PRODUCTION LEVEL SCRIPT -->
+    <!-- Scripts -->
     <script type="module">
-        import { 
-            loadHeader, 
-            loadFooter, 
-            loadGlobalSettings, 
-            loadSystemPrompts, 
-            getPromptForTool, 
-            generateAIContent 
-        } from './assets/js/shared.js';
+        import { loadHeader, loadFooter, loadGlobalSettings, loadSystemPrompts, getPromptForTool, generateAIContent } from './assets/js/shared.js';
 
-        // Page Specific State
         let currentTool = 'writer';
         const titles = { 
             writer: 'AI Blog Post Writer', 
@@ -284,10 +363,28 @@
             rewrite: 'Paraphrase existing content to make it unique and engaging.',
             keywords: 'Find high-volume, low-competition LSI keywords for your niche.'
         };
+        const placeholders = {
+            writer: 'e.g., The Future of Remote Work and how it affects productivity.',
+            outline: 'e.g., How to Start a Vegetable Garden for Beginners',
+            rewrite: 'Paste the text you want to rewrite here...',
+            keywords: 'e.g., Digital Marketing'
+        };
 
-        // Init
+        // FAQ Toggle Logic
+        window.toggleFaq = (button) => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            if(content.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
-            loadHeader('home');
+            await loadHeader('home');
             loadFooter();
             const settings = await loadGlobalSettings();
             if(settings && settings.title) {
@@ -297,22 +394,25 @@
 
             const genBtn = document.getElementById('generate-btn');
             if(genBtn) genBtn.addEventListener('click', handleGenerate);
+            if(window.lucide) window.lucide.createIcons();
         });
 
-        // Generation Logic
         async function handleGenerate() {
             const input = document.getElementById('user-input');
             const btn = document.getElementById('generate-btn');
             const originalContent = btn.innerHTML;
             
             if(!input.value.trim()) {
+                input.focus();
                 input.classList.add('ring-2', 'ring-indigo-500');
                 setTimeout(() => input.classList.remove('ring-2', 'ring-indigo-500'), 1000);
                 return;
             }
             
-            btn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span>`;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>Processing...</span>`;
+            if(window.lucide) window.lucide.createIcons();
             btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
             try {
                 const toolKey = `blog_${currentTool}`;
@@ -320,26 +420,35 @@
                 const text = await generateAIContent(prompt, toolKey, input.value);
                 
                 const modal = document.getElementById('result-modal');
-                document.getElementById('result-content').innerHTML = `<div class="prose prose-indigo max-w-none">${text.replace(/\n/g, '<br>').replace(/##/g, '')}</div>`;
+                // Format simple markdown headers to bold for basic display
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedText = formattedText.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                formattedText = formattedText.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+                formattedText = formattedText.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+                formattedText = formattedText.replace(/\n/g, '<br>');
+
+                document.getElementById('result-content').innerHTML = formattedText;
                 document.getElementById('modal-title').innerText = titles[currentTool] + " Results";
                 
                 modal.classList.remove('hidden');
                 setTimeout(() => { 
                     modal.classList.remove('opacity-0'); 
-                    document.getElementById('result-modal-content').classList.add('scale-100'); 
+                    document.getElementById('result-modal-content').classList.remove('scale-95'); 
                 }, 10);
                 
                 if(window.lucide) window.lucide.createIcons();
 
             } catch (e) {
-                alert(e.message);
+                alert("An error occurred. Please try again.");
+                console.error(e);
             } finally {
                 btn.innerHTML = originalContent;
+                if(window.lucide) window.lucide.createIcons();
                 btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         }
 
-        // Global UI Functions
         window.setTool = (tool) => {
             currentTool = tool;
             document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
@@ -347,6 +456,7 @@
             
             const titleEl = document.getElementById('tool-title');
             const descEl = document.getElementById('tool-desc');
+            const inputEl = document.getElementById('user-input');
             
             titleEl.style.opacity = 0;
             descEl.style.opacity = 0;
@@ -354,6 +464,8 @@
             setTimeout(() => {
                 titleEl.innerText = titles[tool];
                 descEl.innerText = descs[tool];
+                inputEl.placeholder = placeholders[tool];
+                
                 titleEl.style.opacity = 1;
                 descEl.style.opacity = 1;
             }, 200);
@@ -366,8 +478,17 @@
         }
         
         window.copyContent = () => {
-            navigator.clipboard.writeText(document.getElementById('result-content').innerText);
-            alert("Copied!");
+            const text = document.getElementById('result-content').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('#result-modal button[onclick="copyContent()"]');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+                if(window.lucide) window.lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    if(window.lucide) window.lucide.createIcons();
+                }, 2000);
+            });
         }
     </script>
 </body>
