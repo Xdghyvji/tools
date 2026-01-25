@@ -46,7 +46,9 @@ function initAuth() {
             */
             initRouter();
             renderNavigation();
-            document.getElementById('admin-email').innerText = user.email;
+            // Check if element exists before setting innerText to avoid errors
+            const emailEl = document.getElementById('admin-email');
+            if (emailEl) emailEl.innerText = user.email;
         } else {
             window.location.href = '/login.html';
         }
@@ -86,6 +88,8 @@ function initRouter() {
 // Global scope for onclick handlers
 window.loadView = async function(viewName) {
     const content = document.getElementById('main-content');
+    if (!content) return; // Guard clause if main-content is missing
+
     const module = routes[viewName];
 
     if (module) {
@@ -104,11 +108,16 @@ window.loadView = async function(viewName) {
         });
 
         // Render & Init Module
-        content.innerHTML = module.render(viewName);
-        if (module.init) await module.init();
-        
-        // Initialize Icons
-        if(window.lucide) window.lucide.createIcons();
+        try {
+            content.innerHTML = module.render(viewName);
+            if (module.init) await module.init();
+            
+            // Initialize Icons
+            if(window.lucide) window.lucide.createIcons();
+        } catch (error) {
+            console.error(`Error loading module ${viewName}:`, error);
+            content.innerHTML = `<div class="p-10 text-center text-red-400">Error loading module: ${error.message}</div>`;
+        }
     } else {
         content.innerHTML = `<div class="p-10 text-center text-slate-400">Module not found: ${viewName}</div>`;
     }
@@ -136,4 +145,7 @@ function renderNavigation() {
             <span class="font-medium pointer-events-none">${item.label}</span>
         </a>
     `).join('');
+    
+    // Re-initialize icons for the newly added navigation items
+    if(window.lucide) window.lucide.createIcons();
 }
