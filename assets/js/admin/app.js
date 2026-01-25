@@ -26,19 +26,29 @@ const routes = {
 };
 
 let currentUser = null;
+let isRouterInitialized = false;
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}
+
+function startApp() {
+    console.log("App starting...");
     // Show initial loader if it exists
-    const loader = document.getElementById('global-loader'); // Assuming you might have one
+    const loader = document.getElementById('global-loader');
     if(loader) loader.classList.remove('hidden');
     
     initAuth();
-});
+}
 
 function initAuth() {
+    console.log("Initializing Auth Listener...");
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            console.log("User authenticated:", user.email);
             currentUser = user;
             
             // Render basic layout parts that depend on auth
@@ -47,15 +57,18 @@ function initAuth() {
             if (emailEl) emailEl.innerText = user.email;
 
             // Initialize routing *after* auth is confirmed
-            initRouter();
+            if (!isRouterInitialized) {
+                initRouter();
+                isRouterInitialized = true;
+            }
             
             // Hide global loader if it exists
             const loader = document.getElementById('global-loader');
             if(loader) loader.classList.add('hidden');
 
         } else {
+            console.log("User not authenticated.");
             // Not authenticated, redirect to login
-            // Avoid redirect loop if already on login page (though this script is likely only for admin/*)
             if (!window.location.pathname.includes('login.html')) {
                  window.location.href = '/login.html';
             }
@@ -64,12 +77,15 @@ function initAuth() {
 }
 
 function initRouter() {
+    console.log("Initializing Router...");
+    
     // Handle Navigation Clicks via Event Delegation
     document.body.addEventListener('click', (e) => {
         const link = e.target.closest('[data-link]');
         if (link) {
             e.preventDefault();
             const view = link.dataset.link;
+            console.log("Navigating to:", view);
             loadView(view);
         }
     });
@@ -96,8 +112,9 @@ function initRouter() {
     loadView(hash);
 }
 
-// Global scope for onclick handlers (needed if you use onclick="..." in HTML)
+// Global scope for onclick handlers
 window.loadView = async function(viewName) {
+    console.log("Loading View:", viewName);
     const content = document.getElementById('main-content');
     if (!content) {
         console.error("Critical Error: 'main-content' element not found in DOM.");
@@ -134,16 +151,26 @@ window.loadView = async function(viewName) {
 
         // Render & Init Module
         try {
-            // 1. Render HTML (Synchronous usually)
+            // 1. Render HTML
+            console.log(`Rendering ${viewName}...`);
             const html = module.render(viewName);
             content.innerHTML = html;
             
-            // 2. Initialize Logic (Async)
+            // 2. Initialize Logic with Timeout Safety
             if (module.init) {
-                await module.init(); 
+                console.log(`Initializing ${viewName}...`);
+                
+                // Timeout promise to prevent infinite hanging
+                const timeout = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error("Module initialization timed out (5s)")), 5000)
+                );
+
+                // Race the module init against the timeout
+                await Promise.race([module.init(), timeout]);
+                console.log(`${viewName} initialized successfully.`);
             }
             
-            // 3. Re-initialize Icons for new content
+            // 3. Re-initialize Icons
             if(window.lucide) window.lucide.createIcons();
             
         } catch (error) {
@@ -161,6 +188,7 @@ window.loadView = async function(viewName) {
             if(window.lucide) window.lucide.createIcons();
         }
     } else {
+        console.warn(`Module not found: ${viewName}`);
         content.innerHTML = `<div class="p-10 text-center text-slate-400">Module not found: ${viewName}</div>`;
     }
 };
