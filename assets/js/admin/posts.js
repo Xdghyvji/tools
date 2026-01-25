@@ -39,6 +39,8 @@ export function render() {
 
 let postsData = [];
 let authorsList = [];
+let originalModalClasses = ""; // Store default modal classes to restore later
+let originalParentClasses = "";
 
 // ==========================================
 // 2. INITIALIZATION & LISTENERS
@@ -51,14 +53,12 @@ export async function init() {
         const sitemapBtn = document.getElementById('update-sitemap-btn');
         if (sitemapBtn) sitemapBtn.addEventListener('click', () => updateSitemap(true));
         
-        // Pre-fetch authors for the dropdown
         await fetchAuthors();
 
     } catch (e) {
         console.error("Error attaching listeners:", e);
     }
 
-    // Real-time Posts Listener
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
@@ -71,9 +71,7 @@ export async function init() {
         }
 
         tbody.innerHTML = postsData.map(p => {
-            // Find author name from ID
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
-            
             return `
             <tr class="hover:bg-slate-50 group transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-900">
@@ -116,7 +114,6 @@ export async function init() {
 
 async function fetchAuthors() {
     try {
-        // Fetch from Root Authors collection
         const snap = await getDocs(collection(db, 'authors'));
         authorsList = [];
         snap.forEach(doc => authorsList.push({ id: doc.id, ...doc.data() }));
@@ -141,16 +138,10 @@ async function logAction(action, details) {
     }
 }
 
-// --- SEO: URL SLUG GENERATOR ---
 function createSlug(text) {
-    return text.toString().toLowerCase().trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '').replace(/-+$/, '');
+    return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
 }
 
-// --- DYNAMIC SITEMAP GENERATOR ---
 export async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
     if(btn) { btn.innerText = "Updating..."; btn.disabled = true; }
@@ -159,64 +150,33 @@ export async function updateSitemap(force = false) {
         const q = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
         let urls = [];
         
-        const staticPages = [
-            'index.html', 'about.html', 'blog.html', 'contact.html', 
-            'subscription.html', 'tiktok.html', 'instagram.html',
-            'twitter-tools.html', 'email-tools.html', 'blog-tools.html'
-        ];
+        const staticPages = [ 'index.html', 'about.html', 'blog.html', 'contact.html', 'subscription.html', 'tiktok.html', 'instagram.html', 'twitter-tools.html', 'email-tools.html', 'blog-tools.html' ];
 
-        staticPages.forEach(page => {
-            urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' });
-        });
-
+        staticPages.forEach(page => urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' }));
         q.forEach(doc => {
             const d = doc.data();
-            if (d.published !== false) {
-                // Use ID to match single-blog.html logic
-                urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?id=${doc.id}`, priority: '0.9' });
-            }
+            if (d.published !== false) urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?id=${doc.id}`, priority: '0.9' });
         });
 
-        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-    <priority>${u.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
+        const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${u.loc}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><priority>${u.priority}</priority></url>`).join('')}</urlset>`;
 
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { 
-            xml: xmlContent, 
-            updatedAt: serverTimestamp() 
-        });
-
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { xml: xmlContent, updatedAt: serverTimestamp() });
         console.log("Sitemap Updated Successfully!");
         if(force && btn) alert("Sitemap updated!");
 
-    } catch(e) {
-        console.error("Sitemap Error", e);
-        if(force) alert("Error updating sitemap");
-    } finally {
-        if(btn) { 
-            btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap`; 
-            btn.disabled = false;
-            if(window.lucide) window.lucide.createIcons();
-        }
-    }
+    } catch(e) { console.error("Sitemap Error", e); } 
+    finally { if(btn) { btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap`; btn.disabled = false; if(window.lucide) window.lucide.createIcons(); } }
 }
 
 // ==========================================
-// 4. EDITOR MODAL (TinyMCE)
+// 4. FULL SCREEN EDITOR MODAL
 // ==========================================
 
-// Helper: Lazy Load TinyMCE
 async function loadTinyMCE() {
     if (window.tinymce) return;
     return new Promise((resolve) => {
         const script = document.createElement('script');
-        // Using generic no-api-key CDN (works for basic use, might show banner)
-        script.src = 'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js';
+        script.src = 'https://cdn.tiny.cloud/1/7ljj288xo7ekxabldpx0j9gmxvzw7l3ao5riv578q9vi1c9s/tinymce/6/tinymce.min.js';
         script.referrerPolicy = "origin";
         script.onload = () => resolve();
         document.head.appendChild(script);
@@ -226,76 +186,97 @@ async function loadTinyMCE() {
 async function openModal(id = null) {
     const modal = document.getElementById('global-modal');
     const content = document.getElementById('global-modal-content');
-    const post = id ? postsData.find(p => p.id === id) : null;
+    
+    // 1. SAVE ORIGINAL STATE (To restore on close)
+    if (!originalModalClasses) originalModalClasses = content.className;
+    if (!originalParentClasses) originalParentClasses = content.parentElement.className;
 
-    // Ensure TinyMCE is loaded
+    // 2. APPLY FULL SCREEN STYLES
+    // Remove padding from parent
+    content.parentElement.className = "absolute inset-0 flex items-center justify-center p-0"; 
+    // Make content full width/height/rounded-0
+    content.className = "bg-white w-full h-full shadow-none rounded-none overflow-hidden flex flex-col transform transition-all opacity-0 scale-95";
+
+    const post = id ? postsData.find(p => p.id === id) : null;
     await loadTinyMCE();
 
-    // Generate Author Options
-    const authorOptions = authorsList.map(a => 
-        `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`
-    ).join('');
-
-    // Default "Admin" if no authors found
+    const authorOptions = authorsList.map(a => `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`).join('');
     const defaultOption = `<option value="admin" ${!post?.authorId ? 'selected' : ''}>Admin (Me)</option>`;
 
+    // 3. RENDER FULL PAGE LAYOUT
     content.innerHTML = `
-        <div class="flex flex-col h-[90vh]">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white rounded-t-xl">
-                <h3 class="text-xl font-bold text-slate-900">${id ? 'Edit Post' : 'Create New Post'}</h3>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-50 rounded-lg"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <div class="h-16 px-6 border-b border-slate-200 flex justify-between items-center bg-white shrink-0 z-20">
+            <div class="flex items-center gap-4">
+                <button id="close-modal-btn" class="p-2 -ml-2 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full transition-colors group" title="Close Editor">
+                    <i data-lucide="x" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+                </button>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <h3 class="text-lg font-bold text-slate-900">${id ? 'Editing Post' : 'New Article'}</h3>
+                ${id ? '<span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">Live Edit</span>' : ''}
             </div>
             
-            <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
-                <input type="hidden" id="post-id" value="${id || ''}">
-                <input type="hidden" id="post-slug" value="${post?.slug || ''}">
-                
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="md:col-span-3 space-y-4">
+            <div class="flex items-center gap-3">
+                <p class="text-xs text-slate-400 hidden sm:block mr-2" id="save-status">Unsaved changes</p>
+                <button id="save-post-btn" class="px-6 py-2 bg-brand-600 text-white rounded-lg font-bold hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20 flex items-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>${id ? 'Update' : 'Publish'}</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 flex overflow-hidden bg-slate-50">
+            
+            <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+                <div class="p-6 pb-2 shrink-0 bg-white">
+                    <input type="text" id="post-title" class="w-full text-3xl font-bold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900" placeholder="Type your title here..." value="${post?.title || ''}">
+                    <input type="hidden" id="post-id" value="${id || ''}">
+                    <input type="hidden" id="post-slug" value="${post?.slug || ''}">
+                </div>
+
+                <div class="flex-1 overflow-hidden bg-white relative">
+                    <textarea id="post-content-editor" class="w-full h-full border-0 outline-none">${post?.content || ''}</textarea>
+                </div>
+            </div>
+
+            <div class="w-80 bg-white border-l border-slate-200 overflow-y-auto shrink-0 z-10 hidden lg:block">
+                <div class="p-5 space-y-6">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publish Status</label>
+                        <div class="bg-slate-50 p-1 rounded-lg border border-slate-200 flex">
+                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-slate-800" id="btn-status-pub">Public</button>
+                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md text-slate-500 hover:text-slate-700" id="btn-status-draft">Draft</button>
+                        </div>
+                        <input type="hidden" id="post-status" value="${post?.published !== false ? 'true' : 'false'}">
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Settings</label>
+                        
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Post Title</label>
-                            <input type="text" id="post-title" class="w-full p-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none shadow-sm" placeholder="Enter an engaging title..." value="${post?.title || ''}">
+                            <span class="text-xs text-slate-400 mb-1 block">Author</span>
+                            <select id="post-author" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
+                                ${authorOptions || defaultOption}
+                            </select>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                            <textarea id="post-content-editor" class="w-full h-[500px]">${post?.content || ''}</textarea>
+                        <div>
+                            <span class="text-xs text-slate-400 mb-1 block">Category</span>
+                            <select id="post-category" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
+                                ${['AI Tools','SEO','YouTube','Instagram','TikTok','Marketing','Updates'].map(c => `<option ${post?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                            </select>
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm sticky top-0">
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publishing</label>
-                            <select id="post-status" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm mb-3">
-                                <option value="true" ${post?.published !== false ? 'selected' : ''}>Published</option>
-                                <option value="false" ${post?.published === false ? 'selected' : ''}>Draft</option>
-                            </select>
-                            <button id="save-post-btn" class="w-full py-2.5 bg-brand-600 text-white rounded-lg font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/30 mb-3">
-                                ${id ? 'Update Post' : 'Publish Post'}
-                            </button>
-                            <p class="text-xs text-center text-slate-400">Autosaves are off</p>
-                        </div>
-
-                        <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Author</label>
-                                <select id="post-author" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50">
-                                    ${authorOptions || defaultOption}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Category</label>
-                                <select id="post-category" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50">
-                                    ${['AI Tools','SEO','YouTube','Instagram','TikTok','Marketing','Updates'].map(c => `<option ${post?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Featured Image URL</label>
-                                <input type="text" id="post-image" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm mb-2" placeholder="https://..." value="${post?.image || ''}">
-                                <div class="aspect-video bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
-                                    <img id="preview-image" src="${post?.image || ''}" class="w-full h-full object-cover ${post?.image ? '' : 'hidden'}" onerror="this.classList.add('hidden')">
-                                    <span class="text-slate-400 text-xs ${post?.image ? 'hidden' : ''}">Image Preview</span>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Featured Image</label>
+                        <div class="space-y-2">
+                            <input type="text" id="post-image" class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Paste Image URL..." value="${post?.image || ''}">
+                            <div class="aspect-video bg-slate-50 rounded-lg border border-slate-200 border-dashed flex items-center justify-center overflow-hidden relative group">
+                                <img id="preview-image" src="${post?.image || ''}" class="w-full h-full object-cover absolute inset-0 ${post?.image ? '' : 'hidden'}">
+                                <div class="text-center p-4 ${post?.image ? 'hidden' : ''}" id="preview-placeholder">
+                                    <i data-lucide="image" class="w-6 h-6 text-slate-300 mx-auto mb-1"></i>
+                                    <span class="text-[10px] text-slate-400">Preview</span>
                                 </div>
                             </div>
                         </div>
@@ -306,52 +287,77 @@ async function openModal(id = null) {
     `;
 
     modal.classList.remove('hidden');
-    setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
+    // Animate In
+    setTimeout(() => { 
+        content.classList.remove('opacity-0', 'scale-95'); 
+        content.classList.add('opacity-100', 'scale-100'); 
+    }, 50);
+
     if(window.lucide) window.lucide.createIcons();
+    initTinyMCE(); // Init Editor
 
-    // Initialize TinyMCE
-    initTinyMCE();
-
+    // Event Handlers
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('save-post-btn').onclick = savePost;
 
-    // Image Preview Logic
+    // Status Toggle Logic
+    const btnPub = document.getElementById('btn-status-pub');
+    const btnDraft = document.getElementById('btn-status-draft');
+    const inputStatus = document.getElementById('post-status');
+    
+    const updateStatusUI = (isPub) => {
+        if(isPub) {
+            btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-emerald-600";
+            btnDraft.className = "flex-1 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-slate-600";
+            inputStatus.value = "true";
+        } else {
+            btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-slate-600";
+            btnDraft.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-amber-600";
+            inputStatus.value = "false";
+        }
+    };
+    // Init status UI
+    updateStatusUI(inputStatus.value === 'true');
+    btnPub.onclick = () => updateStatusUI(true);
+    btnDraft.onclick = () => updateStatusUI(false);
+
+    // Image Preview
     document.getElementById('post-image').addEventListener('input', (e) => {
         const img = document.getElementById('preview-image');
-        const span = img.nextElementSibling;
+        const placeholder = document.getElementById('preview-placeholder');
         if(e.target.value) {
             img.src = e.target.value;
             img.classList.remove('hidden');
-            span.classList.add('hidden');
+            placeholder.classList.add('hidden');
         } else {
             img.classList.add('hidden');
-            span.classList.remove('hidden');
+            placeholder.classList.remove('hidden');
         }
     });
 }
 
 function initTinyMCE() {
-    // Remove existing if any
-    if (tinymce.get('post-content-editor')) {
-        tinymce.get('post-content-editor').remove();
-    }
+    if (tinymce.get('post-content-editor')) tinymce.get('post-content-editor').remove();
 
     tinymce.init({
         selector: '#post-content-editor',
-        height: 500,
-        menubar: true,
+        height: "100%", // Full Height of container
+        menubar: false, // Cleaner look
+        statusbar: false,
         plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
             'insertdatetime', 'media', 'table', 'help', 'wordcount'
         ],
-        toolbar: 'undo redo | blocks | ' +
-            'bold italic backcolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | code | image media link',
-        content_style: 'body { font-family:Inter,sans-serif; font-size:16px; color:#334155 }',
+        toolbar: 'undo redo | blocks | bold italic forecolor | ' +
+            'alignleft aligncenter alignright | bullist numlist outdent indent | ' +
+            'link image media table | code fullscreen',
+        content_style: `
+            body { font-family:Inter,sans-serif; font-size:16px; color:#334155; max-width: 800px; margin: 0 auto; padding: 20px; } 
+            img { max-width: 100%; height: auto; border-radius: 8px; }
+        `,
         branding: false,
-        promotion: false // Hides "Upgrade" button
+        resize: false
     });
 }
 
@@ -359,36 +365,37 @@ function closeModal() {
     const modal = document.getElementById('global-modal');
     const content = document.getElementById('global-modal-content');
     
-    // Destroy Editor to prevent leaks
-    if (window.tinymce && tinymce.get('post-content-editor')) {
-        tinymce.get('post-content-editor').remove();
-    }
+    if (window.tinymce && tinymce.get('post-content-editor')) tinymce.get('post-content-editor').remove();
 
-    content.classList.remove('scale-100', 'opacity-100');
-    content.classList.add('scale-95', 'opacity-0');
-    setTimeout(() => modal.classList.add('hidden'), 200);
+    // Animate Out
+    content.classList.remove('opacity-100', 'scale-100');
+    content.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        
+        // RESTORE ORIGINAL CLASSES for other modals
+        if (originalModalClasses) content.className = originalModalClasses;
+        if (originalParentClasses) content.parentElement.className = originalParentClasses;
+    }, 200);
 }
 
 // ==========================================
-// 5. SAVE POST LOGIC
+// 5. SAVE LOGIC
 // ==========================================
 async function savePost() {
     const id = document.getElementById('post-id').value;
     const btn = document.getElementById('save-post-btn');
     const title = document.getElementById('post-title').value;
-    
-    // Get Content from TinyMCE
     const content = tinymce.get('post-content-editor').getContent();
     
-    // Get Author
+    // Author Info
     const authorSelect = document.getElementById('post-author');
     const authorId = authorSelect.value;
     const authorName = authorSelect.options[authorSelect.selectedIndex].text;
 
     let slug = document.getElementById('post-slug').value;
-    if (!slug || slug === 'undefined') {
-        slug = createSlug(title);
-    }
+    if (!slug || slug === 'undefined') slug = createSlug(title);
 
     const data = {
         title: title,
@@ -397,15 +404,17 @@ async function savePost() {
         image: document.getElementById('post-image').value,
         content: content,
         published: document.getElementById('post-status').value === 'true',
-        authorId: authorId, // Save ID for linking
-        author: authorName, // Save Name for quick display
+        authorId: authorId, 
+        author: authorName,
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         updatedAt: serverTimestamp()
     };
 
     if (!title) return alert("Please enter a post title.");
 
-    btn.innerText = "Saving...";
+    // Update Button State
+    const originalBtn = btn.innerHTML;
+    btn.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-2 border-white/50 border-t-white mr-2"></span> Saving...`;
     btn.disabled = true;
 
     try {
@@ -419,10 +428,15 @@ async function savePost() {
         }
         
         await updateSitemap();
-        closeModal();
+        document.getElementById('save-status').innerText = "Saved just now";
+        document.getElementById('save-status').className = "text-xs text-emerald-500 font-bold hidden sm:block mr-2";
+        
+        // Small delay before closing to show success
+        setTimeout(() => closeModal(), 500);
+
     } catch(e) {
         alert("Error saving post: " + e.message);
-        btn.innerText = "Save Post";
+        btn.innerHTML = originalBtn;
         btn.disabled = false;
     }
 }
