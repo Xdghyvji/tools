@@ -1,180 +1,156 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Learn about DigitalServicesHub.online - Our mission is to empower content creators with cutting-edge AI tools for YouTube, Instagram, TikTok, and more.">
-    <title>About Us | DigitalServicesHub.online</title>
-    
-    <!-- Tailwind CSS -->
+    <title>About Us - Meet the Founder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } },
-                    animation: { 'fade-in': 'fadeIn 0.5s ease-out', 'slide-up': 'slideUp 0.5s ease-out' },
-                    keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Custom Scrollbar */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-100 selection:text-brand-900 flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-700">
 
-    <!-- Header Container -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
+    <!-- Shared Header Container -->
+    <div id="header-container"></div>
 
-    <!-- Secondary Tool Nav -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm overflow-hidden h-16 flex items-center">
-        <div class="max-w-7xl mx-auto w-full">
-            <div class="flex items-center overflow-x-auto hide-scrollbar px-4 space-x-4">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
-                </a>
-                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
-                </a>
-                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
-                </a>
-                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
-                </a>
-                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="mail" class="w-4 h-4"></i> Email
-                </a>
-                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-slate-50 text-slate-600 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- HERO SECTION -->
-    <section class="relative pt-48 pb-20 lg:pb-32 overflow-hidden bg-slate-900 text-white">
-        <div class="absolute inset-0 bg-[radial-gradient(rgba(59,130,246,0.1)_1px,transparent_1px)] [background-size:20px_20px]"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center animate-slide-up">
-            <span class="inline-block py-1 px-3 rounded-full bg-slate-800 border border-slate-700 text-brand-400 text-sm font-semibold mb-6">
-                Our Story
-            </span>
-            <h1 class="text-4xl lg:text-6xl font-bold font-heading mb-6 leading-tight">
-                Democratizing AI for <br> <span class="text-brand-500">Creators Everywhere</span>
+    <!-- Hero Section -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-4">
+                Empowering Creators with <span class="gradient-text">Digital Excellence</span>
             </h1>
-            <p class="text-lg lg:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                We believe that high-quality content creation shouldn't be limited to those with big budgets. DigitalServicesHub is your free, all-in-one AI copilot.
+            <p class="max-w-2xl mx-auto text-xl text-slate-500">
+                Our mission is to simplify your digital workflow through innovative, accessible, and powerful web tools.
             </p>
         </div>
-    </section>
+    </header>
 
-    <!-- OUR MISSION -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute -inset-4 bg-brand-100 rounded-xl transform -rotate-2"></div>
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" alt="Team working together" class="relative rounded-lg shadow-xl border border-slate-200">
-                </div>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Authority & Transparency Section (Crucial for AdSense) -->
+        <section class="mb-20">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-6">We Build Tools That Solve Real Problems</h2>
-                    <p class="text-slate-600 mb-6 leading-relaxed">
-                        DigitalServicesHub started with a simple observation: creators were spending more time optimizing metadata (titles, tags, SEO) than actually creating content. 
-                    </p>
-                    <p class="text-slate-600 mb-8 leading-relaxed">
-                        We set out to change that. By leveraging the latest advancements in Large Language Models (LLMs), we built a suite of tools that automate the tedious parts of the creative process.
-                    </p>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Who We Are</h2>
+                    <div class="prose prose-lg text-slate-600">
+                        <p class="mb-4">
+                            Welcome to our platform, a premier destination for digital utility tools and insightful tech content. We believe in the power of automation and efficiency.
+                        </p>
+                        <p class="mb-4">
+                            Transparency is our core value. Unlike faceless corporations, this platform is the result of dedicated craftsmanship and individual expertise. Every tool, line of code, and blog post is curated to ensure accuracy, safety, and utility for our users.
+                        </p>
+                        <p>
+                            We adhere to strict editorial standards and privacy policies to ensure a safe environment for all our visitors.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 rounded-2xl p-8 border border-blue-100">
+                    <h3 class="text-xl font-bold text-blue-900 mb-4">Why Trust Us?</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>Expertly Developed:</strong> Built with modern web standards for speed and security.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>User-Centric:</strong> Designed based on real user feedback and needs.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>Transparent Operations:</strong> Clear ownership and open communication channels.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Founder Profile Section -->
+        <section class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+            <div class="md:flex">
+                <!-- Image Container -->
+                <div class="md:w-2/5 bg-slate-100 relative group">
+                    <img 
+                        src="mubashirarham.png" 
+                        onerror="this.src='https://ui-avatars.com/api/?name=Mubashir+Arham&background=0D8ABC&color=fff&size=512'"
+                        alt="Mubashir Arham - Founder & CEO" 
+                        class="w-full h-full object-cover object-center min-h-[400px]"
+                    >
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        <p class="text-white font-medium">Full Stack Developer & Entrepreneur</p>
+                    </div>
+                </div>
+
+                <!-- Content Container -->
+                <div class="md:w-3/5 p-8 md:p-12 flex flex-col justify-center">
+                    <div class="uppercase tracking-wide text-sm text-blue-600 font-bold mb-2">The Driving Force</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Mubashir Arham</h2>
+                    <p class="text-slate-500 text-lg mb-6">Founder, CEO & Lead Developer</p>
                     
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="border-l-4 border-brand-500 pl-4">
-                            <h4 class="font-bold text-slate-900 text-lg">Innovation</h4>
-                            <p class="text-sm text-slate-500">Constantly updating our models.</p>
-                        </div>
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="font-bold text-slate-900 text-lg">Accessibility</h4>
-                            <p class="text-sm text-slate-500">Tools available to everyone, free.</p>
-                        </div>
+                    <div class="space-y-4 text-slate-600 leading-relaxed mb-8">
+                        <p>
+                            I am an <strong>18-year-old tech entrepreneur and Full-Stack Web Developer</strong> from Pakistan. With a passion for code that began early, I have cultivated a diverse set of multi-digital skills ranging from server-side architecture to authority building and digital marketing.
+                        </p>
+                        <p>
+                            As the sole architect behind this platform, I wear many hats: <strong>CEO, Lead Developer, and Chief Editor</strong>. This holistic approach allows me to maintain strict quality control over every tool and article published here. My goal is to bridge the gap between complex technology and everyday user needs.
+                        </p>
+                        <p>
+                            My journey is defined by a relentless pursuit of innovation and a commitment to providing value to the global digital community.
+                        </p>
+                    </div>
+
+                    <!-- Skills Tags -->
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">Web Development</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">Entrepreneurship</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">SEO Authority</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">Content Strategy</span>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="flex space-x-4">
+                        <a href="https://twitter.com" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-800 hover:text-white transition duration-300">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://github.com/Xdghyvji" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-black hover:text-white transition duration-300">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="mailto:your-email@example.com" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-red-500 hover:text-white transition duration-300">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- VALUES SECTION -->
-    <section class="py-20 bg-slate-50 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">Our Core Values</h2>
-                <p class="text-slate-600">These principles guide every tool we build.</p>
-            </div>
+    </main>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center">
-                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mx-auto mb-6">
-                        <i data-lucide="shield-check" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Privacy First</h3>
-                    <p class="text-slate-600">We don't store your data unnecessarily. Your inputs are processed securely.</p>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center">
-                    <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 mx-auto mb-6">
-                        <i data-lucide="zap" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Speed Matters</h3>
-                    <p class="text-slate-600">Creativity flows fast. Our tools are optimized to deliver results in milliseconds.</p>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-all text-center">
-                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6">
-                        <i data-lucide="users" class="w-7 h-7"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Community Driven</h3>
-                    <p class="text-slate-600">We build what you ask for. Our roadmap is defined by user feedback.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Shared Footer Container -->
+    <div id="footer-container"></div>
 
-    <!-- CTA SECTION -->
-    <section class="py-20 bg-slate-900 text-white text-center">
-        <div class="max-w-4xl mx-auto px-4">
-            <h2 class="text-3xl lg:text-4xl font-bold font-heading mb-6">Ready to Transform Your Content?</h2>
-            <p class="text-slate-400 text-lg mb-8">Join thousands of creators using DigitalServicesHub to grow faster.</p>
-            <a href="index.html#tools" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg shadow-brand-600/20">
-                Explore Tools <i data-lucide="arrow-right" class="w-5 h-5"></i>
-            </a>
-        </div>
-    </section>
-
-    <!-- Footer Injection Point -->
-    <footer id="main-footer"></footer>
-
-    <script type="module">
-        import { loadHeader, loadFooter } from './assets/js/shared.js';
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadHeader('about');
-            loadFooter();
-            if(window.lucide) window.lucide.createIcons();
+    <!-- Scripts for Shared Header/Footer -->
+    <script src="assets/js/shared.js"></script>
+    <script>
+        // Ensure shared components initialize after the script loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initSharedComponents === 'function') {
+                initSharedComponents();
+            }
         });
     </script>
+
 </body>
 </html>
