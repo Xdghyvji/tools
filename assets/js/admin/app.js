@@ -1,202 +1,139 @@
-import { auth, onAuthStateChanged } from '../../js/shared.js';
-import { signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { auth, db } from '../../js/shared.js';
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// Import View Modules
-import * as DashboardView from './dashboard.js';
-import * as AnalyticsView from './analytics.js'; // <--- NEW ANALYTICS MODULE
-import * as PostsView from './posts.js';
-import * as MessagesView from './messages.js'; 
-import * as SettingsView from './settings.js'; 
-import * as PromptsView from './prompts.js';   
-import * as UsersView from './users.js';       
-import * as AutoBloggerView from './auto-blogger.js'; 
+// Import Modules
+import * as Dashboard from './dashboard.js';
+import * as Analytics from './analytics.js';
+import * as Posts from './posts.js';
+import * as Messages from './messages.js';
+import * as Prompts from './prompts.js';
+import * as Users from './users.js';
+import * as Settings from './settings.js';
+import * as AutoBlogger from './auto-blogger.js';
+import * as Authors from './authors.js';
 
-// Route Configuration
-// Maps a string ID (from the sidebar) to a specific JS module
 const routes = {
-    'dashboard': DashboardView,
-    'analytics': AnalyticsView, // <--- NEW ROUTE REGISTERED
-    'posts': PostsView,
-    'inbox': MessagesView,      
-    'subscribers': MessagesView,
-    'comments': MessagesView,   
-    'settings': SettingsView,
-    'prompts': PromptsView,     
-    'keys': SettingsView,       
-    'banners': SettingsView,    
-    'logs': SettingsView,       
-    'users': UsersView,         
-    'auto-blogger': AutoBloggerView 
+    'dashboard': Dashboard,
+    'analytics': Analytics,
+    'posts': Posts,
+    'messages': Messages,
+    'prompts': Prompts,
+    'users': Users,
+    'settings': Settings,
+    'auto-blogger': AutoBlogger,
+    'authors': Authors
 };
 
-let currentSubscription = null; // Stores the unsubscribe function for realtime listeners
+let currentUser = null;
 
-// Initialize App
-document.addEventListener("DOMContentLoaded", () => {
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
     initAuth();
-    setupSidebar();
 });
 
-/**
- * 1. Authentication & Initial Load
- * Checks if user is logged in via Firebase. If yes, loads dashboard. If no, redirects to login.
- */
 function initAuth() {
-    const statusBadge = document.getElementById('db-status');
-    
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            // Admin UI Updates
-            if (statusBadge) {
-                statusBadge.innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500"></div> Online`;
-                statusBadge.className = "flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-200";
+            currentUser = user;
+            // Check Admin Role
+            /* // Optional: Strict Admin Check
+            const token = await user.getIdTokenResult();
+            if(!token.claims.admin) {
+                window.location.href = '/login.html';
+                return;
             }
-            const emailEl = document.getElementById('admin-email');
-            if(emailEl) emailEl.innerText = user.email || "Admin";
-            
-            // Load Dashboard by default if no specific view is requested
-            loadView('dashboard');
+            */
+            initRouter();
+            renderNavigation();
+            document.getElementById('admin-email').innerText = user.email;
         } else {
-            // Redirect if not logged in
-            window.location.href = "../login.html";
+            window.location.href = '/login.html';
+        }
+    });
+}
+
+function initRouter() {
+    // Handle Navigation Clicks
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('[data-link]');
+        if (link) {
+            e.preventDefault();
+            const view = link.dataset.link;
+            loadView(view);
         }
     });
 
-    // Logout Handler
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = '../login.html');
+    // Handle Logout
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+        signOut(auth).then(() => window.location.href = '/login.html');
+    });
+
+    // Mobile Menu Toggle
+    const btnMenu = document.getElementById('btn-menu');
+    const sidebar = document.getElementById('sidebar');
+    if(btnMenu && sidebar) {
+        btnMenu.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
         });
     }
+
+    // Load Initial View
+    const hash = window.location.hash.substring(1) || 'dashboard';
+    loadView(hash);
 }
 
-/**
- * 2. Dynamic View Loader (Router)
- * This function swaps the content of the main area without refreshing.
- */
-window.loadView = async function(viewName, subType = null) {
-    const mainView = document.getElementById('main-view');
+// Global scope for onclick handlers
+window.loadView = async function(viewName) {
+    const content = document.getElementById('main-content');
     const module = routes[viewName];
 
-    if (!module) {
-        console.error(`Route not found: ${viewName}`);
-        mainView.innerHTML = `<div class="p-8 text-center text-red-500">Error: Module ${viewName} not found.</div>`;
-        return;
+    if (module) {
+        // Update URL
+        window.location.hash = viewName;
+
+        // Update Active Nav State
+        document.querySelectorAll('[data-link]').forEach(el => {
+            if(el.dataset.link === viewName) {
+                el.classList.add('bg-slate-800', 'text-white');
+                el.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            } else {
+                el.classList.remove('bg-slate-800', 'text-white');
+                el.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            }
+        });
+
+        // Render & Init Module
+        content.innerHTML = module.render(viewName);
+        if (module.init) await module.init();
+        
+        // Initialize Icons
+        if(window.lucide) window.lucide.createIcons();
+    } else {
+        content.innerHTML = `<div class="p-10 text-center text-slate-400">Module not found: ${viewName}</div>`;
     }
-
-    // A. Cleanup: Unsubscribe from previous Firestore listeners
-    try {
-        if (currentSubscription && typeof currentSubscription === 'function') {
-            currentSubscription(); 
-            currentSubscription = null;
-        }
-    } catch (e) { 
-        console.warn("Cleanup warning:", e); 
-    }
-
-    // B. Render: Inject HTML into the main container
-    const targetType = subType || viewName;
-    
-    try {
-        mainView.innerHTML = module.render(targetType);
-    } catch (e) {
-        console.error(`Render Error in ${viewName}:`, e);
-        mainView.innerHTML = `<div class="p-8 text-center text-red-500">Error rendering view: ${e.message}</div>`;
-        return;
-    }
-
-    // C. UI: Update Sidebar Active State
-    updateSidebarActiveState(targetType);
-
-    // D. Logic: Initialize module logic (attach listeners, fetch data)
-    if (module.init) {
-        try {
-            currentSubscription = await module.init(targetType);
-        } catch (error) {
-            console.error(`Error initializing ${viewName}:`, error);
-            mainView.innerHTML += `<div class="p-4 bg-red-50 text-red-600 text-sm rounded-lg mt-4 border border-red-100">
-                <strong>Error loading data:</strong> ${error.message}. <br>
-                <span class="text-xs opacity-75">Check your browser console.</span>
-            </div>`;
-        }
-    }
-
-    // E. Icons: Re-scan DOM for Lucide icons
-    if(window.lucide) window.lucide.createIcons();
 };
 
-/**
- * 3. Sidebar Generator
- * Renders the navigation menu dynamically.
- */
-function setupSidebar() {
-    const nav = document.getElementById('sidebar-nav');
-    if (!nav) return;
-    
-    // Menu Configuration
-    const menuItems = [
+function renderNavigation() {
+    const nav = document.getElementById('admin-nav');
+    if(!nav) return;
+
+    const items = [
         { id: 'dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
-        { id: 'analytics', icon: 'bar-chart-2', label: 'Analytics' }, // <--- NEW ITEM
-        { id: 'users', icon: 'users', label: 'User Manager' }, 
-        { id: 'inbox', icon: 'inbox', label: 'Inbox', badge: 'inbox-badge' },
-        { id: 'subscribers', icon: 'mail', label: 'Subscribers' },
-        { divider: true },
-        { id: 'banners', icon: 'megaphone', label: 'Ad Banners' },
+        { id: 'analytics', icon: 'bar-chart-2', label: 'Analytics' },
+        { id: 'auto-blogger', icon: 'sparkles', label: 'Auto Blogger' },
         { id: 'posts', icon: 'file-text', label: 'Blog Posts' },
-        { id: 'auto-blogger', icon: 'zap', label: 'Auto Blogger', badge: 'pro-badge' },
+        { id: 'authors', icon: 'users', label: 'Authors' },
         { id: 'prompts', icon: 'terminal', label: 'AI Prompts' },
-        { id: 'comments', icon: 'message-square', label: 'Comments', badge: 'comment-badge' },
-        { id: 'keys', icon: 'key', label: 'API Keys' },
-        { id: 'logs', icon: 'activity', label: 'Audit Logs' },
-        { id: 'settings', icon: 'settings', label: 'Settings' },
+        { id: 'messages', icon: 'message-square', label: 'Messages' },
+        { id: 'users', icon: 'users', label: 'Users' },
+        { id: 'settings', icon: 'settings', label: 'Settings' }
     ];
 
-    // Render Menu HTML
-    nav.innerHTML = menuItems.map(item => {
-        if(item.divider) return `<div class="my-2 border-t border-slate-800 mx-2"></div>`;
-        return `
-            <button onclick="loadView('${item.id}')" id="nav-${item.id}" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 group">
-                <i data-lucide="${item.icon}" class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors"></i> 
-                ${item.label}
-                ${item.badge === 'pro-badge' 
-                    ? `<span class="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">PRO</span>` 
-                    : item.badge 
-                        ? `<span class="ml-auto bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden shadow-sm" id="${item.badge}">0</span>` 
-                        : ''}
-            </button>
-        `;
-    }).join('');
-
-    // Mobile Sidebar Toggle Logic
-    const toggleBtn = document.getElementById('toggle-sidebar');
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('-translate-x-full');
-            sb.classList.toggle('absolute');
-            sb.classList.toggle('h-full');
-        });
-    }
-}
-
-/**
- * 4. UI Helper: Active State
- * Highlights the current tab in the sidebar.
- */
-function updateSidebarActiveState(id) {
-    document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.classList.remove('bg-slate-800', 'text-white', 'shadow-md');
-        btn.classList.add('text-slate-300');
-        const icon = btn.querySelector('i');
-        if(icon) icon.classList.add('text-slate-400');
-    });
-    
-    const active = document.getElementById(`nav-${id}`);
-    if(active) {
-        active.classList.add('bg-slate-800', 'text-white', 'shadow-md');
-        active.classList.remove('text-slate-300');
-        const icon = active.querySelector('i');
-        if(icon) icon.classList.remove('text-slate-400');
-    }
+    nav.innerHTML = items.map(item => `
+        <a href="#${item.id}" data-link="${item.id}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+            <i data-lucide="${item.icon}" class="w-5 h-5 group-hover:scale-110 transition-transform pointer-events-none"></i>
+            <span class="font-medium pointer-events-none">${item.label}</span>
+        </a>
+    `).join('');
 }
