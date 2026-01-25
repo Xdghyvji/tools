@@ -3,134 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSH Admin Panel | DigitalServicesHub</title>
+    <title>Admin Dashboard | DigitalServicesHub</title>
     
-    <!-- Core Dependencies -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Admin Styles -->
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="../assets/css/admin.css">
-    
-    <!-- Config -->
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        admin: { 50: '#f8fafc', 100: '#f1f5f9', 800: '#1e293b', 900: '#0f172a' },
-                        brand: { 500: '#3b82f6', 600: '#2563eb' }
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 flex h-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
 
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col h-full transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative z-30" id="sidebar">
-        <!-- Logo Area -->
+    <!-- SIDEBAR (Static Shell) -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 transition-all duration-300 z-20" id="sidebar">
         <div class="h-16 flex items-center px-6 border-b border-slate-800">
-            <div class="flex items-center gap-2 font-bold text-white text-xl">
-                <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">D</div>
-                <span>Admin</span>
+            <div class="flex items-center gap-2">
+                <div class="bg-brand-600 p-1.5 rounded text-white"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                <span class="text-lg font-bold font-heading tracking-tight">DSH Admin</span>
             </div>
-            <button class="md:hidden ml-auto text-slate-400" id="close-sidebar"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3">
-            <div class="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Main</div>
-            <button onclick="router.navigate('dashboard')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors active">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
-            </button>
-            <button onclick="router.navigate('analytics')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="bar-chart-2" class="w-5 h-5"></i> Analytics
-            </button>
-            <button onclick="router.navigate('messages')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors relative">
-                <i data-lucide="message-square" class="w-5 h-5"></i> Messages
-                <span id="nav-msg-badge" class="hidden absolute right-3 top-2.5 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <button onclick="router.navigate('subscribers')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="mail" class="w-5 h-5"></i> Subscribers
-            </button>
-
-            <div class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Content</div>
-            <button onclick="router.navigate('posts')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="file-text" class="w-5 h-5"></i> Blog Posts
-            </button>
-            <button onclick="router.navigate('comments')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="message-circle" class="w-5 h-5"></i> Comments
-            </button>
-            <button onclick="router.navigate('auto-blogger')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i> Auto-Blogger
-            </button>
-            <button onclick="router.navigate('prompts')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="terminal" class="w-5 h-5"></i> AI Prompts
-            </button>
-
-            <div class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">System</div>
-            <button onclick="router.navigate('users')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="users" class="w-5 h-5"></i> Users
-            </button>
-            <button onclick="router.navigate('api-keys')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="key" class="w-5 h-5"></i> API Keys
-            </button>
-            <button onclick="router.navigate('settings')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="settings" class="w-5 h-5"></i> Settings
-            </button>
-            <button onclick="router.navigate('profile')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="user-circle" class="w-5 h-5"></i> Blog Profile
-            </button>
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="sidebar-nav">
+            <!-- Nav items injected by app.js -->
         </nav>
 
-        <!-- User/Logout -->
         <div class="p-4 border-t border-slate-800">
-            <button id="logout-btn" class="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+            <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i> Sign Out
             </button>
         </div>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50 relative">
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
         
-        <!-- Header -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-20">
-            <div class="flex items-center gap-4">
-                <button id="open-sidebar" class="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg"><i data-lucide="menu" class="w-6 h-6"></i></button>
-                <h1 id="page-title" class="text-xl font-bold text-slate-800">Dashboard</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <!-- Notifications (Placeholder) -->
-                <div class="relative">
-                    <button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors relative">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
+        <!-- Top Header -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 lg:px-8 z-10">
+            <button id="toggle-sidebar" class="lg:hidden text-slate-500 hover:text-slate-700">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+            <div class="flex items-center gap-4 ml-auto">
+                <div id="db-status" class="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-xs font-medium border border-yellow-200">
+                    <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div> Auth Check...
                 </div>
-                <div class="h-8 w-8 bg-brand-100 rounded-full flex items-center justify-center text-brand-600 font-bold border border-brand-200">
-                    A
+                <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-900" id="admin-email">Loading...</p>
+                        <p class="text-xs text-slate-500">Super Admin</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold">A</div>
                 </div>
             </div>
         </header>
 
-        <!-- Dynamic Content Area -->
-        <div id="app-content" class="flex-1 overflow-y-auto p-6 scroll-smooth">
-            <!-- Content Injected via JS -->
+        <!-- DYNAMIC CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8" id="main-view">
+            <!-- Views will be injected here by JS -->
             <div class="flex items-center justify-center h-full text-slate-400">
-                <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
+                <div class="loader mr-2"></div> Loading Dashboard...
             </div>
         </div>
-
     </main>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- GLOBAL MODAL CONTAINER (Reused by views) -->
+    <div id="global-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" id="modal-backdrop"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all scale-95 opacity-0" id="global-modal-content">
+                <!-- Modal Content Injected Here -->
+            </div>
+        </div>
+    </div>
 
-    <!-- Scripts -->
+    <!-- Main Logic -->
     <script type="module" src="../assets/js/admin/app.js"></script>
 </body>
 </html>
