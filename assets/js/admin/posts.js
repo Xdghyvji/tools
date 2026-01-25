@@ -39,7 +39,7 @@ export function render() {
 
 let postsData = [];
 let authorsList = [];
-let originalModalClasses = ""; // Store default modal classes to restore later
+let originalModalClasses = ""; 
 let originalParentClasses = "";
 
 // ==========================================
@@ -53,12 +53,14 @@ export async function init() {
         const sitemapBtn = document.getElementById('update-sitemap-btn');
         if (sitemapBtn) sitemapBtn.addEventListener('click', () => updateSitemap(true));
         
+        // Fetch authors immediately so they are ready for the modal
         await fetchAuthors();
 
     } catch (e) {
         console.error("Error attaching listeners:", e);
     }
 
+    // Real-time Posts Listener (Fixed Path)
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
@@ -71,7 +73,9 @@ export async function init() {
         }
 
         tbody.innerHTML = postsData.map(p => {
+            // Find author name from ID
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
+            
             return `
             <tr class="hover:bg-slate-50 group transition-colors">
                 <td class="px-6 py-4 font-medium text-slate-900">
@@ -114,9 +118,11 @@ export async function init() {
 
 async function fetchAuthors() {
     try {
-        const snap = await getDocs(collection(db, 'authors'));
+        // --- FIXED PATH: Use 'artifacts/{appId}/public/data/authors' ---
+        const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'authors'));
         authorsList = [];
         snap.forEach(doc => authorsList.push({ id: doc.id, ...doc.data() }));
+        console.log("Authors Loaded:", authorsList.length);
     } catch (e) {
         console.warn("Could not fetch authors:", e);
     }
@@ -187,23 +193,28 @@ async function openModal(id = null) {
     const modal = document.getElementById('global-modal');
     const content = document.getElementById('global-modal-content');
     
-    // 1. SAVE ORIGINAL STATE (To restore on close)
+    // Save state
     if (!originalModalClasses) originalModalClasses = content.className;
     if (!originalParentClasses) originalParentClasses = content.parentElement.className;
 
-    // 2. APPLY FULL SCREEN STYLES
-    // Remove padding from parent
+    // Apply Full Screen
     content.parentElement.className = "absolute inset-0 flex items-center justify-center p-0"; 
-    // Make content full width/height/rounded-0
     content.className = "bg-white w-full h-full shadow-none rounded-none overflow-hidden flex flex-col transform transition-all opacity-0 scale-95";
 
     const post = id ? postsData.find(p => p.id === id) : null;
     await loadTinyMCE();
 
-    const authorOptions = authorsList.map(a => `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`).join('');
+    // Re-fetch authors to ensure list is fresh
+    if(authorsList.length === 0) await fetchAuthors();
+
+    // Build Dropdown
+    const authorOptions = authorsList.map(a => 
+        `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`
+    ).join('');
+    
+    // Admin Fallback
     const defaultOption = `<option value="admin" ${!post?.authorId ? 'selected' : ''}>Admin (Me)</option>`;
 
-    // 3. RENDER FULL PAGE LAYOUT
     content.innerHTML = `
         <div class="h-16 px-6 border-b border-slate-200 flex justify-between items-center bg-white shrink-0 z-20">
             <div class="flex items-center gap-4">
@@ -225,14 +236,12 @@ async function openModal(id = null) {
         </div>
         
         <div class="flex-1 flex overflow-hidden bg-slate-50">
-            
             <div class="flex-1 flex flex-col h-full overflow-hidden relative">
                 <div class="p-6 pb-2 shrink-0 bg-white">
                     <input type="text" id="post-title" class="w-full text-3xl font-bold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900" placeholder="Type your title here..." value="${post?.title || ''}">
                     <input type="hidden" id="post-id" value="${id || ''}">
                     <input type="hidden" id="post-slug" value="${post?.slug || ''}">
                 </div>
-
                 <div class="flex-1 overflow-hidden bg-white relative">
                     <textarea id="post-content-editor" class="w-full h-full border-0 outline-none">${post?.content || ''}</textarea>
                 </div>
@@ -240,7 +249,6 @@ async function openModal(id = null) {
 
             <div class="w-80 bg-white border-l border-slate-200 overflow-y-auto shrink-0 z-10 hidden lg:block">
                 <div class="p-5 space-y-6">
-                    
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publish Status</label>
                         <div class="bg-slate-50 p-1 rounded-lg border border-slate-200 flex">
@@ -252,14 +260,12 @@ async function openModal(id = null) {
 
                     <div class="space-y-3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Settings</label>
-                        
                         <div>
                             <span class="text-xs text-slate-400 mb-1 block">Author</span>
                             <select id="post-author" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
                                 ${authorOptions || defaultOption}
                             </select>
                         </div>
-
                         <div>
                             <span class="text-xs text-slate-400 mb-1 block">Category</span>
                             <select id="post-category" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
@@ -287,24 +293,21 @@ async function openModal(id = null) {
     `;
 
     modal.classList.remove('hidden');
-    // Animate In
     setTimeout(() => { 
         content.classList.remove('opacity-0', 'scale-95'); 
         content.classList.add('opacity-100', 'scale-100'); 
     }, 50);
 
     if(window.lucide) window.lucide.createIcons();
-    initTinyMCE(); // Init Editor
+    initTinyMCE(); 
 
-    // Event Handlers
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('save-post-btn').onclick = savePost;
 
-    // Status Toggle Logic
+    // Status UI
     const btnPub = document.getElementById('btn-status-pub');
     const btnDraft = document.getElementById('btn-status-draft');
     const inputStatus = document.getElementById('post-status');
-    
     const updateStatusUI = (isPub) => {
         if(isPub) {
             btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-emerald-600";
@@ -316,7 +319,6 @@ async function openModal(id = null) {
             inputStatus.value = "false";
         }
     };
-    // Init status UI
     updateStatusUI(inputStatus.value === 'true');
     btnPub.onclick = () => updateStatusUI(true);
     btnDraft.onclick = () => updateStatusUI(false);
@@ -341,8 +343,8 @@ function initTinyMCE() {
 
     tinymce.init({
         selector: '#post-content-editor',
-        height: "100%", // Full Height of container
-        menubar: false, // Cleaner look
+        height: "100%", 
+        menubar: false,
         statusbar: false,
         plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
@@ -352,10 +354,7 @@ function initTinyMCE() {
         toolbar: 'undo redo | blocks | bold italic forecolor | ' +
             'alignleft aligncenter alignright | bullist numlist outdent indent | ' +
             'link image media table | code fullscreen',
-        content_style: `
-            body { font-family:Inter,sans-serif; font-size:16px; color:#334155; max-width: 800px; margin: 0 auto; padding: 20px; } 
-            img { max-width: 100%; height: auto; border-radius: 8px; }
-        `,
+        content_style: `body { font-family:Inter,sans-serif; font-size:16px; color:#334155; max-width: 800px; margin: 0 auto; padding: 20px; } img { max-width: 100%; height: auto; border-radius: 8px; }`,
         branding: false,
         resize: false
     });
@@ -367,14 +366,11 @@ function closeModal() {
     
     if (window.tinymce && tinymce.get('post-content-editor')) tinymce.get('post-content-editor').remove();
 
-    // Animate Out
     content.classList.remove('opacity-100', 'scale-100');
     content.classList.add('opacity-0', 'scale-95');
 
     setTimeout(() => {
         modal.classList.add('hidden');
-        
-        // RESTORE ORIGINAL CLASSES for other modals
         if (originalModalClasses) content.className = originalModalClasses;
         if (originalParentClasses) content.parentElement.className = originalParentClasses;
     }, 200);
@@ -389,7 +385,6 @@ async function savePost() {
     const title = document.getElementById('post-title').value;
     const content = tinymce.get('post-content-editor').getContent();
     
-    // Author Info
     const authorSelect = document.getElementById('post-author');
     const authorId = authorSelect.value;
     const authorName = authorSelect.options[authorSelect.selectedIndex].text;
@@ -412,7 +407,6 @@ async function savePost() {
 
     if (!title) return alert("Please enter a post title.");
 
-    // Update Button State
     const originalBtn = btn.innerHTML;
     btn.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-2 border-white/50 border-t-white mr-2"></span> Saving...`;
     btn.disabled = true;
@@ -431,7 +425,6 @@ async function savePost() {
         document.getElementById('save-status').innerText = "Saved just now";
         document.getElementById('save-status').className = "text-xs text-emerald-500 font-bold hidden sm:block mr-2";
         
-        // Small delay before closing to show success
         setTimeout(() => closeModal(), 500);
 
     } catch(e) {
