@@ -3,166 +3,218 @@ import { collection, query, orderBy, limit, onSnapshot } from "https://www.gstat
 
 export function render() {
     return `
-    <div class="animate-fade-in space-y-6 pb-20">
+    <div class="animate-fade-in space-y-8 pb-20">
         
         <!-- 1. HEADER & UTILITIES -->
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
-                <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                    Command Center <span class="px-2 py-0.5 rounded text-[10px] bg-green-900/30 text-green-400 border border-green-800 uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Live</span>
+                <h1 class="text-4xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                    Analytics Hub
+                    <span class="px-3 py-1 rounded-full text-[11px] bg-red-100 text-red-600 border border-red-200 uppercase tracking-wider flex items-center gap-1.5 font-bold shadow-sm">
+                        <span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span> Live
+                    </span>
                 </h1>
-                <p class="text-sm text-slate-400">System performance and user growth tracking.</p>
+                <p class="text-lg text-slate-500 mt-2 font-medium">Real-time system insights and growth metrics.</p>
             </div>
-            <div class="flex items-center gap-3 bg-slate-800 p-1.5 rounded-xl border border-slate-700 shadow-sm">
-                <div class="px-3 py-1 border-r border-slate-700">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold">Backend</span>
-                    <div class="flex items-center gap-1 text-xs font-bold text-emerald-500"><i data-lucide="wifi" class="w-3 h-3"></i> Online</div>
+            
+            <!-- Quick Actions Toolbar -->
+            <div class="flex items-center gap-2 bg-white/80 backdrop-blur-xl p-2 rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/40">
+                <div class="px-4 py-2 border-r border-slate-200/60">
+                    <span class="text-[10px] text-slate-500 uppercase font-black tracking-wider">Status</span>
+                    <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-600 mt-0.5">
+                        <i data-lucide="activity" class="w-3.5 h-3.5"></i> Operational
+                    </div>
                 </div>
-                <div class="flex gap-1">
-                    <button onclick="loadView('users')" class="p-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors" title="Manage Users"><i data-lucide="users" class="w-4 h-4"></i></button>
-                    <button onclick="loadView('keys')" class="p-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors" title="Manage Keys"><i data-lucide="key" class="w-4 h-4"></i></button>
-                    <button onclick="loadView('settings')" class="p-2 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors" title="Settings"><i data-lucide="settings" class="w-4 h-4"></i></button>
+                <div class="flex gap-1 pl-2">
+                    <button onclick="loadView('users')" class="p-3 hover:bg-slate-100 rounded-xl text-slate-600 hover:text-slate-900 transition-all duration-200" title="Manage Users">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="loadView('keys')" class="p-3 hover:bg-slate-100 rounded-xl text-slate-600 hover:text-slate-900 transition-all duration-200" title="Manage Keys">
+                        <i data-lucide="key" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="loadView('settings')" class="p-3 hover:bg-slate-100 rounded-xl text-slate-600 hover:text-slate-900 transition-all duration-200" title="Settings">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- 2. KEY METRICS GRID (6 Cards) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Traffic -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="activity" class="w-20 h-20 text-brand-500"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-brand-500/10 text-brand-500 rounded-lg"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></div>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-traffic">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">Total Page Views</p>
-            </div>
-
-            <!-- Generations -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="cpu" class="w-20 h-20 text-purple-500"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-purple-500/10 text-purple-500 rounded-lg"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-generations">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">AI Generations</p>
-            </div>
-
-            <!-- API Health -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="server" class="w-20 h-20 text-slate-400"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-slate-700 text-slate-300 rounded-lg"><i data-lucide="database" class="w-5 h-5"></i></div>
-                    <span class="text-[10px] font-bold text-slate-400 bg-slate-700 px-2 py-0.5 rounded-full" id="stat-keys-status">Checking...</span>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-keys">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">API Keys Active</p>
-            </div>
-
-            <!-- Newsletter Subs -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="mail" class="w-20 h-20 text-green-500"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-green-500/10 text-green-500 rounded-lg"><i data-lucide="mail" class="w-5 h-5"></i></div>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-subscribers">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">Newsletter Subscribers</p>
-            </div>
-
-            <!-- Registered Users -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="users" class="w-20 h-20 text-blue-500"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg"><i data-lucide="user-plus" class="w-5 h-5"></i></div>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-total-users">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">Registered Users</p>
-            </div>
-
-            <!-- VIP Count -->
-            <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700 shadow-sm relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><i data-lucide="crown" class="w-20 h-20 text-amber-500"></i></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-amber-500/10 text-amber-500 rounded-lg"><i data-lucide="crown" class="w-5 h-5"></i></div>
-                    <span class="text-[10px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">Premium</span>
-                </div>
-                <h3 class="text-3xl font-bold text-white tracking-tight" id="stat-vip-count">0</h3>
-                <p class="text-xs text-slate-400 font-medium mt-1">VIP Members</p>
             </div>
         </div>
 
-        <!-- 3. TRAFFIC & AUDIENCE -->
+        <!-- 2. KEY METRICS GRID (High Contrast Light Mode) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Traffic Stats -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-blue-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="bar-chart-2" class="w-32 h-32 text-blue-600"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-blue-100 text-blue-700 rounded-2xl shadow-sm"><i data-lucide="activity" class="w-6 h-6"></i></div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">All Time</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-traffic">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    Total Page Views <i data-lucide="arrow-up-right" class="w-3 h-3 text-green-500"></i>
+                </p>
+            </div>
+
+            <!-- AI Generations -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-purple-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="cpu" class="w-32 h-32 text-purple-600"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-purple-100 text-purple-700 rounded-2xl shadow-sm"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Usage</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-generations">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    AI Content Generated
+                </p>
+            </div>
+
+            <!-- Total Users -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-cyan-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="users" class="w-32 h-32 text-cyan-600"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-cyan-100 text-cyan-700 rounded-2xl shadow-sm"><i data-lucide="user-check" class="w-6 h-6"></i></div>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Community</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-total-users">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    Registered Users
+                </p>
+            </div>
+
+            <!-- API Status -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-orange-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="database" class="w-32 h-32 text-orange-600"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-orange-100 text-orange-700 rounded-2xl shadow-sm"><i data-lucide="server" class="w-6 h-6"></i></div>
+                    <span id="stat-keys-status" class="px-3 py-1 bg-green-100 text-green-700 text-xs font-black uppercase rounded-full">--</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-keys">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    Active API Keys
+                </p>
+            </div>
+
+            <!-- Subscribers -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-pink-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="mail" class="w-32 h-32 text-pink-600"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-pink-100 text-pink-700 rounded-2xl shadow-sm"><i data-lucide="mail-plus" class="w-6 h-6"></i></div>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-subscribers">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    Newsletter Subscribers
+                </p>
+            </div>
+
+            <!-- VIP Members -->
+            <div class="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-amber-500/10 transition-all duration-300">
+                <div class="absolute -right-6 -top-6 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i data-lucide="crown" class="w-32 h-32 text-amber-500"></i>
+                </div>
+                <div class="flex justify-between items-center mb-6 relative z-10">
+                    <div class="p-3 bg-amber-100 text-amber-700 rounded-2xl shadow-sm"><i data-lucide="crown" class="w-6 h-6"></i></div>
+                    <span class="text-xs font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full border border-amber-200">PREMIUM</span>
+                </div>
+                <h3 class="text-5xl font-black text-slate-900 tracking-tighter relative z-10" id="stat-vip-count">0</h3>
+                <p class="text-sm text-slate-600 font-bold mt-2 relative z-10 flex items-center gap-1">
+                    VIP Members
+                </p>
+            </div>
+        </div>
+
+        <!-- 3. DETAILED ANALYTICS (Charts & Lists) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- Main Chart: Traffic Trend -->
-            <div class="lg:col-span-2 bg-slate-800/50 p-6 rounded-xl border border-slate-700 shadow-sm flex flex-col">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-white">Traffic Activity</h3>
-                    <span class="text-xs text-slate-400">Last 24 Activity Points</span>
+            <!-- Traffic Chart -->
+            <div class="lg:col-span-2 bg-white/70 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-xl shadow-slate-200/50 flex flex-col">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">Traffic Velocity</h3>
+                        <p class="text-sm text-slate-500 font-semibold mt-1">Request distribution over time</p>
+                    </div>
+                    <span class="px-4 py-1.5 rounded-xl bg-slate-100 text-xs text-slate-600 font-bold border border-slate-200">Real-time</span>
                 </div>
-                <div class="flex-1 flex items-end gap-1 h-48 border-b border-slate-700 pb-2" id="traffic-chart">
-                    <div class="w-full text-center text-slate-500 text-xs self-center">Collecting traffic data...</div>
+                <div class="flex-1 flex items-end gap-2 h-48 border-b border-slate-200 pb-2" id="traffic-chart">
+                    <div class="w-full text-center text-slate-400 text-sm font-bold animate-pulse py-12">Loading visual data...</div>
                 </div>
             </div>
 
-            <!-- Audience Intelligence -->
-            <div class="lg:col-span-1 bg-slate-800/50 p-6 rounded-xl border border-slate-700 shadow-sm flex flex-col">
-                <h3 class="font-bold text-white mb-4">Audience Health</h3>
+            <!-- Audience Breakdown -->
+            <div class="lg:col-span-1 bg-white/70 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-xl shadow-slate-200/50 flex flex-col">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-amber-100 rounded-xl text-amber-600"><i data-lucide="pie-chart" class="w-5 h-5"></i></div>
+                    <h3 class="text-xl font-black text-slate-900">Audience</h3>
+                </div>
                 
-                <!-- VIP Ratio -->
-                <div class="mb-6">
-                    <div class="flex justify-between text-xs mb-2 font-medium">
-                        <span class="text-slate-400">VIP Conversion Rate</span>
-                        <span class="text-amber-500" id="vip-ratio-text">0%</span>
+                <!-- VIP Ratio Bar -->
+                <div class="mb-10">
+                    <div class="flex justify-between text-sm mb-3 font-bold">
+                        <span class="text-slate-500">Conversion Rate</span>
+                        <span class="text-amber-600" id="vip-ratio-text">0%</span>
                     </div>
-                    <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
-                        <div class="bg-amber-500 h-2 rounded-full transition-all duration-1000" id="vip-ratio-bar" style="width: 0%"></div>
+                    <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden border border-slate-200">
+                        <div class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full rounded-full transition-all duration-1000 relative" id="vip-ratio-bar" style="width: 0%">
+                             <div class="absolute inset-0 bg-white/30 animate-[shimmer_2s_infinite]"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Top Referrers -->
+                <!-- Top Referrers List -->
                 <div class="mt-auto">
-                    <h4 class="text-xs font-bold text-slate-500 uppercase mb-3">Top Sources</h4>
-                    <div class="space-y-3" id="top-referrers">
-                        <p class="text-xs text-slate-500 italic">No data yet.</p>
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-4 tracking-widest border-b border-slate-100 pb-2">Top Referrers</h4>
+                    <div class="space-y-4" id="top-referrers">
+                        <p class="text-xs text-slate-400 italic">No referral data found.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. TOOL STATS & RECENT USERS -->
+        <!-- 4. TOOLS & NEW USERS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <!-- Tool Popularity -->
-            <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-white">Popular Tools</h3>
-                    <span class="text-xs text-slate-400">By Usage Volume</span>
+            <div class="bg-white/70 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-xl shadow-slate-200/50">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                        <i data-lucide="wrench" class="w-5 h-5 text-slate-400"></i> Popular Tools
+                    </h3>
                 </div>
-                <div class="space-y-4" id="tool-bars">
-                    <div class="text-center text-slate-500 text-sm py-10">Loading usage data...</div>
+                <div class="space-y-6" id="tool-bars">
+                    <div class="text-center text-slate-400 text-sm font-bold py-8">Fetching usage statistics...</div>
                 </div>
             </div>
 
-            <!-- Recent Signups -->
-            <div class="bg-slate-800/50 rounded-xl border border-slate-700 shadow-sm overflow-hidden">
-                <div class="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-300 text-sm">New Registrations</h3>
-                    <button onclick="loadView('users')" class="text-xs text-brand-500 font-bold hover:underline">View All</button>
+            <!-- Recent Users -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl border border-white/50 shadow-xl shadow-slate-200/50 overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h3 class="text-xl font-black text-slate-900">New Signups</h3>
+                    <button onclick="loadView('users')" class="text-xs text-blue-600 font-bold bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">View All</button>
                 </div>
-                <div class="divide-y divide-slate-700" id="recent-users-list">
-                    <div class="p-4 text-center text-slate-500 text-xs">No users yet.</div>
+                <div class="divide-y divide-slate-100 overflow-y-auto max-h-[350px] custom-scrollbar" id="recent-users-list">
+                    <div class="p-8 text-center text-slate-400 text-sm font-medium">No recent activity.</div>
                 </div>
             </div>
         </div>
 
-        <!-- 5. ADMIN SCRATCHPAD -->
-        <div class="bg-amber-900/10 p-6 rounded-xl border border-amber-900/30 shadow-sm flex flex-col relative group">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-amber-500 flex items-center gap-2"><i data-lucide="sticky-note" class="w-4 h-4"></i> Admin Scratchpad</h3>
-                <span class="text-[10px] text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" id="note-status">Auto-saved</span>
+        <!-- 5. ADMIN NOTEPAD -->
+        <div class="bg-yellow-50/80 backdrop-blur-sm p-6 rounded-3xl border border-yellow-200/60 shadow-lg relative group transition-all hover:bg-yellow-50">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black text-yellow-800 flex items-center gap-2">
+                    <i data-lucide="sticky-note" class="w-5 h-5"></i> Scratchpad
+                </h3>
+                <span class="text-[10px] text-yellow-700 font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-yellow-200/50 px-2 py-1 rounded" id="note-status">Auto-saved</span>
             </div>
-            <textarea id="admin-notes" class="w-full min-h-[100px] bg-transparent border-0 outline-none text-sm text-amber-200 font-medium resize-none placeholder-amber-500/50" placeholder="Type quick notes, ideas, or todos here..."></textarea>
+            <textarea id="admin-notes" class="w-full min-h-[120px] bg-transparent border-0 outline-none text-sm text-yellow-900 font-bold resize-none placeholder-yellow-800/40 leading-relaxed" placeholder="Write your ideas, tasks, or reminders here..."></textarea>
         </div>
 
     </div>`;
@@ -171,20 +223,19 @@ export function render() {
 export async function init() {
     const unsubs = [];
 
-    // Helper to safely add listeners
     const safeSnapshot = (q, callback) => {
         try {
-            const unsub = onSnapshot(q, callback, (error) => {
-                console.warn("Dashboard Data Error:", error.message);
-            });
-            unsubs.push(unsub);
-        } catch (e) { console.error("Snapshot Init Failed:", e); }
+            unsubs.push(onSnapshot(q, callback, (e) => console.warn("Stream Error:", e.message)));
+        } catch (e) { console.error("Init Failed:", e); }
     };
 
-    // 1. TRAFFIC LOGS
-    safeSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'traffic_logs'), orderBy('timestamp', 'desc'), limit(150)), (snap) => {
-        document.getElementById('stat-traffic').innerText = snap.size + (snap.size === 150 ? '+' : '');
+    // 1. TRAFFIC (Increased limit for 'All Time' feel)
+    safeSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'traffic_logs'), orderBy('timestamp', 'desc'), limit(500)), (snap) => {
+        // Count
+        const total = snap.size;
+        document.getElementById('stat-traffic').innerText = total + (total === 500 ? '+' : '');
         
+        // Process Data for Charts
         const logs = [];
         const refs = {};
         snap.forEach(doc => {
@@ -195,67 +246,90 @@ export async function init() {
             refs[r] = (refs[r] || 0) + 1;
         });
 
-        // Chart
+        // Traffic Chart (Visualizing distribution)
         const chart = document.getElementById('traffic-chart');
         if(logs.length > 0 && chart) {
             chart.innerHTML = '';
-            const chunkSize = Math.ceil(logs.length / 24) || 1;
-            for(let i=0; i<24; i++) {
-                const count = logs.slice(i*chunkSize, (i+1)*chunkSize).length;
-                const h = Math.max(10, (count / chunkSize) * 100);
-                chart.innerHTML += `<div class="flex-1 bg-brand-500/20 hover:bg-brand-500/40 rounded-t-sm transition-all" style="height:${h}%" title="${count} hits"></div>`;
+            const chunks = 24;
+            const chunkSize = Math.ceil(logs.length / chunks) || 1;
+            
+            // Reverse logs to show timeline left-to-right (oldest to newest)
+            const timeData = [...logs].reverse(); 
+            
+            for(let i=0; i<chunks; i++) {
+                // Slice chunks
+                const chunk = timeData.slice(i*chunkSize, (i+1)*chunkSize);
+                const count = chunk.length;
+                // Height percentage logic
+                const h = Math.max(15, (count / chunkSize) * 100);
+                
+                chart.innerHTML += `
+                    <div class="flex-1 bg-blue-100 hover:bg-blue-600 group rounded-t-lg transition-all duration-300 relative" style="height:${Math.min(h, 100)}%">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 font-bold">
+                            ${count} Hits
+                        </div>
+                    </div>`;
             }
         }
 
-        // Referrers
-        const topRefs = Object.entries(refs).sort((a,b) => b[1]-a[1]).slice(0,5);
-        document.getElementById('top-referrers').innerHTML = topRefs.map(([k,v]) => 
-            `<div class="flex justify-between text-xs"><span class="text-slate-300 font-medium truncate max-w-[150px]">${k}</span><span class="text-slate-400 bg-slate-700 px-1.5 rounded border border-slate-600">${v}</span></div>`
-        ).join('');
+        // Top Referrers
+        const topRefs = Object.entries(refs).sort((a,b) => b[1]-a[1]).slice(0, 5);
+        document.getElementById('top-referrers').innerHTML = topRefs.map(([k,v]) => `
+            <div class="flex justify-between items-center text-xs group">
+                <span class="text-slate-700 font-bold truncate max-w-[150px] group-hover:text-blue-600 transition-colors">${k}</span>
+                <span class="text-slate-500 font-mono bg-slate-100 px-2 py-1 rounded-md border border-slate-200 group-hover:bg-white group-hover:shadow-sm">${v}</span>
+            </div>
+        `).join('');
     });
 
-    // 2. TOOL USAGE
-    safeSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'tool_usage_logs'), limit(300)), (snap) => {
-        document.getElementById('stat-generations').innerText = snap.size;
+    // 2. GENERATIONS & TOOLS
+    safeSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'tool_usage_logs'), limit(500)), (snap) => {
+        document.getElementById('stat-generations').innerText = snap.size + (snap.size === 500 ? '+' : '');
+        
         const counts = {};
         snap.forEach(doc => {
-            const t = doc.data().tool?.split('_')[0];
-            if(t) counts[t] = (counts[t]||0)+1;
+            const tool = doc.data().tool?.split('_')[0] || 'Unknown';
+            counts[tool] = (counts[tool] || 0) + 1;
         });
         
-        const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+        const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 5);
         const max = sorted[0]?.[1] || 1;
 
-        document.getElementById('tool-bars').innerHTML = sorted.map(([k,v]) => 
-            `<div class="mb-2">
-                <div class="flex justify-between text-xs mb-1 font-medium"><span class="capitalize text-slate-300">${k}</span><span class="text-slate-500">${v}</span></div>
-                <div class="w-full bg-slate-700 h-1.5 rounded-full"><div class="bg-brand-500 h-1.5 rounded-full" style="width:${(v/max)*100}%"></div></div>
-            </div>`
-        ).join('') || '<div class="text-center text-xs text-slate-500 py-4">No data</div>';
+        document.getElementById('tool-bars').innerHTML = sorted.map(([k,v]) => `
+            <div class="group">
+                <div class="flex justify-between text-xs mb-2 font-bold">
+                    <span class="capitalize text-slate-700 group-hover:text-blue-600 transition-colors">${k}</span>
+                    <span class="text-slate-400">${v}</span>
+                </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full shadow-sm group-hover:from-blue-400 group-hover:to-indigo-500 transition-all duration-500" style="width:${(v/max)*100}%"></div>
+                </div>
+            </div>
+        `).join('') || '<div class="py-4 text-center text-slate-400 text-xs font-bold">No tool usage yet.</div>';
     });
 
-    // 3. SUBSCRIBERS (Newsletter)
+    // 3. SUBSCRIBERS
     safeSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'subscribers'), (snap) => {
         document.getElementById('stat-subscribers').innerText = snap.size;
     });
 
     // 4. API KEYS
     safeSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'api_keys'), (snap) => {
-        document.getElementById('stat-keys').innerText = snap.size;
+        const count = snap.size;
+        document.getElementById('stat-keys').innerText = count;
         const statusEl = document.getElementById('stat-keys-status');
-        if(snap.size > 0) {
-            statusEl.innerText = "Operational";
-            statusEl.className = "text-[10px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded-full";
+        if(count > 0) {
+            statusEl.innerText = "Active";
+            statusEl.className = "px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-black uppercase rounded-full border border-emerald-200";
         } else {
-            statusEl.innerText = "Critical";
-            statusEl.className = "text-[10px] font-bold text-red-400 bg-red-900/30 px-2 py-0.5 rounded-full animate-pulse";
+            statusEl.innerText = "Empty";
+            statusEl.className = "px-3 py-1 bg-red-100 text-red-700 text-xs font-black uppercase rounded-full border border-red-200 animate-pulse";
         }
     });
 
-    // 5. USERS (TOTAL & VIP)
+    // 5. USERS
     safeSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
-        let total = 0;
-        let vip = 0;
+        let total = 0, vip = 0;
         const recent = [];
 
         snap.forEach(doc => {
@@ -265,39 +339,41 @@ export async function init() {
             recent.push(d);
         });
 
-        // Stats
+        // Counters
         document.getElementById('stat-total-users').innerText = total;
         document.getElementById('stat-vip-count').innerText = vip;
-        
-        // Ratio Bar
+
+        // VIP Ratio
         const ratio = total > 0 ? Math.round((vip/total)*100) : 0;
         document.getElementById('vip-ratio-text').innerText = `${ratio}%`;
         document.getElementById('vip-ratio-bar').style.width = `${ratio}%`;
 
-        // Recent List (Client Sort)
+        // Recent List
         recent.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
         
         const listEl = document.getElementById('recent-users-list');
-        if (recent.length > 0) {
-            listEl.innerHTML = recent.slice(0, 5).map(u => `
-                <div class="p-3 flex justify-between items-center hover:bg-slate-700/30 transition-colors">
+        if(recent.length > 0) {
+            listEl.innerHTML = recent.slice(0, 6).map(u => `
+                <div class="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors group cursor-default">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full ${u.vip ? 'bg-amber-900/30 text-amber-500' : 'bg-slate-700 text-slate-400'} flex items-center justify-center text-xs font-bold">
-                            ${u.email ? u.email.charAt(0).toUpperCase() : 'U'}
+                        <div class="w-10 h-10 rounded-full ${u.vip ? 'bg-amber-100 text-amber-600 border border-amber-200' : 'bg-white text-slate-400 border border-slate-200'} flex items-center justify-center text-sm font-black shadow-sm">
+                            ${u.email ? u.email.charAt(0).toUpperCase() : '?'}
                         </div>
-                        <div class="min-w-0">
-                            <p class="text-xs font-bold text-slate-200 truncate max-w-[120px] flex items-center gap-1">
-                                ${u.displayName || 'Anonymous'}
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1 group-hover:text-blue-600 transition-colors">
+                                ${u.displayName || 'Anonymous User'}
                                 ${u.vip ? '<i data-lucide="crown" class="w-3 h-3 text-amber-500 fill-current"></i>' : ''}
                             </p>
-                            <p class="text-[10px] text-slate-500 truncate">${u.email || 'No Email'}</p>
+                            <p class="text-[10px] text-slate-400 font-semibold truncate max-w-[140px]">${u.email || 'No Email'}</p>
                         </div>
                     </div>
-                    <span class="text-[10px] text-slate-500 font-mono">${u.createdAt ? new Date(u.createdAt.seconds*1000).toLocaleDateString() : '-'}</span>
+                    <span class="text-[10px] text-slate-400 font-mono bg-slate-100 px-2 py-1 rounded-md border border-slate-200">
+                        ${u.createdAt ? new Date(u.createdAt.seconds*1000).toLocaleDateString() : 'Just now'}
+                    </span>
                 </div>
             `).join('');
         } else {
-            listEl.innerHTML = '<div class="p-4 text-center text-slate-500 text-xs">No users found.</div>';
+            listEl.innerHTML = '<div class="p-8 text-center text-slate-400 text-xs font-bold">No registered users found.</div>';
         }
         if(window.lucide) window.lucide.createIcons();
     });
@@ -310,9 +386,12 @@ export async function init() {
         noteArea.addEventListener('input', () => {
             localStorage.setItem('dsh_admin_notes', noteArea.value);
             if(status) {
-                status.innerText = "Saving...";
                 status.classList.remove('opacity-0');
-                setTimeout(() => { status.innerText = "Saved"; setTimeout(() => status.classList.add('opacity-0'), 1000); }, 500);
+                status.innerText = "Saving...";
+                setTimeout(() => { 
+                    status.innerText = "Saved"; 
+                    setTimeout(() => status.classList.add('opacity-0'), 1500);
+                }, 600);
             }
         });
     }
