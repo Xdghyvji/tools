@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Post... | DigitalServicesHub</title>
-    <meta name="description" content="Loading amazing content...">
-    
+    <title>Blog Post | DigitalServicesHub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' } },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { brand: { 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
                 }
             }
         }
@@ -24,302 +20,181 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="font-heading font-bold text-xl text-slate-900">DSH.</a>
+                <div class="hidden md:flex gap-6">
+                    <a href="blog.html" class="text-slate-600 hover:text-brand-600 font-medium">Blog</a>
+                    <a href="authors.html" class="text-slate-600 hover:text-brand-600 font-medium">Authors</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <main class="flex-grow pt-28 pb-20 px-4 sm:px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <main class="flex-grow pb-16 pt-8">
+        <article class="max-w-3xl mx-auto px-4 sm:px-6">
             
-            <div class="lg:col-span-8 space-y-8">
+            <div id="loading-state" class="text-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
+                <p class="text-slate-500">Loading Article...</p>
+            </div>
+
+            <div id="blog-content" class="hidden animate-fade-in">
                 
-                <div id="loading-spinner" class="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
-                    <p class="text-slate-500">Loading Article...</p>
+                <header class="mb-8 text-center">
+                    <span id="post-category" class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-4">
+                        Article
+                    </span>
+                    <h1 id="post-title" class="text-3xl sm:text-4xl font-heading font-bold text-slate-900 mb-4 leading-tight">
+                        </h1>
+                    <div class="flex items-center justify-center gap-4 text-slate-500 text-sm">
+                        <span id="post-date"></span>
+                        <span>&bull;</span>
+                        <span id="read-time">5 min read</span>
+                    </div>
+                </header>
+
+                <div class="rounded-2xl overflow-hidden shadow-lg mb-10 aspect-video bg-slate-200">
+                    <img id="post-image" src="" alt="Blog Cover" class="w-full h-full object-cover">
                 </div>
 
-                <div id="error-state" class="hidden text-center py-20 bg-red-50 rounded-2xl border border-red-100">
-                    <h1 class="text-2xl font-bold text-red-700 mb-2">Post Not Found</h1>
-                    <a href="/blog.html" class="text-red-600 hover:underline">Back to Blog</a>
-                </div>
-
-                <article id="blog-content" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="w-full h-64 md:h-96 relative bg-slate-100">
-                        <img id="post-img" src="" alt="Blog Cover" class="w-full h-full object-cover">
+                <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700">
                     </div>
 
-                    <div class="p-8 md:p-10">
-                        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-6">
-                            <span id="post-category" class="bg-brand-50 text-brand-700 px-3 py-1 rounded-full font-semibold text-xs uppercase tracking-wide">Category</span>
-                            <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-4 h-4"></i> <span id="post-date">Date</span></span>
-                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-4 h-4"></i> <span id="post-readTime">5</span> min read</span>
-                        </div>
+                <hr class="my-12 border-slate-200">
 
-                        <h1 id="post-title" class="text-3xl md:text-5xl font-bold font-heading text-slate-900 mb-8 leading-tight">Post Title</h1>
-
-                        <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl">
-                            </div>
-
-                        <div class="mt-12 pt-8 border-t border-slate-100 flex justify-between items-center">
-                            <a href="/blog.html" class="text-slate-500 hover:text-brand-600 font-medium flex items-center gap-2 transition-colors">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to All Posts
-                            </a>
-                        </div>
-                    </div>
-                </article>
-
-                <div id="comments-section" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-                    <h3 class="text-2xl font-bold text-slate-900 mb-6">Comments</h3>
+                <div id="author-section" class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left hidden">
                     
-                    <div id="comments-list" class="space-y-6 mb-10">
-                        <p class="text-slate-500 italic text-center py-4">No comments yet. Be the first!</p>
+                    <div class="shrink-0" id="author-image-container">
+                        <img id="author-image" src="assets/img/default-avatar.png" alt="Author" class="w-20 h-20 rounded-full object-cover border-4 border-slate-50 shadow-inner">
                     </div>
-
-                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-                        <h4 class="font-bold text-slate-900 mb-4">Leave a Reply</h4>
-                        <form id="comment-form" class="space-y-4">
-                            <input type="hidden" id="current-post-id">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="comment-name" placeholder="Your Name" required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
-                                <input type="email" id="comment-email" placeholder="Your Email (kept private)" required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                    
+                    <div class="flex-1">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+                            <h3 class="text-lg font-bold text-slate-900" id="author-name">Unknown Author</h3>
+                            <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-medium border border-slate-200" id="author-role">Contributor</span>
+                        </div>
+                        <p class="text-slate-600 mb-4 text-sm leading-relaxed" id="author-bio">
+                            Content creator at DigitalServicesHub.
+                        </p>
+                        
+                        <div class="flex items-center justify-center md:justify-start gap-3" id="author-socials">
                             </div>
-                            <textarea id="comment-text" rows="3" placeholder="Write your comment..." required class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
-                            <button type="submit" class="bg-brand-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-brand-700 transition-colors">Post Comment</button>
-                        </form>
                     </div>
                 </div>
 
             </div>
-
-            <aside class="lg:col-span-4 space-y-8">
-                
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Advertisement</span>
-                    <div class="w-full h-64 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-200">
-                        <p class="text-slate-400 text-sm">Ad Space (300x250)</p>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Popular Tools</h3>
-                    <ul class="space-y-3">
-                        <li>
-                            <a href="/tiktok.html" class="flex items-center gap-3 group">
-                                <div class="w-10 h-10 rounded-lg bg-pink-50 flex items-center justify-center text-pink-600 group-hover:bg-pink-100 transition-colors">
-                                    <i data-lucide="video" class="w-5 h-5"></i>
-                                </div>
-                                <span class="font-medium text-slate-700 group-hover:text-brand-600 transition-colors">TikTok Viral Tools</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/instagram.html" class="flex items-center gap-3 group">
-                                <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-100 transition-colors">
-                                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                                </div>
-                                <span class="font-medium text-slate-700 group-hover:text-brand-600 transition-colors">Instagram Downloader</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/email-tools.html" class="flex items-center gap-3 group">
-                                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
-                                    <i data-lucide="mail" class="w-5 h-5"></i>
-                                </div>
-                                <span class="font-medium text-slate-700 group-hover:text-brand-600 transition-colors">Email Extractor</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="bg-brand-600 rounded-2xl shadow-lg shadow-brand-500/30 p-6 text-white text-center">
-                    <i data-lucide="mail-open" class="w-8 h-8 mx-auto mb-3 text-brand-200"></i>
-                    <h3 class="text-lg font-bold mb-2">Join the Hub</h3>
-                    <p class="text-brand-100 text-sm mb-4">Get the latest AI tools & tricks delivered to your inbox.</p>
-                    <a href="/subscription.html" class="block w-full bg-white text-brand-600 py-2.5 rounded-lg font-bold hover:bg-brand-50 transition-colors">Subscribe Free</a>
-                </div>
-
-            </aside>
-
-        </div>
+        </article>
     </main>
 
-    <footer id="main-footer"></footer>
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2024 DigitalServicesHub. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script type="module">
-        import { loadHeader, loadFooter, db, appId } from './assets/js/shared.js';
-        import { doc, getDoc, collection, query, where, getDocs, addDoc, onSnapshot, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { db } from './assets/js/shared.js'; // Ensure shared.js exports 'db'
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            loadHeader('blog');
-            loadFooter();
-            if(window.lucide) lucide.createIcons();
-            
-            await loadBlogPost();
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
 
-        async function loadBlogPost() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const slug = urlParams.get('slug');
-            const id = urlParams.get('id');
-
-            if (!slug && !id) {
-                window.location.href = '/blog.html';
+        async function loadPost() {
+            if (!postId) {
+                window.location.href = 'blog.html';
                 return;
             }
 
             try {
-                let postData = null;
-                let postDocId = null;
+                // 1. Fetch Post
+                const postRef = doc(db, "posts", postId);
+                const postSnap = await getDoc(postRef);
 
-                // 1. Try Slug
-                if (slug) {
-                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), where('slug', '==', slug));
-                    const querySnapshot = await getDocs(q);
-                    if (!querySnapshot.empty) {
-                        const docSnap = querySnapshot.docs[0];
-                        postData = docSnap.data();
-                        postDocId = docSnap.id;
-                    }
-                }
-
-                // 2. Try ID (Fallback)
-                if (!postData && id) {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', id);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        postData = docSnap.data();
-                        postDocId = docSnap.id;
-                    }
-                }
-
-                if (postData) {
-                    renderPost(postData);
-                    injectSEO(postData, postDocId);
+                if (postSnap.exists()) {
+                    const data = postSnap.data();
                     
-                    // LOAD COMMENTS for this specific post
-                    initComments(postDocId);
+                    // Render Post Data
+                    document.title = `${data.title} | DSH Blog`;
+                    document.getElementById('post-title').innerText = data.title;
+                    document.getElementById('post-date').innerText = new Date(data.date).toLocaleDateString();
+                    document.getElementById('post-image').src = data.image || 'https://via.placeholder.com/800x400';
+                    document.getElementById('post-body').innerHTML = data.content;
                     
+                    // 2. Fetch Author (if exists)
+                    if (data.authorId) {
+                        loadAuthor(data.authorId);
+                    } else {
+                        // Reveal Content even if no author
+                        document.getElementById('loading-state').classList.add('hidden');
+                        document.getElementById('blog-content').classList.remove('hidden');
+                    }
                 } else {
-                    showError();
+                    document.getElementById('loading-state').innerHTML = `<p class="text-red-500">Post not found.</p>`;
                 }
-
             } catch (error) {
                 console.error("Error loading post:", error);
-                showError();
+                document.getElementById('loading-state').innerHTML = `<p class="text-red-500">Error loading post.</p>`;
             }
         }
 
-        function renderPost(data) {
-            document.getElementById('loading-spinner').classList.add('hidden');
-            document.getElementById('blog-content').classList.remove('hidden');
-            document.getElementById('comments-section').classList.remove('hidden'); // Show comments
+        async function loadAuthor(authorId) {
+            try {
+                const authorRef = doc(db, "authors", authorId);
+                const authorSnap = await getDoc(authorRef);
 
-            document.getElementById('post-title').innerText = data.title;
-            document.getElementById('post-date').innerText = data.date;
-            document.getElementById('post-category').innerText = data.category || 'General';
-            document.getElementById('post-readTime').innerText = data.readTime || '5';
-            
-            const imgEl = document.getElementById('post-img');
-            if (data.image) {
-                imgEl.src = data.image;
-            } else {
-                imgEl.parentElement.classList.add('hidden');
-            }
+                if (authorSnap.exists()) {
+                    const author = authorSnap.data();
+                    const section = document.getElementById('author-section');
+                    
+                    // Update Elements
+                    section.classList.remove('hidden'); 
+                    
+                    // 1. Link Author Name
+                    document.getElementById('author-name').innerHTML = `
+                        <a href="author.html?id=${authorId}" class="hover:text-brand-600 transition hover:underline decoration-2 underline-offset-2">
+                            ${author.name || "Anonymous"}
+                        </a>
+                    `;
+                    
+                    document.getElementById('author-role').innerText = author.role || "Writer";
+                    
+                    // 2. Link Author Image
+                    const imgUrl = author.photoURL || 'assets/img/default-avatar.png';
+                    document.getElementById('author-image-container').innerHTML = `
+                        <a href="author.html?id=${authorId}" class="block group relative">
+                            <img src="${imgUrl}" alt="${author.name}" 
+                                class="w-20 h-20 rounded-full object-cover border-4 border-slate-50 shadow-inner group-hover:border-blue-200 transition duration-300">
+                            <div class="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/5 transition"></div>
+                        </a>
+                    `;
+                    
+                    if (author.bio) {
+                        document.getElementById('author-bio').innerText = author.bio;
+                    }
 
-            document.getElementById('post-body').innerHTML = data.content;
-            if(window.lucide) lucide.createIcons();
-        }
-
-        function injectSEO(data, docId) {
-            document.title = `${data.title} | DigitalServicesHub`;
-            
-            let metaDesc = document.querySelector('meta[name="description"]');
-            const plainText = data.content.replace(/<[^>]+>/g, '');
-            const excerpt = plainText.substring(0, 160) + '...';
-            metaDesc.setAttribute('content', excerpt);
-
-            let canonical = document.querySelector('link[rel="canonical"]');
-            if (!canonical) {
-                canonical = document.createElement('link');
-                canonical.rel = 'canonical';
-                document.head.appendChild(canonical);
-            }
-            const cleanUrl = `https://digitalserviceshub.online/single-blog.html?slug=${data.slug || docId}`;
-            canonical.href = cleanUrl;
-        }
-
-        function showError() {
-            document.getElementById('loading-spinner').classList.add('hidden');
-            document.getElementById('error-state').classList.remove('hidden');
-        }
-
-        // ==========================================
-        // COMMENTS SYSTEM LOGIC
-        // ==========================================
-        function initComments(postId) {
-            document.getElementById('current-post-id').value = postId;
-
-            // 1. Real-time Listener for Comments
-            const q = query(
-                collection(db, 'artifacts', appId, 'public', 'data', 'comments'),
-                where('postId', '==', postId),
-                orderBy('createdAt', 'desc')
-            );
-
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('comments-list');
-                if (snapshot.empty) {
-                    list.innerHTML = `<p class="text-slate-500 italic text-center py-4">No comments yet. Be the first!</p>`;
-                } else {
-                    list.innerHTML = snapshot.docs.map(doc => {
-                        const c = doc.data();
-                        const date = c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleDateString() : 'Just now';
-                        // Generate avatar initials
-                        const initials = c.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-                        
-                        return `
-                            <div class="flex gap-4 animate-fade-in">
-                                <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold flex-shrink-0">
-                                    ${initials}
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <h5 class="font-bold text-slate-900 text-sm">${c.name}</h5>
-                                        <span class="text-xs text-slate-400">• ${date}</span>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed">${c.text}</p>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
+                    // Render Socials
+                    const socialContainer = document.getElementById('author-socials');
+                    let socialHtml = '';
+                    if (author.socials) {
+                        if (author.socials.twitter) socialHtml += `<a href="${author.socials.twitter}" target="_blank" class="p-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-500 rounded-full transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>`;
+                        if (author.socials.linkedin) socialHtml += `<a href="${author.socials.linkedin}" target="_blank" class="p-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-full transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>`;
+                        if (author.socials.website) socialHtml += `<a href="${author.socials.website}" target="_blank" class="p-2 bg-slate-100 hover:bg-green-50 hover:text-green-600 rounded-full transition"><i data-lucide="globe" class="w-4 h-4"></i></a>`;
+                    }
+                    socialContainer.innerHTML = socialHtml;
+                    lucide.createIcons();
                 }
-            });
-
-            // 2. Handle Submission
-            document.getElementById('comment-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const btn = e.target.querySelector('button');
-                const originalText = btn.innerText;
-                btn.innerText = "Posting...";
-                btn.disabled = true;
-
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), {
-                        postId: postId,
-                        name: document.getElementById('comment-name').value,
-                        email: document.getElementById('comment-email').value, // Saved but not shown publicly
-                        text: document.getElementById('comment-text').value,
-                        createdAt: serverTimestamp()
-                    });
-
-                    e.target.reset();
-                    alert("Comment posted!");
-                } catch (err) {
-                    console.error("Error posting comment:", err);
-                    alert("Failed to post comment. Please try again.");
-                } finally {
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                }
-            });
+            } catch (e) {
+                console.warn("Could not load author details", e);
+            } finally {
+                // Ensure content is revealed
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('blog-content').classList.remove('hidden');
+            }
         }
+
+        loadPost();
     </script>
 </body>
 </html>
