@@ -20,7 +20,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <div id="app-header"></div>
+    <header id="main-header" class="bg-white border-b border-slate-200 sticky top-0 z-50"></header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         
@@ -35,7 +35,7 @@
 
                 <div id="blog-content" class="hidden animate-fade-in opacity-0 transition-opacity duration-500">
                     
-                    <header id="main-header">
+                    <header class="mb-8">
                         <div class="flex items-center gap-3 mb-6">
                             <span id="post-category" class="px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider">
                                 Article
@@ -60,25 +60,19 @@
                                     <div class="text-slate-400 text-xs" id="post-date">Just now</div>
                                 </div>
                             </div>
-                            
-                            <button class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition" onclick="navigator.share({url:window.location.href})">
-                                <i data-lucide="share-2" class="w-5 h-5"></i>
-                            </button>
                         </div>
                     </header>
 
-                    <div class="rounded-2xl overflow-hidden shadow-lg mb-10 aspect-video bg-slate-100">
+                    <div class="rounded-2xl overflow-hidden shadow-lg mb-10 aspect-video bg-slate-100 border border-slate-200">
                         <img id="post-image" src="" alt="Blog Cover" class="w-full h-full object-cover">
                     </div>
 
-                    <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl">
-                        </div>
+                    <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl"></div>
 
                     <hr class="my-12 border-slate-200">
 
                     <div id="author-section" class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left hidden">
-                        <div class="shrink-0" id="end-author-image-container">
-                            </div>
+                        <div class="shrink-0" id="end-author-image-container"></div>
                         <div class="flex-1">
                             <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
                                 <h3 class="text-lg font-bold text-slate-900" id="end-author-name"></h3>
@@ -86,6 +80,31 @@
                             </div>
                             <p class="text-slate-600 mb-4 text-sm leading-relaxed" id="end-author-bio"></p>
                             <div class="flex items-center justify-center sm:justify-start gap-3" id="author-socials"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 pt-12 border-t border-slate-200" id="comments-section">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
+                            <i data-lucide="message-square" class="w-6 h-6 text-brand-600"></i>
+                            Discussion <span id="comment-count" class="text-slate-400 text-lg font-normal">(0)</span>
+                        </h3>
+
+                        <form id="comment-form" class="bg-slate-50 rounded-2xl p-6 mb-12 border border-slate-200 shadow-sm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <input type="text" id="c-name" placeholder="Your Name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition bg-white">
+                                <input type="email" id="c-email" placeholder="Email (private)" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition bg-white">
+                            </div>
+                            <textarea id="c-text" rows="3" placeholder="Share your thoughts..." required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition bg-white mb-4"></textarea>
+                            <div class="flex justify-end">
+                                <button type="submit" id="c-submit" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition shadow-lg shadow-brand-600/20 flex items-center gap-2">
+                                    <span>Post Comment</span>
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="comments-list" class="space-y-6">
+                            <p class="text-slate-500 text-center py-4 italic">Loading comments...</p>
                         </div>
                     </div>
 
@@ -103,25 +122,25 @@
                             <div class="bg-black text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="music-2" class="w-4 h-4"></i></div>
                             <div>
                                 <h4 class="font-bold text-slate-800 text-sm">TikTok Downloader</h4>
-                                <p class="text-xs text-slate-500">Remove watermarks instantly</p>
+                                <p class="text-xs text-slate-500">No watermark</p>
                             </div>
                         </a>
                         <a href="instagram.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 group transition-colors border border-transparent hover:border-slate-100">
                             <div class="bg-pink-600 text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="instagram" class="w-4 h-4"></i></div>
                             <div>
                                 <h4 class="font-bold text-slate-800 text-sm">Instagram Tools</h4>
-                                <p class="text-xs text-slate-500">Download Reels & Stories</p>
+                                <p class="text-xs text-slate-500">Reels & Stories</p>
                             </div>
                         </a>
                         <a href="blog-tools.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 group transition-colors border border-transparent hover:border-slate-100">
                             <div class="bg-blue-600 text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="pen-tool" class="w-4 h-4"></i></div>
                             <div>
                                 <h4 class="font-bold text-slate-800 text-sm">AI Blog Writer</h4>
-                                <p class="text-xs text-slate-500">Generate SEO articles</p>
+                                <p class="text-xs text-slate-500">SEO Optimized</p>
                             </div>
                         </a>
                     </div>
-
+                    
                     <div class="mt-6 pt-6 border-t border-slate-100">
                         <div class="bg-slate-900 rounded-xl p-5 text-center text-white">
                             <p class="font-bold mb-2">Need Pro Features?</p>
@@ -136,66 +155,69 @@
 
     </main>
 
-    <div id="main-footer"></div>
+    <footer id="main-footer"></footer>
 
     <script type="module">
-        // Import appId from shared.js
-        import { db, loadHeader, loadFooter, appId } from './assets/js/shared.js';
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { db, auth, loadHeader, loadFooter, appId } from './assets/js/shared.js';
+        import { doc, getDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadHeader();
+            loadHeader('blog'); // Pass 'blog' to highlight correct nav item
             loadFooter();
-            if(window.lucide) lucide.createIcons();
         });
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
 
         async function loadPost() {
-            if (!postId) { window.location.href = 'blog.html'; return; }
+            if (!postId) {
+                console.warn("No ID provided, redirecting...");
+                window.location.href = 'blog.html';
+                return;
+            }
 
             try {
-                // Correct Path: artifacts/{appId}/public/data/posts
+                // IMPORTANT: Verify this path matches your database
+                // Path: artifacts/{appId}/public/data/posts/{postId}
                 const postRef = doc(db, "artifacts", appId, "public", "data", "posts", postId);
                 const postSnap = await getDoc(postRef);
 
                 if (postSnap.exists()) {
                     const data = postSnap.data();
                     
-                    // Populate Content
+                    // Render Content
                     document.title = `${data.title} | DSH`;
                     document.getElementById('post-title').innerText = data.title;
-                    document.getElementById('post-date').innerText = new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    document.getElementById('post-date').innerText = new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                     document.getElementById('post-image').src = data.image || 'assets/img/blog-placeholder.jpg';
                     document.getElementById('post-body').innerHTML = data.content;
                     
                     if (data.category) document.getElementById('post-category').innerText = data.category;
+                    
+                    // Load Author
+                    if (data.authorId) await loadAuthorData(data.authorId);
 
-                    // Load Author Data
-                    if (data.authorId) {
-                        await loadAuthorData(data.authorId);
-                    }
-
-                    // Reveal
+                    // Show Content
                     document.getElementById('loading-state').classList.add('hidden');
                     const content = document.getElementById('blog-content');
                     content.classList.remove('hidden');
                     setTimeout(() => content.classList.remove('opacity-0'), 50);
 
+                    // Initialize Comments
+                    initComments();
                 } else {
-                    document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Post not found.</div>`;
+                    console.error("Post does not exist in DB");
+                    document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Post not found. ID: ${postId}</div>`;
                 }
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Unable to load content.</div>`;
+                console.error("Detailed Error:", error);
+                document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Error: ${error.message}</div>`;
             }
         }
 
         async function loadAuthorData(authorId) {
             try {
-                // Assuming Authors are at Root Level (Shared)
-                // If nested, change to: doc(db, "artifacts", appId, "public", "data", "authors", authorId)
+                // Ensure this path matches where authors are stored (Root or Artifacts)
                 const authorRef = doc(db, "authors", authorId);
                 const authorSnap = await getDoc(authorRef);
 
@@ -205,20 +227,20 @@
                     const imgUrl = author.photoURL || 'assets/img/default-avatar.png';
                     const name = author.name || "Unknown Author";
 
-                    // 1. UPDATE START HEADER (Small Icon)
+                    // 1. Top Mini Profile
                     document.getElementById('start-author-link').href = profileUrl;
                     document.getElementById('start-author-image').src = imgUrl;
                     document.getElementById('start-author-name').innerText = name;
                     document.getElementById('start-author-name').href = profileUrl;
 
-                    // 2. UPDATE END CARD (Full Details)
+                    // 2. Bottom Full Card
                     const section = document.getElementById('author-section');
                     section.classList.remove('hidden');
-                    section.classList.add('flex'); // Ensure flex display matches CSS
+                    section.classList.add('flex');
 
                     document.getElementById('end-author-name').innerHTML = `<a href="${profileUrl}" class="hover:text-brand-600 hover:underline">${name}</a>`;
                     document.getElementById('end-author-role').innerText = author.role || "Writer";
-                    document.getElementById('end-author-bio').innerText = author.bio || "Content Creator at DigitalServicesHub.";
+                    document.getElementById('end-author-bio').innerText = author.bio || "";
                     
                     document.getElementById('end-author-image-container').innerHTML = `
                         <a href="${profileUrl}" class="block group">
@@ -230,17 +252,78 @@
                     // Socials
                     const s = author.socials;
                     let socialHtml = '';
-                    if (s) {
-                        if (s.twitter) socialHtml += `<a href="${s.twitter}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-blue-500 hover:text-white transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>`;
-                        if (s.linkedin) socialHtml += `<a href="${s.linkedin}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-blue-700 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>`;
-                        if (s.website) socialHtml += `<a href="${s.website}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-green-600 hover:text-white transition"><i data-lucide="globe" class="w-4 h-4"></i></a>`;
-                    }
+                    if (s?.twitter) socialHtml += `<a href="${s.twitter}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-blue-500 hover:text-white transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>`;
                     document.getElementById('author-socials').innerHTML = socialHtml;
                     if(window.lucide) lucide.createIcons();
                 }
-            } catch (e) {
-                console.warn("Author load error:", e);
-            }
+            } catch (e) { console.warn("Author load warning:", e); }
+        }
+
+        function initComments() {
+            const list = document.getElementById('comments-list');
+            const form = document.getElementById('comment-form');
+            const countEl = document.getElementById('comment-count');
+
+            // Path: artifacts/{appId}/public/data/comments
+            const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'comments');
+            const q = query(commentsRef, where("postId", "==", postId), orderBy("createdAt", "desc"));
+
+            onSnapshot(q, (snapshot) => {
+                countEl.innerText = `(${snapshot.size})`;
+                
+                if (snapshot.empty) {
+                    list.innerHTML = `<p class="text-slate-400 text-center py-6">No comments yet.</p>`;
+                    return;
+                }
+
+                list.innerHTML = snapshot.docs.map(doc => {
+                    const c = doc.data();
+                    const date = c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleDateString() : 'Just now';
+                    const initial = c.name ? c.name.charAt(0).toUpperCase() : 'U';
+                    const colors = ['bg-red-100 text-red-600', 'bg-blue-100 text-blue-600', 'bg-green-100 text-green-600'];
+                    const colorClass = colors[Math.floor(Math.random() * colors.length)];
+
+                    return `
+                        <div class="flex gap-4 p-4 rounded-xl bg-white border border-slate-100 shadow-sm animate-fade-in">
+                            <div class="shrink-0 w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold border border-slate-200">
+                                ${initial}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h4 class="font-bold text-slate-900 text-sm">${c.name}</h4>
+                                    <span class="text-xs text-slate-400">${date}</span>
+                                </div>
+                                <p class="text-slate-600 text-sm leading-relaxed">${c.text}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('c-submit');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<span>Posting...</span>`;
+
+                try {
+                    await addDoc(commentsRef, {
+                        postId: postId,
+                        name: document.getElementById('c-name').value,
+                        email: document.getElementById('c-email').value,
+                        text: document.getElementById('c-text').value,
+                        createdAt: serverTimestamp()
+                    });
+                    form.reset();
+                } catch (error) {
+                    console.error("Comment Error:", error);
+                    alert("Error posting comment. Check permissions.");
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
         }
 
         loadPost();
