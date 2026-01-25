@@ -3,278 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dominate X (formerly Twitter) with DigitalServicesHub. AI tools to generate viral threads, engaging tweets, professional bios, and trending hashtags.">
-    <title>X (Twitter) Tools | DigitalServicesHub.online</title>
+    <title>Free AI X (Twitter) Generator: Threads, Tweets & Bio | DigitalServicesHub</title>
+    <meta name="description" content="Go viral on X (Twitter) with our free AI tools. Generate engaging threads, viral tweets, professional bios, and trending hashtags in seconds.">
+    <meta name="keywords" content="twitter thread generator, ai tweet writer, twitter bio generator, x content creator, viral tweet maker, free social media tools">
+    <meta name="author" content="DigitalServicesHub">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://digitalserviceshub.online/twitter-tools.html">
+    <meta property="og:title" content="Free AI X (Twitter) Tools | Viral Content Generator">
+    <meta property="og:description" content="Generate threads, tweets, and bios that drive engagement and follower growth.">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+    <!-- Schema Markup for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "DigitalServicesHub X Writer",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A suite of free AI tools for Twitter/X content creation, including thread generation and bio optimization."
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }, x: { 50: '#f8fafc', 100: '#f1f5f9', 500: '#64748b', 800: '#1e293b', 900: '#0f172a', accent: '#1d9bf0' } }
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        heading: ['Plus Jakarta Sans', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }, 
+                        x: { 50: '#f8fafc', 100: '#f1f5f9', 500: '#64748b', 800: '#1e293b', 900: '#0f172a', accent: '#1d9bf0' } 
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
-        
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .tool-tab.active { background-color: #f1f5f9; color: #0f172a; border-bottom: 2px solid #0f172a; }
+        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        .tool-tab { transition: all 0.2s ease; position: relative; }
+        .tool-tab.active { color: #0f172a; background-color: #f1f5f9; font-weight: 600; }
+        .tool-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background-color: #0f172a; border-top-left-radius: 2px; border-top-right-radius: 2px; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+        .prose h3 { margin-top: 2em; margin-bottom: 0.75em; font-weight: 700; color: #1e293b; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.75; color: #475569; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
+        .prose li { margin-bottom: 0.5em; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- Header Container -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
+    <!-- Header Container (Loaded via JS) -->
+    <header class="fixed w-full top-0 z-50 glass-header h-20" id="main-header"></header>
 
-    <!-- Secondary Tool Nav -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm h-16 flex items-center">
-        <div class="max-w-7xl mx-auto w-full">
-            <div class="flex items-center overflow-x-auto px-4 space-x-4 custom-scrollbar flex-nowrap">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
+    <!-- Secondary Navigation -->
+    <nav class="fixed top-20 w-full z-40 bg-white/95 backdrop-blur border-b border-slate-200 h-14 flex items-center">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto custom-scrollbar">
+            <div class="flex items-center space-x-2 h-full">
+                <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> All Tools
                 </a>
-                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                <a href="email-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Email Marketing
                 </a>
-                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
+                <a href="blog-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Blog & SEO
                 </a>
-                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
+                <a href="twitter-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-900 bg-slate-100 rounded-md whitespace-nowrap border border-slate-200">
+                    <i data-lucide="twitter" class="w-4 h-4"></i> X (Twitter)
                 </a>
-                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="mail" class="w-4 h-4"></i> Email
-                </a>
-                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 text-white border border-slate-700 font-semibold whitespace-nowrap shadow-sm transition-colors">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
+                <a href="instagram.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="instagram" class="w-4 h-4"></i> Social Media
                 </a>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- AD SPACE -->
-    <div class="pt-48 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
-        <p class="text-[10px] text-slate-400 text-center uppercase tracking-wider mb-1">Advertisement</p>
-        <div id="ad-728-90" class="w-[728px] h-[90px] mx-auto bg-slate-50 border border-slate-200 flex items-center justify-center"></div>
-    </div>
-
-    <!-- HERO SECTION -->
-    <section class="pt-48 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="tools">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            
-            <!-- Left: Content -->
-            <div class="text-center lg:text-left animate-fade-in">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold mb-6 border border-slate-700">
-                    <i data-lucide="twitter" class="w-3 h-3"></i> X (Twitter) Growth Suite
-                </div>
-                <h1 class="text-4xl lg:text-6xl font-bold font-heading text-slate-900 leading-tight mb-6">
-                    Write Viral Threads & <span class="text-slate-500 relative">Tweets
-                        <svg class="absolute w-full h-3 -bottom-1 left-0 text-slate-300 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
-                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
-                        </svg>
-                    </span> in Seconds
-                </h1>
-                <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    Grow your following on X with AI. Generate multi-tweet threads from a single topic, optimize your bio, and find trending hashtags instantly.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start text-sm font-medium text-slate-500">
-                    <div class="flex items-center gap-2"><i data-lucide="list-start" class="w-5 h-5 text-slate-900"></i> Thread Creator</div>
-                    <div class="flex items-center gap-2"><i data-lucide="zap" class="w-5 h-5 text-blue-500"></i> Viral Hooks</div>
-                    <div class="flex items-center gap-2"><i data-lucide="user-check" class="w-5 h-5 text-slate-900"></i> Bio Optimization</div>
-                </div>
-            </div>
-
-            <!-- Right: Tool Interface -->
-            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-slide-up relative z-10">
-                <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar">
-                    <button onclick="setTool('thread')" class="tool-tab active flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Thread</button>
-                    <button onclick="setTool('tweet')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Tweet</button>
-                    <button onclick="setTool('bio')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Bio</button>
-                    <button onclick="setTool('tags')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap text-slate-600 hover:bg-white transition-colors">Hashtags</button>
-                </div>
-                <div class="p-8">
-                    <div class="mb-6">
-                        <h3 class="font-bold text-slate-900 mb-2 text-xl" id="tool-title">Twitter Thread Creator</h3>
-                        <p class="text-sm text-slate-500" id="tool-desc">Turn a simple idea into a viral 5-tweet thread.</p>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Topic / Idea</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i data-lucide="edit-3" class="h-5 w-5 text-slate-400"></i>
-                                </div>
-                                <input type="text" id="user-input" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-all" placeholder="e.g., 10 lessons from building a startup">
-                            </div>
-                        </div>
-                        <button id="generate-btn" class="w-full py-3.5 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2 shadow-lg shadow-slate-500/30">
-                            <i data-lucide="sparkles" class="w-4 h-4"></i> <span>Generate Thread</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- STATS SECTION -->
-    <section class="bg-white py-16 border-y border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">500k+</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Tweets Generated</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">20M+</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Impressions</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">10x</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Engagement Growth</p>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-3xl font-bold text-slate-900">Free</h3>
-                    <p class="text-sm text-slate-500 font-medium uppercase tracking-wide">Forever</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <script async="async" data-cfasync="false" src="//chapturnjut.com/44285d75d83bd85e96d6a8f42f720f48/invoke.js"></script>
-    <div id="container-44285d75d83bd85e96d6a8f42f720f48"></div>
-    <!-- FEATURES SECTION -->
-    <section class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4 font-heading">Master the Art of Micro-Blogging</h2>
-                <p class="text-slate-600 text-lg">
-                    Twitter (X) rewards consistency and hooks. Our AI models are trained on thousands of viral tweets to understand exactly what makes people retweet.
-                </p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-white mb-6">
-                        <i data-lucide="list-start" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Thread Architecture</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        We structure threads with a strong hook, value-packed body tweets, and a compelling call-to-action (CTA) summary.
-                    </p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
-                        <i data-lucide="zap" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Viral Formatting</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        Our tool automatically formats tweets with line breaks and bullet points to maximize readability and engagement.
-                    </p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-slate-100">
-                    <div class="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center text-slate-700 mb-6">
-                        <i data-lucide="user-check" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Authority Building</h3>
-                    <p class="text-slate-600 leading-relaxed">
-                        Generate bios and content that position you as an expert in your niche, attracting high-quality followers.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HOW IT WORKS SECTION -->
-    <section class="py-20 bg-white border-t border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-slate-200 to-blue-200 rounded-full blur-3xl opacity-50"></div>
-                    <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=1974&auto=format&fit=crop" alt="Twitter Creator Dashboard" class="relative rounded-2xl shadow-2xl border border-slate-200 transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                </div>
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-40 pb-16">
+        
+        <!-- Hero & Tool Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+            <div class="grid lg:grid-cols-12 gap-12 items-start">
                 
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-8 font-heading">Grow Your Personal Brand in 3 Steps</h2>
-                    <div class="space-y-8">
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">1</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Select Your Format</h4>
-                                <p class="text-slate-600">Choose between a long-form Thread, a single punchy Tweet, or Bio optimization.</p>
+                <!-- Left Column: Copy -->
+                <div class="lg:col-span-5 pt-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider mb-6 border border-slate-700">
+                        <i data-lucide="twitter" class="w-3 h-3"></i> X (Twitter) Growth Suite
+                    </div>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold font-heading text-slate-900 leading-tight mb-6">
+                        Write Viral Threads & <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-900">Tweets in Seconds</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Grow your following on X with AI. Generate multi-tweet threads from a single topic, optimize your bio for conversions, and find trending hashtags instantly.
+                    </p>
+                    
+                    <!-- COMPLIANCE UPDATE: Benefit-driven claims (No fake stats) -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="infinity" class="w-5 h-5 text-slate-900"></i> Unlimited Threads
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-slate-900"></i> Boost Engagement
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                            <i data-lucide="zap" class="w-5 h-5 text-slate-900"></i> Viral Hooks
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: The Tool Interface -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative z-10 ring-1 ring-slate-900/5">
+                        
+                        <!-- Tool Tabs -->
+                        <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar no-scrollbar">
+                            <button onclick="setTool('thread')" class="tool-tab active flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="list-start" class="w-4 h-4"></i> Thread
+                            </button>
+                            <button onclick="setTool('tweet')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> Tweet
+                            </button>
+                            <button onclick="setTool('bio')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="user" class="w-4 h-4"></i> Bio
+                            </button>
+                            <button onclick="setTool('tags')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="hash" class="w-4 h-4"></i> Hashtags
+                            </button>
+                        </div>
+
+                        <!-- Tool Input Area -->
+                        <div class="p-8">
+                            <div class="mb-6">
+                                <h3 class="font-bold text-slate-900 mb-2 text-xl flex items-center gap-2" id="tool-title">
+                                    Twitter Thread Creator
+                                </h3>
+                                <p class="text-slate-500" id="tool-desc">Turn a simple idea into a viral 5-tweet thread.</p>
+                            </div>
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Topic / Idea</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i data-lucide="edit-3" class="h-5 w-5 text-slate-400"></i>
+                                        </div>
+                                        <input type="text" id="user-input" class="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-all bg-slate-50 focus:bg-white" placeholder="e.g., 10 lessons from building a startup">
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-2 text-right">More details = better threads.</p>
+                                </div>
+                                
+                                <button id="generate-btn" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-900/20 transition-all flex items-center justify-center gap-2 text-lg group">
+                                    <i data-lucide="sparkles" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> 
+                                    <span>Generate Content</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">2</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Enter Your Idea</h4>
-                                <p class="text-slate-600">Type a rough topic, keyword, or industry. Example: "AI in Marketing".</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">3</div>
-                            <div>
-                                <h4 class="text-lg font-bold text-slate-900 mb-2">Review & Tweet</h4>
-                                <p class="text-slate-600">Copy the generated content directly to X. No editing required.</p>
-                            </div>
+                        
+                        <!-- AI Badge -->
+                        <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
+                            <span>Powered by Advanced AI Models</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> System Online</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer Injection Point -->
+        <!-- VISUAL CONTEXT: Strategy -->
+        <section class="bg-white py-20 border-y border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">Master the Art of Micro-Blogging</h2>
+                    <p class="text-lg text-slate-600">Twitter (X) rewards consistency and hooks. Our AI models are trained on thousands of viral tweets to understand exactly what makes people retweet.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-700 to-slate-900"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-slate-900 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="magnet" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">The Hook</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            We craft opening tweets that stop the scroll. High-contrast statements and open loops that demand attention.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-blue-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="list" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">The Structure</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Threads are formatted for readability. Short sentences, bullet points, and visual spacing to keep the reader engaged.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-emerald-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="rocket" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">The CTA</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Every thread ends with a clear Call to Action to drive followers, newsletter signups, or website traffic.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Long-Form Educational Content (Compliance Fix) -->
+        <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="prose prose-lg prose-slate max-w-none">
+                
+                <h2 class="font-heading text-3xl font-bold text-slate-900">How to Go Viral on X (Twitter) in 2025</h2>
+                <p>
+                    The algorithm has changed. It's no longer just about hashtag stuffing or posting 20 times a day. Today, X prioritizes <strong>Dwell Time</strong> and <strong>Replies</strong>. This means your content needs to be sticky—it needs to keep people reading and encourage them to comment.
+                </p>
+                <p>
+                    Our AI Thread Generator is built on the "Hook-Value-CTA" framework used by top creators. It ensures your first tweet is provocative enough to stop the scroll, while the subsequent tweets deliver genuine value that warrants a retweet.
+                </p>
+
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">The Anatomy of a Perfect Twitter Bio</h2>
+                <p>
+                    Your bio is your landing page. You have less than 5 seconds to convince a visitor to follow you. A high-converting bio answers three questions:
+                </p>
+                <ul class="list-none pl-0 space-y-2 mt-4">
+                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 mt-1"></i> <span><strong>Who are you?</strong> (Authority/Credibility)</span></li>
+                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 mt-1"></i> <span><strong>What do you tweet about?</strong> (Niche/Value)</span></li>
+                    <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 mt-1"></i> <span><strong>Why should I follow?</strong> (Social Proof/CTA)</span></li>
+                </ul>
+                <p class="mt-4">
+                    Use our <strong>Bio Optimizer</strong> tool to generate professional, witty, or niche-specific bios that check all these boxes.
+                </p>
+
+                <div class="bg-slate-100 p-6 rounded-xl my-8 border-l-4 border-slate-900">
+                    <h4 class="font-bold text-slate-900 mb-2 no-margin">Viral Tweet Checklist</h4>
+                    <ul class="text-sm mb-0">
+                        <li>Does the first line spark curiosity or emotion?</li>
+                        <li>Is the formatting clean (lots of white space)?</li>
+                        <li>Did you remove unnecessary words (adverbs/adjectives)?</li>
+                        <li>Is there a clear takeaway for the reader?</li>
+                    </ul>
+                </div>
+
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">Why Threads Work Better Than Single Tweets</h2>
+                <p>
+                    Threads (or "tweetstorms") allow you to bypass the character limit and dive deep into a topic. The algorithm loves threads because they increase the time a user spends on your content. When someone expands your thread to read more, it sends a strong signal to X that your content is high-quality, leading to broader distribution.
+                </p>
+
+            </div>
+        </article>
+
+        <!-- FAQ Section (Compliance Fix) -->
+        <section class="bg-slate-50 py-20 border-t border-slate-200">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold font-heading text-center text-slate-900 mb-12">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            Is this X/Twitter tool free?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Yes, all tools on DigitalServicesHub are completely free to use. You can generate unlimited threads, tweets, and bio optimizations without any cost or subscription.
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            How do I post a generated thread?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Our tool generates the content for you. You simply need to copy each numbered tweet and paste it into X's thread composer. We recommend adding images or GIFs to your tweets to increase engagement further.
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
+                            Can I use this for business accounts?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Absolutely. The AI is trained to produce professional, engaging content suitable for personal brands, startups, and corporate accounts. You can specify the tone (e.g., "Professional," "Witty," "Inspirational") in your input.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Container -->
     <footer id="main-footer"></footer>
 
     <!-- Result Modal -->
-    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl m-4 flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="result-modal-content">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl m-4 flex flex-col max-h-[85vh] animate-in fade-in zoom-in duration-300" id="result-modal-content">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
                 <div>
-                    <h3 class="font-bold text-xl text-slate-900" id="modal-title">Generated Results</h3>
-                    <p class="text-xs text-slate-500">X-Optimized Content</p>
+                    <h3 class="font-bold text-xl text-slate-900" id="modal-title">Generated Content</h3>
+                    <p class="text-xs text-slate-500 mt-1">Ready to Post</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="copyContent()" class="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors text-slate-700">
-                        <i data-lucide="copy" class="w-4 h-4"></i> Copy
-                    </button>
                     <button onclick="closeModal()" class="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
-            <div class="flex-1 p-8 overflow-y-auto">
-                <div id="result-content" class="prose prose-slate max-w-none text-slate-800 leading-relaxed"></div>
+            <div class="flex-1 p-8 overflow-y-auto custom-scrollbar bg-white">
+                <div id="result-content" class="prose prose-slate max-w-none text-slate-800 leading-relaxed whitespace-pre-line"></div>
             </div>
-            <!-- AD SPACE -->
-            <div class="p-4 border-t border-slate-100 flex justify-center bg-slate-50 rounded-b-2xl hidden" id="ad-modal-container">
-                <div id="ad-modal" class="w-[300px] h-[250px] bg-white border border-slate-200 flex items-center justify-center"></div>
+            <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-b-2xl">
+                <span class="text-xs text-slate-400">Content generated by AI. Fact-check before posting.</span>
+                <button onclick="copyContent()" class="px-6 py-2.5 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy to Clipboard
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- PRODUCTION LEVEL SCRIPT -->
+    <!-- Scripts -->
     <script type="module">
-        import { 
-            loadHeader, 
-            loadFooter, 
-            loadGlobalSettings, 
-            loadSystemPrompts, 
-            getPromptForTool, 
-            generateAIContent 
-        } from './assets/js/shared.js';
+        import { loadHeader, loadFooter, loadGlobalSettings, loadSystemPrompts, getPromptForTool, generateAIContent } from './assets/js/shared.js';
 
-        // Page Specific State
         let currentTool = 'thread';
         const titles = { 
             thread: 'Twitter Thread Creator', 
@@ -288,10 +367,28 @@
             bio: 'Create a professional or witty bio to convert profile visitors.', 
             tags: 'Find trending hashtags to increase your tweet impressions.' 
         };
+        const placeholders = {
+            thread: 'e.g., 10 lessons from building a startup in 2024. Tone: Inspirational.',
+            tweet: 'e.g., A funny tweet about programming bugs.',
+            bio: 'e.g., Digital marketer specializing in SEO. I love coffee and hiking.',
+            tags: 'e.g., Artificial Intelligence'
+        };
 
-        // Init
+        // FAQ Toggle Logic
+        window.toggleFaq = (button) => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            if(content.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
-            loadHeader('home');
+            await loadHeader('home');
             loadFooter();
             const settings = await loadGlobalSettings();
             if(settings && settings.title) document.title = settings.title.replace('YouTube', 'Twitter');
@@ -299,22 +396,25 @@
 
             const genBtn = document.getElementById('generate-btn');
             if(genBtn) genBtn.addEventListener('click', handleGenerate);
+            if(window.lucide) window.lucide.createIcons();
         });
 
-        // Generation Logic
         async function handleGenerate() {
             const input = document.getElementById('user-input');
             const btn = document.getElementById('generate-btn');
             const originalContent = btn.innerHTML;
             
             if(!input.value.trim()) {
+                input.focus();
                 input.classList.add('ring-2', 'ring-slate-900');
                 setTimeout(() => input.classList.remove('ring-2', 'ring-slate-900'), 1000);
                 return;
             }
             
-            btn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span>`;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>Processing...</span>`;
+            if(window.lucide) window.lucide.createIcons();
             btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
             try {
                 const toolKey = `twitter_${currentTool}`;
@@ -322,34 +422,53 @@
                 const text = await generateAIContent(prompt, toolKey, input.value);
                 
                 const modal = document.getElementById('result-modal');
-                document.getElementById('result-content').innerHTML = `<div class="prose prose-slate max-w-none">${text.replace(/\n/g, '<br>')}</div>`;
+                
+                // Simple formatting for bold text
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                document.getElementById('result-content').innerHTML = formattedText;
                 
                 document.getElementById('modal-title').innerText = titles[currentTool] + " Results";
 
                 modal.classList.remove('hidden');
                 setTimeout(() => { 
                     modal.classList.remove('opacity-0'); 
-                    document.getElementById('result-modal-content').classList.add('scale-100'); 
+                    document.getElementById('result-modal-content').classList.remove('scale-95'); 
                 }, 10);
                 
                 if(window.lucide) window.lucide.createIcons();
 
             } catch (e) {
-                alert(e.message);
+                alert("An error occurred. Please try again.");
+                console.error(e);
             } finally {
                 btn.innerHTML = originalContent;
+                if(window.lucide) window.lucide.createIcons();
                 btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         }
 
-        // Global UI Functions
         window.setTool = (tool) => {
             currentTool = tool;
             document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`button[onclick="setTool('${tool}')"]`).classList.add('active');
             
-            document.getElementById('tool-title').innerText = titles[tool];
-            document.getElementById('tool-desc').innerText = descs[tool];
+            const titleEl = document.getElementById('tool-title');
+            const descEl = document.getElementById('tool-desc');
+            const inputEl = document.getElementById('user-input');
+            
+            // Fade transition
+            titleEl.style.opacity = 0;
+            descEl.style.opacity = 0;
+            
+            setTimeout(() => {
+                titleEl.innerText = titles[tool];
+                descEl.innerText = descs[tool];
+                inputEl.placeholder = placeholders[tool];
+                
+                titleEl.style.opacity = 1;
+                descEl.style.opacity = 1;
+            }, 200);
         }
 
         window.closeModal = () => {
@@ -359,8 +478,17 @@
         }
         
         window.copyContent = () => {
-            navigator.clipboard.writeText(document.getElementById('result-content').innerText);
-            alert("Copied!");
+            const text = document.getElementById('result-content').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('#result-modal button[onclick="copyContent()"]');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+                if(window.lucide) window.lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    if(window.lucide) window.lucide.createIcons();
+                }, 2000);
+            });
         }
     </script>
 </body>
