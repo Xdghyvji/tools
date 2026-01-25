@@ -146,31 +146,40 @@
     <!-- Scripts for Shared Header/Footer -->
     <script>
         /**
-         * Robust initialization helper.
-         * Tries to initialize components immediately if shared.js is loaded,
-         * or waits for the script to load/DOM to be ready.
+         * Robust injection script.
+         * Runs immediately to attempt initialization and sets up polling.
          */
-        function handleSharedInit() {
-            if (typeof initSharedComponents === 'function') {
-                initSharedComponents();
-            } else {
-                // If not found, check again in a short interval (in case of slow script loading)
-                let retryCount = 0;
-                const interval = setInterval(() => {
-                    if (typeof initSharedComponents === 'function') {
-                        initSharedComponents();
-                        clearInterval(interval);
-                    } else if (retryCount > 10) {
-                        console.error("Shared components failed to load from assets/js/shared.js");
-                        clearInterval(interval);
-                    }
-                    retryCount++;
-                }, 200);
+        (function() {
+            function init() {
+                if (typeof initSharedComponents === 'function') {
+                    initSharedComponents();
+                    console.log("Shared components initialized successfully.");
+                    return true;
+                }
+                return false;
             }
-        }
 
-        // Run on load
-        window.addEventListener('load', handleSharedInit);
+            // Attempt 1: Immediate
+            if (!init()) {
+                // Attempt 2: On DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', init);
+                
+                // Attempt 3: On Window Load
+                window.addEventListener('load', init);
+
+                // Attempt 4: Polling (Every 100ms for 3 seconds)
+                let attempts = 0;
+                const interval = setInterval(() => {
+                    attempts++;
+                    if (init() || attempts > 30) {
+                        clearInterval(interval);
+                        if (attempts > 30) {
+                            console.error("shared.js components could not be initialized. Check file path: assets/js/shared.js");
+                        }
+                    }
+                }, 100);
+            }
+        })();
     </script>
 
 </body>
