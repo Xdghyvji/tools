@@ -81,7 +81,7 @@
                 <!-- Image Container -->
                 <div class="md:w-2/5 bg-slate-100 relative group">
                     <img 
-                        src="mubashirarham.png" 
+                        src="mubashirarham.jpg" 
                         onerror="this.src='https://ui-avatars.com/api/?name=Mubashir+Arham&background=0D8ABC&color=fff&size=512'"
                         alt="Mubashir Arham - Founder & CEO" 
                         class="w-full h-full object-cover object-center min-h-[400px]"
@@ -128,7 +128,7 @@
                         <a href="https://github.com/Xdghyvji" target="_blank" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-black hover:text-white transition duration-300">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:your-email@example.com" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-red-500 hover:text-white transition duration-300">
+                        <a href="mailto:mubashirarham12@gmail.com" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-red-500 hover:text-white transition duration-300">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -144,10 +144,12 @@
     <!-- Scripts for Shared Header/Footer -->
     <script src="assets/js/shared.js"></script>
     <script>
-        // Ensure shared components initialize after the script loads
-        document.addEventListener('DOMContentLoaded', () => {
+        // Use an IIFE or wait for full load to handle injection
+        window.addEventListener('load', function() {
             if (typeof initSharedComponents === 'function') {
                 initSharedComponents();
+            } else {
+                console.error("Shared components initialization function not found.");
             }
         });
     </script>
