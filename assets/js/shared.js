@@ -4,8 +4,8 @@
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
  * - Session-Based High Quality Cookie Consent (AdSense Compliant)
- * - Global Adsterra & AdSense Injection System
- * - Dynamic Header/Footer Injection with Logo
+ * - Global Adsterra & AdSense Injection System (Lazy Loaded for LCP)
+ * - Dynamic Header/Footer/Favicon Injection
  * - Real-time Presence & Performance Monitoring
  * - Scroll Depth & Funnel Tracking
  */
@@ -14,7 +14,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getFirestore, collection, doc, getDoc, addDoc, writeBatch, serverTimestamp, enableIndexedDbPersistence, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-console.log("🚀 System: Initializing Core Services v2.5 (Enhanced Tracking)...");
+console.log("🚀 System: Initializing Core Services v2.8 (LCP Fix)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -132,9 +132,26 @@ class AuthManager {
 const authManager = new AuthManager();
 
 // ==========================================
-// 3. UI INJECTOR (Header/Footer with Logo)
+// 3. UI INJECTOR (Header/Footer with Logo & Favicon)
 // ==========================================
+
+// Global Favicon Injector
+function injectFavicon() {
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    // Using the uploaded logo path for favicon
+    link.href = '/assets/img/digitalserviceshub.png';
+    link.type = 'image/png';
+}
+
 export function loadHeader(activePage = '') {
+    // Inject Favicon immediately when header loads
+    injectFavicon();
+
     const header = document.getElementById('main-header');
     if (!header) return console.error("UI: #main-header element missing");
 
@@ -150,7 +167,8 @@ export function loadHeader(activePage = '') {
     header.innerHTML = `
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="/index.html" class="flex items-center gap-2 group">
-                <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/40x40?text=DSH'; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg\'>D</div><span class=\'font-bold text-xl text-slate-900 tracking-tight\'>DigitalServices<span class=\'text-brand-600\'>Hub</span></span>'">
+                <!-- LOGO: Updated Path and Sizing -->
+                <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg\'>D</div><span class=\'font-bold text-xl text-slate-900 tracking-tight\'>DigitalServices<span class=\'text-brand-600\'>Hub</span></span>'">
             </a>
 
             <!-- Desktop Nav -->
@@ -192,7 +210,8 @@ export function loadHeader(activePage = '') {
         <div id="mobile-menu" class="hidden fixed inset-0 z-[60] bg-white overflow-y-auto transform transition-transform duration-300 translate-x-full">
             <div class="flex justify-between items-center p-4 border-b border-slate-100 sticky top-0 bg-white z-10">
                 <div class="flex items-center gap-2">
-                    <img src="/digitalserviceshub.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.src='https://via.placeholder.com/32x32?text=DSH'">
+                    <!-- Mobile Logo -->
+                    <img src="/assets/img/digitalserviceshub.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.src='https://via.placeholder.com/40x40?text=DSH'">
                     <span class="font-bold text-lg text-slate-900">Menu</span>
                 </div>
                 <button id="close-mobile-menu" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"><i data-lucide="x" class="w-6 h-6"></i></button>
@@ -281,9 +300,8 @@ export function loadHeader(activePage = '') {
     if(window.lucide) window.lucide.createIcons();
     authManager.init();
     
-    // Inject Ads after header load
-    injectAdSense();
-    injectAdsterraAds();
+    // Inject Ads after header load (LAZY LOADED)
+    lazyLoadAds();
 }
 
 export function loadFooter() {
@@ -296,7 +314,8 @@ export function loadFooter() {
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
                     <a href="/index.html" class="flex items-center gap-2 mb-4">
-                        <img src="/digitalserviceshub.png" alt="DigitalServicesHub" class="h-8 w-auto brightness-200 grayscale contrast-200">
+                        <!-- Footer Logo -->
+                        <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub" class="h-8 w-auto brightness-200 grayscale contrast-200 opacity-90">
                     </a>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">Empowering creators with free, professional-grade AI tools. Built for scale, security, and speed.</p>
                 </div>
@@ -365,7 +384,10 @@ class AnalyticsEngine {
         }
 
         if (this.isTracking) {
-            this.fetchGeo().then(data => this.ipData = data);
+            // Lazy load geo to improve LCP
+            requestIdleCallback(() => {
+                this.fetchGeo().then(data => this.ipData = data);
+            });
             
             // Track Page View
             this.track('page_view', {
@@ -570,7 +592,8 @@ const CookieManager = {
             localStorage.setItem('dsh_cookie_consent', 'accepted');
             closeModal();
             analytics.isTracking = true;
-            // Reload ads if needed, or trigger specific ad personalization logic here
+            // Reload ads if needed
+            lazyLoadAds();
         };
         
         document.getElementById('cookie-reject').onclick = () => {
@@ -589,7 +612,7 @@ const CookieManager = {
 };
 
 // ==========================================
-// 6. AD SYSTEM (AdSense & Adsterra)
+// 6. AD SYSTEM (AdSense & Adsterra - Lazy Loaded for LCP)
 // ==========================================
 
 // Global settings loader
@@ -615,6 +638,20 @@ export async function loadSystemPrompts() {
     return true; 
 }
 
+// Main Lazy Load Function to fix LCP issues
+function lazyLoadAds() {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const delay = isMobile ? 3500 : 1500; // Longer delay on mobile to prioritize content paint
+
+    // Use requestIdleCallback if available, fallback to setTimeout
+    const scheduleLoad = window.requestIdleCallback || ((cb) => setTimeout(cb, delay));
+
+    scheduleLoad(() => {
+        injectAdSense();
+        injectAdsterraAds();
+    }, { timeout: 5000 });
+}
+
 /**
  * Injects Google AdSense.
  * Safe injection that respects existing scripts.
@@ -628,7 +665,7 @@ function injectAdSense() {
     script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7047763389543423";
     script.crossOrigin = "anonymous";
     document.head.appendChild(script);
-    console.log("✅ AdSense: Script Injected");
+    console.log("✅ AdSense: Script Injected (Lazy)");
 }
 
 /**
