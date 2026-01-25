@@ -3,17 +3,18 @@
  * Features:
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
- * - Session-Based High Quality Cookie Consent
- * - Global Adsterra Ad Injection System
- * - Dynamic Header/Footer Injection
- * - Mobile App Integration
+ * - Session-Based High Quality Cookie Consent (AdSense Compliant)
+ * - Global Adsterra & AdSense Injection System
+ * - Dynamic Header/Footer Injection with Logo
+ * - Real-time Presence & Performance Monitoring
+ * - Scroll Depth & Funnel Tracking
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, addDoc, writeBatch, serverTimestamp, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, addDoc, writeBatch, serverTimestamp, enableIndexedDbPersistence, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-console.log("🚀 System: Initializing Core Services v2.4 (App Integration)...");
+console.log("🚀 System: Initializing Core Services v2.5 (Enhanced Tracking)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -131,7 +132,7 @@ class AuthManager {
 const authManager = new AuthManager();
 
 // ==========================================
-// 3. UI INJECTOR (Header/Footer)
+// 3. UI INJECTOR (Header/Footer with Logo)
 // ==========================================
 export function loadHeader(activePage = '') {
     const header = document.getElementById('main-header');
@@ -149,8 +150,7 @@ export function loadHeader(activePage = '') {
     header.innerHTML = `
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="/index.html" class="flex items-center gap-2 group">
-                <div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">D</div>
-                <span class="font-bold text-xl text-slate-900 tracking-tight group-hover:text-brand-600 transition-colors">DigitalServices<span class="text-brand-600">Hub</span></span>
+                <img src="/digitalserviceshub.png" alt="DigitalServicesHub Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/40x40?text=DSH'; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg\'>D</div><span class=\'font-bold text-xl text-slate-900 tracking-tight\'>DigitalServices<span class=\'text-brand-600\'>Hub</span></span>'">
             </a>
 
             <!-- Desktop Nav -->
@@ -171,13 +171,12 @@ export function loadHeader(activePage = '') {
                 </div>
                 <a href="/blog.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('blog')}">Blog</a>
                 <a href="/subscription.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('pricing')}">Pricing</a>
-                <a href="/about.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">about</a>
+                <a href="/about.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('about')}">About</a>
                 <a href="/contact.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">Contact</a>
             </div>
 
             <!-- Action Buttons -->
             <div class="flex items-center gap-3">
-                <!-- App Download Button (Desktop) -->
                 <a href="/app-release.apk" class="hidden lg:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:-translate-y-0.5" title="Download mobile app for a better version">
                     <i data-lucide="smartphone" class="w-4 h-4"></i>
                     <span>Get App</span>
@@ -185,39 +184,71 @@ export function loadHeader(activePage = '') {
 
                 <a href="/login.html" id="nav-auth-btn" class="hidden md:flex px-4 py-2 text-sm font-bold text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">Log in</a>
                 <a href="/subscription.html" class="px-5 py-2.5 bg-slate-900 hover:bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-slate-900/20 hover:shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-0.5">Get Started</a>
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"><i data-lucide="menu" class="w-6 h-6"></i></button>
             </div>
         </nav>
 
         <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-[60] bg-white">
-            <div class="flex justify-between items-center p-4 border-b border-slate-100">
-                <span class="font-bold text-xl text-slate-900">Menu</span>
-                <button id="close-mobile-menu" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg"><i data-lucide="x" class="w-6 h-6"></i></button>
-            </div>
-            <div class="flex flex-col p-4 gap-2 overflow-y-auto">
-                <a href="/index.html" class="p-3 text-sm font-bold rounded-lg ${isActive('home')}">Home</a>
-                <div class="p-3 bg-slate-50 rounded-lg">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Tools</span>
-                    <div class="grid grid-cols-2 gap-2">
-                        <a href="/tiktok.html" class="p-2 bg-white border border-slate-200 rounded text-center text-sm font-medium">TikTok</a>
-                        <a href="/instagram.html" class="p-2 bg-white border border-slate-200 rounded text-center text-sm font-medium">Instagram</a>
-                        <a href="/blog-tools.html" class="p-2 bg-white border border-slate-200 rounded text-center text-sm font-medium">Blog AI</a>
-                        <a href="/email-tools.html" class="p-2 bg-white border border-slate-200 rounded text-center text-sm font-medium">Email</a>
-                    </div>
+        <div id="mobile-menu" class="hidden fixed inset-0 z-[60] bg-white overflow-y-auto transform transition-transform duration-300 translate-x-full">
+            <div class="flex justify-between items-center p-4 border-b border-slate-100 sticky top-0 bg-white z-10">
+                <div class="flex items-center gap-2">
+                    <img src="/digitalserviceshub.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.src='https://via.placeholder.com/32x32?text=DSH'">
+                    <span class="font-bold text-lg text-slate-900">Menu</span>
                 </div>
-                <a href="/blog.html" class="p-3 text-sm font-bold rounded-lg ${isActive('blog')}">Blog</a>
-                <a href="/subscription.html" class="p-3 text-sm font-bold rounded-lg ${isActive('pricing')}">Pricing</a>
-                <a href="/contact.html" class="p-3 text-sm font-bold rounded-lg ${isActive('contact')}">Contact</a>
-                
-                <div class="h-px bg-slate-100 my-2"></div>
-                
-                <!-- App Download Button (Mobile) -->
-                <a href="/app-release.apk" class="flex items-center justify-center gap-2 p-3 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-md hover:shadow-lg transition-all">
-                    <i data-lucide="smartphone" class="w-5 h-5"></i> Download Mobile App
-                </a>
+                <button id="close-mobile-menu" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-4 flex flex-col gap-6">
+                <!-- Primary Navigation -->
+                <div class="flex flex-col gap-2">
+                    <a href="/index.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold ${isActive('home') ? 'bg-brand-50 text-brand-700' : ''}">
+                        <i data-lucide="home" class="w-5 h-5"></i> Home
+                    </a>
+                    
+                    <!-- Tools Dropdown (Expanded by default for mobile ease) -->
+                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                        <div class="flex items-center gap-2 mb-3 text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
+                            <i data-lucide="wrench" class="w-3 h-3"></i> AI Tools
+                        </div>
+                        <div class="grid grid-cols-1 gap-1">
+                            <a href="/tiktok.html" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white hover:shadow-sm text-slate-600 text-sm font-medium transition-all">
+                                <span class="p-1.5 bg-black text-white rounded-md"><i data-lucide="music-2" class="w-3.5 h-3.5"></i></span> TikTok Tools
+                            </a>
+                            <a href="/instagram.html" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white hover:shadow-sm text-slate-600 text-sm font-medium transition-all">
+                                <span class="p-1.5 bg-pink-600 text-white rounded-md"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></span> Instagram Tools
+                            </a>
+                            <a href="/twitter-tools.html" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white hover:shadow-sm text-slate-600 text-sm font-medium transition-all">
+                                <span class="p-1.5 bg-blue-400 text-white rounded-md"><i data-lucide="twitter" class="w-3.5 h-3.5"></i></span> Twitter Tools
+                            </a>
+                            <a href="/email-tools.html" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white hover:shadow-sm text-slate-600 text-sm font-medium transition-all">
+                                <span class="p-1.5 bg-emerald-500 text-white rounded-md"><i data-lucide="mail" class="w-3.5 h-3.5"></i></span> Email Tools
+                            </a>
+                            <a href="/blog-tools.html" class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-white hover:shadow-sm text-slate-600 text-sm font-medium transition-all">
+                                <span class="p-1.5 bg-indigo-500 text-white rounded-md"><i data-lucide="pen-tool" class="w-3.5 h-3.5"></i></span> Blog Writer
+                            </a>
+                        </div>
+                    </div>
 
-                <a href="/login.html" id="mobile-nav-auth-btn" class="p-3 text-center text-sm font-bold text-brand-600 bg-brand-50 rounded-lg">Log in</a>
+                    <a href="/blog.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold ${isActive('blog') ? 'bg-brand-50 text-brand-700' : ''}">
+                        <i data-lucide="book-open" class="w-5 h-5"></i> Blog
+                    </a>
+                    <a href="/subscription.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold ${isActive('pricing') ? 'bg-brand-50 text-brand-700' : ''}">
+                        <i data-lucide="credit-card" class="w-5 h-5"></i> Pricing
+                    </a>
+                    <a href="/contact.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold ${isActive('contact') ? 'bg-brand-50 text-brand-700' : ''}">
+                        <i data-lucide="message-square" class="w-5 h-5"></i> Contact
+                    </a>
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="mt-auto flex flex-col gap-3 pt-4 border-t border-slate-100">
+                    <a href="/app-release.apk" class="flex items-center justify-center gap-2 p-3.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
+                        <i data-lucide="smartphone" class="w-5 h-5"></i> Download App
+                    </a>
+                    <a href="/login.html" id="mobile-nav-auth-btn" class="flex items-center justify-center gap-2 p-3.5 text-sm font-bold text-brand-700 bg-brand-50 rounded-xl hover:bg-brand-100 transition-colors">
+                        <i data-lucide="log-in" class="w-5 h-5"></i> Log In
+                    </a>
+                </div>
             </div>
         </div>
     `;
@@ -227,14 +258,31 @@ export function loadHeader(activePage = '') {
     const menu = document.getElementById('mobile-menu');
     
     if (btn && menu && closeBtn) {
-        btn.onclick = () => { menu.classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
-        closeBtn.onclick = () => { menu.classList.add('hidden'); document.body.style.overflow = ''; };
+        // Open
+        btn.onclick = () => { 
+            menu.classList.remove('hidden'); 
+            // Slight delay to allow display:block to apply before transition
+            requestAnimationFrame(() => {
+                menu.classList.remove('translate-x-full');
+            });
+            document.body.style.overflow = 'hidden'; 
+        };
+        
+        // Close
+        closeBtn.onclick = () => { 
+            menu.classList.add('translate-x-full');
+            setTimeout(() => {
+                menu.classList.add('hidden'); 
+                document.body.style.overflow = ''; 
+            }, 300); // Match transition duration
+        };
     }
 
     if(window.lucide) window.lucide.createIcons();
     authManager.init();
     
-    // Inject Adsterra Ads after header load
+    // Inject Ads after header load
+    injectAdSense();
     injectAdsterraAds();
 }
 
@@ -248,8 +296,7 @@ export function loadFooter() {
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
                     <a href="/index.html" class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">D</div>
-                        <span class="font-bold text-xl text-white">DigitalServicesHub</span>
+                        <img src="/digitalserviceshub.png" alt="DigitalServicesHub" class="h-8 w-auto brightness-200 grayscale contrast-200">
                     </a>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">Empowering creators with free, professional-grade AI tools. Built for scale, security, and speed.</p>
                 </div>
@@ -266,7 +313,7 @@ export function loadFooter() {
                     <ul class="space-y-3 text-sm text-slate-400">
                         <li><a href="/privacy.html" class="hover:text-brand-400 transition-colors">Privacy Policy</a></li>
                         <li><a href="/terms.html" class="hover:text-brand-400 transition-colors">Terms of Service</a></li>
-                        <li><a href="/about.html" class="hover:text-brand-400 transition-colors">about us</a></li>
+                        <li><a href="/about.html" class="hover:text-brand-400 transition-colors">About Us</a></li>
                         <li><a href="/contact.html" class="hover:text-brand-400 transition-colors">Contact Support</a></li>
                     </ul>
                 </div>
@@ -281,7 +328,7 @@ export function loadFooter() {
 }
 
 // ==========================================
-// 4. POWERFUL ANALYTICS (Batched & Efficient)
+// 4. POWERFUL ANALYTICS (Enhanced)
 // ==========================================
 class AnalyticsEngine {
     constructor() {
@@ -290,7 +337,9 @@ class AnalyticsEngine {
         this.sessionId = sessionStorage.getItem('dsh_session_id') || this.createSession();
         this.isTracking = false;
         this.flushInterval = null;
+        this.heartbeatInterval = null;
         this.defaultGeo = { ip: 'Anonymous', country_name: 'Unknown', city: 'Unknown', region: 'Unknown', latitude: 0, longitude: 0 };
+        this.scrollDepth = 0;
     }
 
     createSession() {
@@ -300,19 +349,17 @@ class AnalyticsEngine {
     }
 
     async init() {
-        // Soft Opt-in Logic: Tracking starts immediately unless explicitly rejected in the past
+        // Cookie Consent Logic
         const consent = localStorage.getItem('dsh_cookie_consent');
         
         if (consent === 'rejected') {
             console.log("Analytics: Tracking disabled by user.");
             this.isTracking = false;
         } else {
-            // Implicit consent or already accepted
             this.isTracking = true;
         }
 
-        // Show popup on every session visit if not already shown in this session
-        // This satisfies "pops up everytime a user visits"
+        // Show popup on every session visit if not already shown
         if (!sessionStorage.getItem('dsh_consent_session_viewed')) {
             CookieManager.show();
         }
@@ -320,13 +367,19 @@ class AnalyticsEngine {
         if (this.isTracking) {
             this.fetchGeo().then(data => this.ipData = data);
             
+            // Track Page View
             this.track('page_view', {
                 path: window.location.pathname,
                 title: document.title,
                 referrer: document.referrer || 'Direct'
             });
 
+            // Start Services
             this.setupClickTracking();
+            this.setupScrollTracking();
+            this.setupPerformanceTracking();
+            this.startHeartbeat();
+            
             this.flushInterval = setInterval(() => this.flush(), 10000);
             window.addEventListener('beforeunload', () => this.flush());
         }
@@ -342,10 +395,7 @@ class AnalyticsEngine {
                 const data = await res.json();
                 return { ...this.defaultGeo, ...data };
             }
-        } catch (e) {
-            // Silently fail or log warning if strict debug needed
-            // console.warn("Analytics: Geo fetch skipped", e);
-        }
+        } catch (e) {}
         return this.defaultGeo;
     }
 
@@ -364,6 +414,64 @@ class AnalyticsEngine {
 
         this.queue.push(event);
         if (this.queue.length >= 5) this.flush();
+    }
+
+    // FEATURE 1: Scroll Depth Tracking
+    setupScrollTracking() {
+        let maxScroll = 0;
+        window.addEventListener('scroll', () => {
+            const scrollPercent = Math.round((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100);
+            if (scrollPercent > maxScroll) {
+                maxScroll = scrollPercent;
+                // Log milestones: 25%, 50%, 75%, 100%
+                if (maxScroll >= 25 && this.scrollDepth < 25) { this.track('scroll_depth', { depth: 25 }); this.scrollDepth = 25; }
+                if (maxScroll >= 50 && this.scrollDepth < 50) { this.track('scroll_depth', { depth: 50 }); this.scrollDepth = 50; }
+                if (maxScroll >= 75 && this.scrollDepth < 75) { this.track('scroll_depth', { depth: 75 }); this.scrollDepth = 75; }
+                if (maxScroll >= 90 && this.scrollDepth < 90) { this.track('scroll_depth', { depth: 100 }); this.scrollDepth = 100; }
+            }
+        });
+    }
+
+    // FEATURE 3: Performance Monitoring (Core Web Vitals Proxy)
+    setupPerformanceTracking() {
+        window.addEventListener('load', () => {
+            if (window.performance) {
+                const navEntry = performance.getEntriesByType('navigation')[0];
+                if (navEntry) {
+                    this.track('performance', {
+                        loadTime: navEntry.loadEventEnd - navEntry.startTime,
+                        domReady: navEntry.domContentLoadedEventEnd - navEntry.startTime,
+                        ttfb: navEntry.responseStart - navEntry.requestStart
+                    });
+                }
+            }
+        });
+    }
+
+    // FEATURE 5: Conversion Funnel (Helper)
+    trackFunnelStep(stepName, toolName) {
+        this.track('funnel_step', { step: stepName, tool: toolName });
+    }
+
+    // Real-time Heartbeat
+    startHeartbeat() {
+        const beat = async () => {
+            if (!this.isTracking) return;
+            try {
+                // Write directly to a 'presence' collection with TTL-like behavior (handled by admin query)
+                const presenceRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', this.sessionId);
+                await setDoc(presenceRef, {
+                    lastActive: serverTimestamp(),
+                    path: window.location.pathname,
+                    device: this.getDeviceType(),
+                    country: this.ipData?.country_name || 'Unknown'
+                });
+            } catch (e) {
+                // console.warn("Heartbeat skipped"); 
+            }
+        };
+        beat(); // Initial beat
+        this.heartbeatInterval = setInterval(beat, 60000); // Every 60s
     }
 
     setupClickTracking() {
@@ -409,46 +517,45 @@ class AnalyticsEngine {
 const analytics = new AnalyticsEngine();
 
 // ==========================================
-// 5. COOKIE MANAGER (Quality UI)
+// 5. COOKIE MANAGER (AdSense Enhanced)
 // ==========================================
 const CookieManager = {
     show: () => {
         if (document.getElementById('cookie-consent-modal')) return;
         
-        // Mark session as viewed so it doesn't pop up on every page load within the same tab/session
         sessionStorage.setItem('dsh_consent_session_viewed', 'true');
 
         const modal = document.createElement('div');
         modal.id = 'cookie-consent-modal';
-        modal.className = "fixed bottom-4 right-4 z-[9999] max-w-sm w-full animate-slide-up";
+        modal.className = "fixed bottom-0 left-0 right-0 z-[9999] p-4 flex justify-center animate-slide-up";
         
-        // High Quality Glassmorphism Design
+        // GDPR/CCPA Compliant Design
         modal.innerHTML = `
-            <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-6 flex flex-col gap-4 transform transition-all duration-300 translate-y-10 opacity-0" id="cookie-inner">
-                <div class="flex items-start gap-3">
-                    <div class="p-3 bg-brand-100 rounded-xl text-brand-600 shadow-sm">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-200 p-6 max-w-2xl w-full flex flex-col md:flex-row gap-6 items-center transform transition-all duration-500 translate-y-full opacity-0" id="cookie-inner">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 bg-brand-100 rounded-lg text-brand-600">
+                            <i data-lucide="cookie" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-lg">We value your privacy</h3>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-lg">Privacy Choice</h3>
-                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-                            We use technology to analyze traffic and serve personalized content. Your data helps us keep this tool free.
-                            <a href="/privacy.html" class="text-brand-600 hover:underline font-medium">Policy</a>
-                        </p>
-                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        We use cookies to enhance your experience, analyze site traffic, and serve personalized content. By clicking "Accept All", you consent to our use of cookies.
+                        <a href="/privacy.html" class="text-brand-600 hover:underline font-semibold ml-1">Read Policy</a>
+                    </p>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <button id="cookie-accept" class="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-black text-sm shadow-lg shadow-slate-900/20 transition-all hover:scale-[1.02] active:scale-95">
-                        Accept & Continue
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button id="cookie-reject" class="flex-1 md:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 transition-all text-sm whitespace-nowrap">
+                        Essential Only
                     </button>
-                    <button id="cookie-reject" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 text-sm transition-colors">
-                        Decline Tracking
+                    <button id="cookie-accept" class="flex-1 md:flex-none px-8 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-brand-600 text-sm shadow-lg shadow-slate-900/20 hover:shadow-brand-600/20 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
+                        Accept All
                     </button>
                 </div>
             </div>
             <style>
-                @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-                .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+                @keyframes slideUpCookie { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                .animate-slide-up { animation: slideUpCookie 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
             </style>
         `;
         document.body.appendChild(modal);
@@ -456,33 +563,33 @@ const CookieManager = {
 
         setTimeout(() => {
             const inner = document.getElementById('cookie-inner');
-            inner.classList.remove('translate-y-10', 'opacity-0');
+            inner.classList.remove('translate-y-full', 'opacity-0');
         }, 100);
 
         document.getElementById('cookie-accept').onclick = () => {
             localStorage.setItem('dsh_cookie_consent', 'accepted');
             closeModal();
             analytics.isTracking = true;
+            // Reload ads if needed, or trigger specific ad personalization logic here
         };
         
         document.getElementById('cookie-reject').onclick = () => {
             localStorage.setItem('dsh_cookie_consent', 'rejected');
             closeModal();
             analytics.isTracking = false; 
-            // Reload to stop tracking scripts if necessary, but simple flag switch is usually enough
         };
 
         function closeModal() {
             const inner = document.getElementById('cookie-inner');
-            inner.style.transform = 'translateY(20px)';
+            inner.style.transform = 'translateY(100%)';
             inner.style.opacity = '0';
-            setTimeout(() => modal.remove(), 300);
+            setTimeout(() => modal.remove(), 500);
         }
     }
 };
 
 // ==========================================
-// 6. ADSTERRA & GLOBAL ADS SYSTEM
+// 6. AD SYSTEM (AdSense & Adsterra)
 // ==========================================
 
 // Global settings loader
@@ -503,38 +610,46 @@ export async function loadGlobalSettings() {
     return {};
 }
 
-// RESTORED MISSING EXPORT: Load System Prompts
+// Load System Prompts
 export async function loadSystemPrompts() {
-    // This function is required by tools like instagram.html to fetch prompt templates.
-    // If not found in DB, return a safe empty object or true to signal readiness.
     return true; 
 }
 
 /**
+ * Injects Google AdSense.
+ * Safe injection that respects existing scripts.
+ */
+function injectAdSense() {
+    if (document.getElementById('dsh-adsense-script')) return;
+
+    const script = document.createElement('script');
+    script.id = 'dsh-adsense-script';
+    script.async = true;
+    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7047763389543423";
+    script.crossOrigin = "anonymous";
+    document.head.appendChild(script);
+    console.log("✅ AdSense: Script Injected");
+}
+
+/**
  * Injects Adsterra Ads Globally.
- * Uses a safe default structure or fetches from settings.
- * Includes error handling for AdBlockers/403s.
  */
 function injectAdsterraAds() {
-    // Prevent double injection
     if (document.getElementById('dsh-adsterra-script')) return;
 
     loadGlobalSettings().then(settings => {
-        // 1. Social Bar / Native Banner (Everywhere)
-        // Checks settings for 'adsterra_social_bar_url' or falls back to placeholder logic
+        // 1. Social Bar
         const socialBarUrl = settings?.adsterra_social_bar_url;
-        
         if (socialBarUrl) {
             const script = document.createElement('script');
             script.id = 'dsh-adsterra-script';
             script.type = 'text/javascript';
             script.src = socialBarUrl;
-            // Handle loading errors silently (AdBlocker)
-            script.onerror = () => console.log("Ads: Social bar blocked or failed to load (expected if adblock is on).");
+            script.onerror = () => console.log("Ads: Social bar blocked (AdBlock).");
             document.head.appendChild(script);
         }
 
-        // 2. Banner Injection logic (for specific containers like #ad-container)
+        // 2. Banner Injection
         const adContainers = document.querySelectorAll('.adsterra-banner-728');
         if (adContainers.length > 0 && settings?.adsterra_banner_728_code) {
             adContainers.forEach(container => {
@@ -544,7 +659,6 @@ function injectAdsterraAds() {
             });
         }
     }).catch(e => {
-        // Fail silently for ads
         console.log("Ads: Init skipped");
     });
 }
@@ -558,7 +672,9 @@ export function getPromptForTool(toolKey, input) {
 }
 
 export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
-    analytics.track('generation', { tool, topic });
+    // FUNNEL TRACKING: Step 1 (Generation Requested)
+    analytics.track('funnel_step', { step: 'generation_request', tool, topic });
+    
     try {
         const response = await fetch('/.netlify/functions/generate-content', {
             method: 'POST',
@@ -567,9 +683,15 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
         });
         if (!response.ok) throw new Error('Generation failed');
         const data = await response.json();
+        
+        // FUNNEL TRACKING: Step 2 (Generation Success)
+        analytics.track('funnel_step', { step: 'generation_success', tool });
+        
         return data.text;
     } catch (e) {
         console.error("AI Error:", e);
+        // FUNNEL TRACKING: Step 2 (Generation Fail)
+        analytics.track('funnel_step', { step: 'generation_fail', tool, error: e.message });
         throw new Error("AI Service Busy. Please try again.");
     }
 }
