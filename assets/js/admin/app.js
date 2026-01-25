@@ -3,26 +3,32 @@ import { signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth
 
 // Import View Modules
 import * as DashboardView from './dashboard.js';
+import * as AnalyticsView from './analytics.js';     // [NEW] Analytics Module
 import * as PostsView from './posts.js';
-import * as MessagesView from './messages.js'; // Inbox, Comments, Subscribers
-import * as SettingsView from './settings.js'; // Global Settings, Keys, Banners
-import * as PromptsView from './prompts.js';   // Dedicated Prompts Module
-import * as UsersView from './users.js';       // User Management Module
+import * as AutoBloggerView from './auto-blogger.js'; // [NEW] Auto Blogger Module
+import * as MessagesView from './messages.js';       // Inbox, Comments, Subscribers
+import * as AuthorsView from './authors.js';         // [NEW] Authors Module
+import * as SettingsView from './settings.js';       // Global Settings, Keys, Banners
+import * as PromptsView from './prompts.js';         // Dedicated Prompts Module
+import * as UsersView from './users.js';             // User Management Module
 
 // Route Configuration
 // Maps a string ID (from the sidebar) to a specific JS module
 const routes = {
     'dashboard': DashboardView,
+    'analytics': AnalyticsView,     // [NEW] Route
     'posts': PostsView,
-    'inbox': MessagesView,      // Maps 'inbox' view to MessagesView module
-    'subscribers': MessagesView,// Maps 'subscribers' view to MessagesView module
-    'comments': MessagesView,   // Maps 'comments' view to MessagesView module
+    'autoblogger': AutoBloggerView, // [NEW] Route
+    'inbox': MessagesView,
+    'subscribers': MessagesView,
+    'comments': MessagesView,
     'settings': SettingsView,
-    'prompts': PromptsView,     // Route for the Prompts Manager
-    'keys': SettingsView,       // Sub-view handled by SettingsView
-    'banners': SettingsView,    // Sub-view handled by SettingsView
-    'logs': SettingsView,       // Sub-view handled by SettingsView
-    'users': UsersView          // Route for User Management
+    'prompts': PromptsView,
+    'authors': AuthorsView,         // [NEW] Route
+    'keys': SettingsView,
+    'banners': SettingsView,
+    'logs': SettingsView,
+    'users': UsersView
 };
 
 let currentSubscription = null; // Stores the unsubscribe function for realtime listeners
@@ -51,11 +57,9 @@ function initAuth() {
             if(emailEl) emailEl.innerText = user.email || "Admin";
             
             // Load Dashboard by default if no specific view is requested
-            // In a more advanced version, we could check URL params here
             loadView('dashboard');
         } else {
             // Redirect if not logged in
-            // Note: We use ../ because this script runs inside /admin/index.html
             window.location.href = "../login.html";
         }
     });
@@ -72,7 +76,7 @@ function initAuth() {
 /**
  * 2. Dynamic View Loader (Router)
  * This function swaps the content of the main area without refreshing.
- * * @param {string} viewName - Key from the routes object (e.g., 'dashboard', 'users')
+ * @param {string} viewName - Key from the routes object (e.g., 'dashboard', 'users')
  * @param {string} subType - Optional subtype passed to the module's render function (e.g., 'keys' for Settings)
  */
 window.loadView = async function(viewName, subType = null) {
@@ -85,7 +89,7 @@ window.loadView = async function(viewName, subType = null) {
         return;
     }
 
-    // A. Cleanup: Unsubscribe from previous Firestore listeners to prevent memory leaks/performance issues
+    // A. Cleanup: Unsubscribe from previous Firestore listeners
     try {
         if (currentSubscription && typeof currentSubscription === 'function') {
             currentSubscription(); 
@@ -96,7 +100,6 @@ window.loadView = async function(viewName, subType = null) {
     }
 
     // B. Render: Inject HTML into the main container
-    // Some modules (like Settings/Messages) handle multiple sub-views, so we pass the viewName/targetType
     const targetType = subType || viewName;
     
     try {
@@ -111,10 +114,8 @@ window.loadView = async function(viewName, subType = null) {
     updateSidebarActiveState(targetType);
 
     // D. Logic: Initialize module logic (attach listeners, fetch data)
-    // The init() function typically returns an unsubscribe function for Firestore
     if (module.init) {
         try {
-            // We await init in case it needs to fetch initial data before setting up listeners
             currentSubscription = await module.init(targetType);
         } catch (error) {
             console.error(`Error initializing ${viewName}:`, error);
@@ -125,7 +126,7 @@ window.loadView = async function(viewName, subType = null) {
         }
     }
 
-    // E. Icons: Re-scan DOM for Lucide icons (crucial for newly injected HTML)
+    // E. Icons: Re-scan DOM for Lucide icons
     if(window.lucide) window.lucide.createIcons();
 };
 
@@ -140,14 +141,18 @@ function setupSidebar() {
     // Menu Configuration
     const menuItems = [
         { id: 'dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
-        { id: 'users', icon: 'users', label: 'User Manager' }, // Updated Label
+        { id: 'analytics', icon: 'bar-chart-3', label: 'Analytics' }, // [NEW] Added Analytics
+        { id: 'users', icon: 'users', label: 'User Manager' },
+        { id: 'authors', icon: 'pen-tool', label: 'Authors' },        // [NEW] Added Authors
         { id: 'inbox', icon: 'inbox', label: 'Inbox', badge: 'inbox-badge' },
         { id: 'subscribers', icon: 'mail', label: 'Subscribers' },
         { divider: true },
-        { id: 'banners', icon: 'megaphone', label: 'Ad Banners' },
+        { id: 'autoblogger', icon: 'bot', label: 'Auto Blogger' },    // [NEW] Added Auto Blogger
         { id: 'posts', icon: 'file-text', label: 'Blog Posts' },
         { id: 'prompts', icon: 'terminal', label: 'AI Prompts' },
+        { id: 'banners', icon: 'megaphone', label: 'Ad Banners' },
         { id: 'comments', icon: 'message-square', label: 'Comments', badge: 'comment-badge' },
+        { divider: true },
         { id: 'keys', icon: 'key', label: 'API Keys' },
         { id: 'logs', icon: 'activity', label: 'Audit Logs' },
         { id: 'settings', icon: 'settings', label: 'Settings' },
@@ -170,7 +175,7 @@ function setupSidebar() {
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             const sb = document.getElementById('sidebar');
-            sb.classList.toggle('-translate-x-full'); // Show/Hide via CSS transform
+            sb.classList.toggle('-translate-x-full');
             sb.classList.toggle('absolute');
             sb.classList.toggle('h-full');
         });
@@ -182,18 +187,15 @@ function setupSidebar() {
  * Highlights the current tab in the sidebar.
  */
 function updateSidebarActiveState(id) {
-    // Reset all buttons to default state
+    // Reset all buttons
     document.querySelectorAll('.nav-item').forEach(btn => {
         btn.classList.remove('bg-slate-800', 'text-white', 'shadow-md');
         btn.classList.add('text-slate-300');
-        // Reset icon color inside
         const icon = btn.querySelector('i');
         if(icon) icon.classList.add('text-slate-400');
     });
     
-    // Set active button state
-    // We handle cases where sub-types (like 'keys') map to a main nav item (like 'settings') if you grouped them in sidebar
-    // But here every ID in menuItems matches a route directly.
+    // Set active button
     const active = document.getElementById(`nav-${id}`);
     if(active) {
         active.classList.add('bg-slate-800', 'text-white', 'shadow-md');
