@@ -3,209 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Maximize your open rates with DigitalServicesHub. AI tools to generate click-worthy subject lines, engaging newsletters, persuasive cold emails, and drip campaigns.">
-    <title>Email Marketing Tools | DigitalServicesHub.online</title>
+    <title>Free AI Email Generator: Subject Lines, Newsletters & Cold Emails | DigitalServicesHub</title>
+    <meta name="description" content="Boost open rates with our free AI email writer. Generate high-converting subject lines, newsletters, and cold outreach emails in seconds. No signup required.">
+    <meta name="keywords" content="AI email writer, free subject line generator, cold email template, newsletter generator, email marketing tools, email copy ai">
+    <meta name="author" content="DigitalServicesHub">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://digitalserviceshub.online/email-tools.html">
+    <meta property="og:title" content="Free AI Email Generator | Write Better Emails Faster">
+    <meta property="og:description" content="Stop staring at a blank cursor. Create professional emails, subject lines, and drip sequences in seconds with AI.">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+    <!-- Schema Markup for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "DigitalServicesHub Email Generator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "A suite of free AI tools to generate email subject lines, newsletters, and cold outreach sequences."
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }, email: { 500: '#14b8a6', 600: '#0d9488', amber: '#f59e0b' } }
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'], 
+                        heading: ['Plus Jakarta Sans', 'sans-serif'] 
+                    },
+                    colors: { 
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' },
+                        teal: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#134e4a' }
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .tool-tab.active { background-color: #ccfbf1; color: #0f766e; border-bottom: 2px solid #0d9488; }
-        .faq-card:hover { transform: translateY(-2px); transition: all 0.3s ease; }
+        .glass-header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        .tool-tab { transition: all 0.2s ease; position: relative; }
+        .tool-tab.active { color: #0f766e; background-color: #f0fdfa; font-weight: 600; }
+        .tool-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background-color: #0d9488; border-top-left-radius: 2px; border-top-right-radius: 2px; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
+        .prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; color: #1e293b; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.75; color: #475569; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
+        .prose li { margin-bottom: 0.5em; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- Header Container -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm h-20" id="main-header"></header>
+    <!-- Header Container (loaded dynamically) -->
+    <header class="fixed w-full top-0 z-50 glass-header h-20" id="main-header"></header>
 
-    <!-- Secondary Tool Nav -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm h-16 flex items-center">
-        <div class="max-w-7xl mx-auto w-full">
-            <div class="flex items-center overflow-x-auto px-4 space-x-4 custom-scrollbar flex-nowrap">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200">
-                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
+    <!-- Secondary Navigation -->
+    <nav class="fixed top-20 w-full z-40 bg-white/95 backdrop-blur border-b border-slate-200 h-14 flex items-center">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 overflow-x-auto custom-scrollbar">
+            <div class="flex items-center space-x-2 h-full">
+                <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> All Tools
                 </a>
-                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                <a href="email-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-teal-700 bg-teal-50 rounded-md whitespace-nowrap border border-teal-100">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Email Marketing
                 </a>
-                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-50 text-teal-600 border border-teal-100 font-semibold whitespace-nowrap shadow-sm">
-                    <i data-lucide="mail" class="w-4 h-4"></i> Email Tools
+                <a href="blog-tools.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Blog & SEO
                 </a>
-                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
+                <a href="instagram.html" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors whitespace-nowrap">
+                    <i data-lucide="instagram" class="w-4 h-4"></i> Social Media
                 </a>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- HERO SECTION -->
-    <section class="pt-48 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="tools">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            <div class="text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-100 text-teal-700 text-xs font-semibold mb-6 border border-teal-200">
-                    <i data-lucide="sparkles" class="w-3 h-3"></i> AI-Powered Copywriting
-                </div>
-                <h1 class="text-4xl lg:text-6xl font-bold font-heading text-slate-900 leading-tight mb-6">
-                    Professional Emails <span class="text-teal-600">Generated in Seconds</span>
-                </h1>
-                <p class="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    From subject lines that demand clicks to full-length newsletters, our AI tools help you communicate effectively and increase your conversion rates.
-                </p>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden relative z-10">
-                <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar">
-                    <button onclick="setTool('subject')" class="tool-tab active flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap">Subject Lines</button>
-                    <button onclick="setTool('newsletter')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap">Newsletter</button>
-                    <button onclick="setTool('cold')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap">Cold Email</button>
-                    <button onclick="setTool('sequence')" class="tool-tab flex-1 py-4 px-4 font-medium text-sm whitespace-nowrap">Sequence</button>
-                </div>
-                <div class="p-8">
-                    <div class="mb-6">
-                        <h3 class="font-bold text-slate-900 mb-2 text-xl" id="tool-title">Subject Line Generator</h3>
-                        <p class="text-sm text-slate-500" id="tool-desc">Create catchy subject lines that demand to be opened.</p>
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-40 pb-16">
+        
+        <!-- Hero & Tool Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+            <div class="grid lg:grid-cols-12 gap-12 items-start">
+                
+                <!-- Left Column: Copy -->
+                <div class="lg:col-span-5 pt-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-bold uppercase tracking-wider mb-6 border border-teal-200">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> AI-Powered Writing
                     </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Topic / Product Name</label>
-                            <input type="text" id="user-input" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none" placeholder="e.g., Summer Fashion Collection">
+                    <h1 class="text-4xl lg:text-5xl font-extrabold font-heading text-slate-900 leading-tight mb-6">
+                        Write Emails That <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-600">Actually Get Opened</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Writer's block is the enemy of revenue. Whether you need a catchy subject line, a nurturing newsletter, or a cold outreach sequence, our AI generates professional copy in seconds—so you can hit "Send" with confidence.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 mb-10">
+                        <div class="flex items-center gap-2 text-sm text-slate-500">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500"></i> Free Forever
                         </div>
-                        <button id="generate-btn" class="w-full py-3.5 bg-teal-600 text-white rounded-lg font-bold hover:bg-teal-700 transition-all flex items-center justify-center gap-2">
-                            <i data-lucide="zap" class="w-4 h-4"></i> <span>Generate Content</span>
-                        </button>
+                        <div class="flex items-center gap-2 text-sm text-slate-500">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500"></i> No Login Required
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-teal-500"></i> Human-like Tone
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: The Tool Interface -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative z-10 ring-1 ring-slate-900/5">
+                        
+                        <!-- Tool Tabs -->
+                        <div class="bg-slate-50 border-b border-slate-200 flex overflow-x-auto custom-scrollbar no-scrollbar">
+                            <button onclick="setTool('subject')" class="tool-tab active flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="type" class="w-4 h-4"></i> Subject Lines
+                            </button>
+                            <button onclick="setTool('newsletter')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="newspaper" class="w-4 h-4"></i> Newsletter
+                            </button>
+                            <button onclick="setTool('cold')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="send" class="w-4 h-4"></i> Cold Email
+                            </button>
+                            <button onclick="setTool('sequence')" class="tool-tab flex-1 py-4 px-6 text-sm font-medium whitespace-nowrap flex items-center gap-2 justify-center">
+                                <i data-lucide="list-video" class="w-4 h-4"></i> Drip Sequence
+                            </button>
+                        </div>
+
+                        <!-- Tool Input Area -->
+                        <div class="p-8">
+                            <div class="mb-6">
+                                <h3 class="font-bold text-slate-900 mb-2 text-xl flex items-center gap-2" id="tool-title">
+                                    Subject Line Generator
+                                </h3>
+                                <p class="text-slate-500" id="tool-desc">Create 10 catchy, high-open-rate subject lines based on your content.</p>
+                            </div>
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">What is this email about?</label>
+                                    <textarea id="user-input" rows="4" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-shadow resize-none bg-slate-50 focus:bg-white" placeholder="e.g., Launching our new summer swimwear collection with a 20% discount for early birds. The tone should be exciting and urgent."></textarea>
+                                    <p class="text-xs text-slate-400 mt-2 text-right">Be specific for better results.</p>
+                                </div>
+                                
+                                <button id="generate-btn" class="w-full py-4 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-600/20 transition-all flex items-center justify-center gap-2 text-lg group">
+                                    <i data-lucide="zap" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> 
+                                    <span>Generate Content</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Badge -->
+                        <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
+                            <span>Powered by Advanced AI Models</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div> System Online</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- REFINED BENEFITS SECTION (Fix for #2) -->
-    <section class="bg-white py-16 border-y border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="space-y-2">
-                    <div class="flex justify-center text-teal-600 mb-2"><i data-lucide="check-circle" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-bold text-slate-900">High Open Rates</h3>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">Psychology-Backed Copy</p>
+        <!-- Value Props / Why This Tool Matters -->
+        <section class="bg-white py-20 border-y border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">Why Use an AI Email Generator?</h2>
+                    <p class="text-lg text-slate-600">Email marketing still has the highest ROI of any marketing channel ($36 for every $1 spent). But that only works if people actually read what you write.</p>
                 </div>
-                <div class="space-y-2">
-                    <div class="flex justify-center text-amber-500 mb-2"><i data-lucide="infinity" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-bold text-slate-900">Unlimited Usage</h3>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">100% Free Generations</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex justify-center text-blue-600 mb-2"><i data-lucide="shield-check" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-bold text-slate-900">Spam-Safe</h3>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">Filtered for Deliverability</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex justify-center text-slate-900 mb-2"><i data-lucide="zap" class="w-8 h-8"></i></div>
-                    <h3 class="text-xl font-bold text-slate-900">Instant Results</h3>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">No Login Required</p>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
+                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-teal-600 mb-6">
+                            <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Overcome the Blank Page</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            Staring at a white screen is paralyzing. Our tool gives you a structured first draft instantly. You can edit, tweak, and polish, but you never have to start from zero again.
+                        </p>
+                    </div>
+
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
+                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 mb-6">
+                            <i data-lucide="mouse-pointer-2" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Psychology-Backed Copy</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            We've trained our models on high-performing emails. They naturally use hooks, curiosity gaps, and benefit-driven language that triggers the reader's desire to click.
+                        </p>
+                    </div>
+
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
+                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-amber-500 mb-6">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Avoid the Spam Folder</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            Aggressive sales language triggers spam filters. Our AI balances persuasion with professionalism, avoiding "spammy" keywords that hurt your domain reputation.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- EDUCATIONAL SECTION (Fix for #1) -->
-    <section class="py-24 bg-white border-b border-slate-200">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-slate-900 font-heading mb-8 text-center">Why Email Subject Lines Matter for SEO & Open Rates</h2>
-            <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
-                <p class="mb-6">
-                    In the digital marketing landscape, the email subject line is the most critical gatekeeper. While click-bait tactics might yield short-term spikes, modern AI filters and sophisticated users have evolved. Utilizing a "curiosity gap"—the space between what a user knows and what they want to know—is significantly more effective than misleading headlines. High-quality subject lines improve your sender reputation, which indirectly impacts your overall digital footprint and brand SEO.
-                </p>
-                <p class="mb-6">
-                    Deliverability is heavily influenced by spam filters that analyze keyword density and emotional triggers. Using words like "Winner," "Cash," or excessive exclamation marks can flag your domain, leading to lower reach. A healthy industry average open rate typically hovers between 17% and 28%, depending on your niche. To stay above this threshold, your content must feel personal and relevant.
+        <!-- Long-Form Content: How to Use & SEO Content -->
+        <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            
+            <div class="prose prose-lg prose-slate max-w-none">
+                <h2 class="font-heading text-3xl font-bold text-slate-900">How to Master Email Marketing with AI</h2>
+                <p>
+                    Email is personal. Unlike a social media post that scrolls by in a feed, an email sits in a user's inbox waiting for attention. This makes it powerful, but it also raises the stakes. If you are boring, irrelevant, or annoying, the "Unsubscribe" button is just one click away.
                 </p>
                 <p>
-                    Effective email marketing relies on "E-E-A-T" (Experience, Expertise, Authoritativeness, and Trustworthiness). By providing consistent value in your newsletters and outreach, you signal to both users and email service providers that your domain is a trusted source of information. Our AI tools are designed to maintain this balance, ensuring your copy remains persuasive without crossing into deceptive territory.
+                    Here is how to use our suite of tools to build a sustainable, high-converting email strategy.
                 </p>
-            </div>
-        </div>
-    </section>
 
-    <!-- FAQ SECTION (Fix for #3) -->
-    <section class="py-24 bg-slate-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-extrabold text-slate-900 font-heading mb-4">Email Marketing FAQ</h2>
-                <p class="text-slate-600 text-lg">Common questions about optimizing your email campaigns.</p>
+                <h3>1. Start with the Subject Line (The Gatekeeper)</h3>
+                <p>
+                    It doesn't matter if you've written the works of Shakespeare inside the email; if the subject line is dull, no one will read it. Use the <strong>Subject Line Generator</strong> tab above.
+                </p>
+                <ul>
+                    <li><strong>Be Specific:</strong> Instead of "Weekly Update," try "3 tips to double your traffic this week."</li>
+                    <li><strong>Use Curiosity:</strong> "The one mistake costing you sales..." is harder to ignore than "Sales tips."</li>
+                    <li><strong>Keep it Short:</strong> Mobile devices often cut off subject lines after 40-50 characters.</li>
+                </ul>
+
+                <h3>2. The Newsletter: Value First, Sell Second</h3>
+                <p>
+                    When using the <strong>Newsletter Writer</strong>, focus your input on the <em>value</em> you are providing. A good rule of thumb is the 80/20 rule: 80% educational or entertaining content, 20% promotion.
+                </p>
+                <p>
+                    If you train your audience that opening your emails makes them smarter or happier, they will open your sales emails too. If every email is a pitch, they will tune you out.
+                </p>
+
+                <h3>3. Cold Outreach: The Art of the Soft Touch</h3>
+                <p>
+                    Cold emailing is not about closing a sale instantly; it's about starting a conversation. Use the <strong>Cold Email</strong> tool to generate brief, respectful messages.
+                </p>
+                <p>
+                    <strong>Pro Tip:</strong> Personalization is key. The AI gives you a template, but you should always add a sentence that proves you know who the recipient is. Mention a recent post of theirs, their company news, or a mutual connection.
+                </p>
+
+                <h3>4. Drip Sequences: Automate Your Funnel</h3>
+                <p>
+                    The <strong>Sequence Planner</strong> is designed for "set it and forget it" marketing. When someone signs up for your lead magnet, they should receive a series of 3-5 emails.
+                </p>
+                <ul>
+                    <li><strong>Email 1:</strong> Deliver the asset immediately.</li>
+                    <li><strong>Email 2:</strong> Provide additional value/backstory.</li>
+                    <li><strong>Email 3:</strong> Address a common objection.</li>
+                    <li><strong>Email 4:</strong> Soft sell your main product.</li>
+                </ul>
             </div>
-            
-            <div class="space-y-4">
-                <div class="faq-card bg-white p-6 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-slate-900 mb-2">How does the AI generate subject lines?</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">Our AI uses Large Language Models trained on successful marketing campaigns to identify patterns that drive engagement. It combines your specific input with proven copywriting frameworks like AIDA (Attention, Interest, Desire, Action) to produce unique, high-performing results.</p>
-                </div>
-                <div class="faq-card bg-white p-6 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-slate-900 mb-2">Is this tool free for commercial newsletters?</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">Yes, all tools on DigitalServicesHub are completely free for both personal and commercial use. You can use the generated copy for your business newsletters, cold outreach campaigns, or client work without any attribution required.</p>
-                </div>
-                <div class="faq-card bg-white p-6 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-slate-900 mb-2">How can I avoid the spam folder?</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">To ensure high deliverability, avoid using all-caps, excessive emojis, or "trigger words" related to urgency and money. Our tool is optimized to suggest natural-sounding language that bypasses common algorithmic filters used by Gmail and Outlook.</p>
-                </div>
-                <div class="faq-card bg-white p-6 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-slate-900 mb-2">Can I generate content in other languages?</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">While optimized for English, the AI can process and generate content in over 20 languages including Spanish, French, and German. Simply provide your input in the target language to get started.</p>
+        </article>
+
+        <!-- FAQ Section -->
+        <section class="bg-slate-50 py-20 border-t border-slate-200">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold font-heading text-center text-slate-900 mb-12">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <!-- FAQ Item 1 -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                            Is the generated content unique?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
+                            Yes. Our AI generates fresh content every time based on your specific inputs. While it follows proven marketing structures, the actual words and phrasing are unique to your request. We recommend adding your own personal flair to the final output to make it truly yours.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                            Do you save my email ideas?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
+                            No. We prioritize your privacy. The inputs you provide are processed to generate the result and are then discarded. We do not store your campaign ideas, product names, or generated copy on our servers.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                            Can I use this for commercial purposes?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
+                            Absolutely. You have full ownership of any content generated by this tool. feel free to use it for your business newsletters, client work, or marketing campaigns without attribution.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                            Why does the tone matter?
+                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
+                        </button>
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
+                            Tone is the difference between a "corporate announcement" and a letter from a friend. People buy from people they like. Our AI allows you to specify a tone (e.g., "Professional," "Witty," "Urgent") so the email matches your brand voice perfectly.
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+    </main>
+
+    <!-- Footer Container -->
+    <footer id="main-footer"></footer>
 
     <!-- Result Modal -->
-    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-all duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl m-4 flex flex-col max-h-[85vh]">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
-                <h3 class="font-bold text-xl text-slate-900" id="modal-title">Results</h3>
-                <button onclick="closeModal()" class="p-2 hover:bg-slate-200 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <div id="result-modal" class="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center opacity-0 transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl m-4 flex flex-col max-h-[85vh] animate-in fade-in zoom-in duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-2xl">
+                <div>
+                    <h3 class="font-bold text-xl text-slate-900" id="modal-title">Generated Content</h3>
+                    <p class="text-xs text-slate-500 mt-1">Review and edit before sending</p>
+                </div>
+                <button onclick="closeModal()" class="p-2 hover:bg-slate-200 rounded-full text-slate-500 transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="flex-1 p-8 overflow-y-auto">
-                <div id="result-content" class="prose prose-slate max-w-none"></div>
+            <div class="flex-1 p-8 overflow-y-auto custom-scrollbar bg-white">
+                <div id="result-content" class="prose prose-slate max-w-none font-medium text-slate-700 whitespace-pre-line"></div>
             </div>
-            <div class="p-4 border-t border-slate-100 flex justify-end">
-                <button onclick="copyContent()" class="px-6 py-2 bg-teal-600 text-white rounded-lg font-bold hover:bg-teal-700 transition-colors">Copy Results</button>
+            <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-b-2xl">
+                <span class="text-xs text-slate-400">Content generated by AI. Fact-check before use.</span>
+                <button onclick="copyContent()" class="px-6 py-2.5 bg-teal-600 text-white rounded-lg font-bold hover:bg-teal-700 transition-all flex items-center gap-2 shadow-lg shadow-teal-600/20">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy to Clipboard
+                </button>
             </div>
         </div>
     </div>
 
-    <footer id="main-footer"></footer>
-
+    <!-- Scripts -->
     <script type="module">
         import { loadHeader, loadFooter, loadGlobalSettings, loadSystemPrompts, getPromptForTool, generateAIContent } from './assets/js/shared.js';
 
         let currentTool = 'subject';
-        const titles = { subject: 'Subject Line Generator', newsletter: 'Newsletter Writer', cold: 'Cold Email Generator', sequence: 'Drip Sequence Planner' };
+        const titles = { 
+            subject: 'Subject Line Generator', 
+            newsletter: 'Newsletter Writer', 
+            cold: 'Cold Email Generator', 
+            sequence: 'Drip Sequence Planner' 
+        };
         const descs = {
-            subject: 'Create catchy subject lines that demand to be opened.',
-            newsletter: 'Generate engaging, value-packed weekly newsletters.',
-            cold: 'Write persuasive cold outreach emails that get replies.',
-            sequence: 'Outline a complete automated email series for new subscribers.'
+            subject: 'Create 10 catchy, high-open-rate subject lines.',
+            newsletter: 'Draft a full, engaging newsletter for your subscribers.',
+            cold: 'Write a persuasive outreach email that gets replies.',
+            sequence: 'Outline a multi-day email sequence for new leads.'
+        };
+        const placeholders = {
+            subject: 'e.g., A 24-hour flash sale on sneakers. Target audience is Gen Z. Tone should be hype and urgent.',
+            newsletter: 'e.g., Weekly update for a cooking blog. Topic: 5 tips for better knife skills. Include a soft pitch for my cooking course.',
+            cold: 'e.g., Selling SEO services to local dentists. I want to offer a free audit first. Keep it short and professional.',
+            sequence: 'e.g., Welcome sequence for a SaaS product. Day 1: Welcome. Day 3: Key features. Day 7: Case study. Day 14: Upgrade offer.'
         };
 
+        // FAQ Toggle Logic
+        window.toggleFaq = (button) => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            if(content.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
-            loadHeader('home');
+            await loadHeader('home'); // Using 'home' active state or add 'email' to header logic if supported
             loadFooter();
             await loadSystemPrompts();
+            
             document.getElementById('generate-btn').addEventListener('click', handleGenerate);
             if(window.lucide) window.lucide.createIcons();
         });
@@ -213,10 +402,20 @@
         async function handleGenerate() {
             const input = document.getElementById('user-input');
             const btn = document.getElementById('generate-btn');
-            if(!input.value.trim()) return;
             
-            btn.innerHTML = `<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>`;
+            if(!input.value.trim()) {
+                input.focus();
+                input.classList.add('ring-2', 'ring-red-400');
+                setTimeout(() => input.classList.remove('ring-2', 'ring-red-400'), 2000);
+                return;
+            }
+            
+            // Loading State
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>Generating...</span>`;
+            if(window.lucide) window.lucide.createIcons();
             btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
             try {
                 const toolKey = `email_${currentTool}`;
@@ -224,24 +423,49 @@
                 const text = await generateAIContent(prompt, toolKey, input.value);
                 
                 const modal = document.getElementById('result-modal');
-                document.getElementById('result-content').innerHTML = text.replace(/\n/g, '<br>');
+                // Simple formatting: bolding headers if AI returns markdown-style
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                document.getElementById('result-content').innerHTML = formattedText;
+                
                 document.getElementById('modal-title').innerText = titles[currentTool];
+                
                 modal.classList.remove('hidden');
                 setTimeout(() => modal.classList.remove('opacity-0'), 10);
             } catch (e) {
                 console.error(e);
+                alert("An error occurred. Please try again.");
             } finally {
-                btn.innerHTML = `<span>Generate Content</span>`;
+                btn.innerHTML = originalContent;
+                if(window.lucide) window.lucide.createIcons();
                 btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         }
 
         window.setTool = (tool) => {
             currentTool = tool;
+            
+            // Update UI tabs
             document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`button[onclick="setTool('${tool}')"]`).classList.add('active');
-            document.getElementById('tool-title').innerText = titles[tool];
-            document.getElementById('tool-desc').innerText = descs[tool];
+            
+            // Update Text
+            const titleEl = document.getElementById('tool-title');
+            const descEl = document.getElementById('tool-desc');
+            const inputEl = document.getElementById('user-input');
+            
+            // Simple fade effect
+            titleEl.classList.add('opacity-0');
+            descEl.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                titleEl.innerText = titles[tool];
+                descEl.innerText = descs[tool];
+                inputEl.placeholder = placeholders[tool];
+                
+                titleEl.classList.remove('opacity-0');
+                descEl.classList.remove('opacity-0');
+            }, 200);
         }
 
         window.closeModal = () => {
@@ -252,7 +476,16 @@
         
         window.copyContent = () => {
             const text = document.getElementById('result-content').innerText;
-            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('#result-modal button[onclick="copyContent()"]');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+                if(window.lucide) window.lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    if(window.lucide) window.lucide.createIcons();
+                }, 2000);
+            });
         }
     </script>
 </body>
