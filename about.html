@@ -17,6 +17,8 @@
             -webkit-text-fill-color: transparent;
         }
     </style>
+    <!-- Use defer to ensure the script executes after the HTML is parsed -->
+    <script src="assets/js/shared.js" defer></script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-700">
 
@@ -142,16 +144,33 @@
     <div id="footer-container"></div>
 
     <!-- Scripts for Shared Header/Footer -->
-    <script src="assets/js/shared.js"></script>
     <script>
-        // Use an IIFE or wait for full load to handle injection
-        window.addEventListener('load', function() {
+        /**
+         * Robust initialization helper.
+         * Tries to initialize components immediately if shared.js is loaded,
+         * or waits for the script to load/DOM to be ready.
+         */
+        function handleSharedInit() {
             if (typeof initSharedComponents === 'function') {
                 initSharedComponents();
             } else {
-                console.error("Shared components initialization function not found.");
+                // If not found, check again in a short interval (in case of slow script loading)
+                let retryCount = 0;
+                const interval = setInterval(() => {
+                    if (typeof initSharedComponents === 'function') {
+                        initSharedComponents();
+                        clearInterval(interval);
+                    } else if (retryCount > 10) {
+                        console.error("Shared components failed to load from assets/js/shared.js");
+                        clearInterval(interval);
+                    }
+                    retryCount++;
+                }, 200);
             }
-        });
+        }
+
+        // Run on load
+        window.addEventListener('load', handleSharedInit);
     </script>
 
 </body>
