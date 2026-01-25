@@ -150,7 +150,7 @@ export function loadHeader(activePage = '') {
     header.innerHTML = `
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <a href="/index.html" class="flex items-center gap-2 group">
-                <img src="/digitalserviceshub.png" alt="DigitalServicesHub Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/40x40?text=DSH'; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg\'>D</div><span class=\'font-bold text-xl text-slate-900 tracking-tight\'>DigitalServices<span class=\'text-brand-600\'>Hub</span></span>'">
+                <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/40x40?text=DSH'; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-gradient-to-br from-brand-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg\'>D</div><span class=\'font-bold text-xl text-slate-900 tracking-tight\'>DigitalServices<span class=\'text-brand-600\'>Hub</span></span>'">
             </a>
 
             <!-- Desktop Nav -->
