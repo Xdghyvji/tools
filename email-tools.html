@@ -62,7 +62,8 @@
         .tool-tab.active { color: #0f766e; background-color: #f0fdfa; font-weight: 600; }
         .tool-tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background-color: #0d9488; border-top-left-radius: 2px; border-top-right-radius: 2px; }
         .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); }
-        .prose h3 { margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; color: #1e293b; }
+        .code-preview { font-family: 'Courier New', Courier, monospace; }
+        .prose h3 { margin-top: 2em; margin-bottom: 0.75em; font-weight: 700; color: #1e293b; }
         .prose p { margin-bottom: 1.25em; line-height: 1.75; color: #475569; }
         .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
         .prose li { margin-bottom: 0.5em; }
@@ -114,7 +115,7 @@
                         Writer's block is the enemy of revenue. Whether you need a catchy subject line, a nurturing newsletter, or a cold outreach sequence, our AI generates professional copy in seconds—so you can hit "Send" with confidence.
                     </p>
                     
-                    <!-- COMPLIANCE UPDATE: Replaced generic stats with benefit-driven claims -->
+                    <!-- COMPLIANCE FIX: Benefit-driven claims (No fake stats) -->
                     <div class="flex flex-col sm:flex-row gap-4 mb-10">
                         <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
                             <i data-lucide="infinity" class="w-5 h-5 text-teal-500"></i> Unlimited Generations
@@ -181,53 +182,121 @@
             </div>
         </section>
 
-        <!-- Value Props / Why This Tool Matters -->
+        <!-- VISUAL CONTEXT: How It Works & Stats -->
         <section class="bg-white py-20 border-y border-slate-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-16">
-                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">Why Use an AI Email Generator?</h2>
-                    <p class="text-lg text-slate-600">Email marketing still has the highest ROI of any marketing channel ($36 for every $1 spent). But that only works if people actually read what you write.</p>
+                    <h2 class="text-3xl font-bold font-heading text-slate-900 mb-4">How Our AI Optimizes Your Emails</h2>
+                    <p class="text-lg text-slate-600">We don't just put words together. Our engine analyzes thousands of successful campaigns to ensure your email hits the mark.</p>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-8">
-                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-teal-600 mb-6">
-                            <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                    <!-- Step 1 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-teal-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-teal-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="scan-text" class="w-8 h-8"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Overcome the Blank Page</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            Staring at a white screen is paralyzing. Our tool gives you a structured first draft instantly. You can edit, tweak, and polish, but you never have to start from zero again.
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">1. Context Analysis</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            The AI reads your input to understand your goal (Sales, Nurture, Welcome) and target audience (B2B, B2C).
                         </p>
                     </div>
 
-                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 mb-6">
-                            <i data-lucide="mouse-pointer-2" class="w-6 h-6"></i>
+                    <!-- Step 2 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-blue-600 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="wand-2" class="w-8 h-8"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Psychology-Backed Copy</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            We've trained our models on high-performing emails. They naturally use hooks, curiosity gaps, and benefit-driven language that triggers the reader's desire to click.
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">2. Psychology Injection</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            It applies proven frameworks like AIDA (Attention, Interest, Desire, Action) and curiosity gaps to the copy.
                         </p>
                     </div>
 
-                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all">
-                        <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-amber-500 mb-6">
-                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    <!-- Step 3 -->
+                    <div class="feature-card bg-slate-50 p-8 rounded-2xl border border-slate-100 transition-all text-center relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600"></div>
+                        <div class="w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center text-amber-500 mb-6 mx-auto group-hover:scale-110 transition-transform">
+                            <i data-lucide="shield-check" class="w-8 h-8"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-3">Avoid the Spam Folder</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            Aggressive sales language triggers spam filters. Our AI balances persuasion with professionalism, avoiding "spammy" keywords that hurt your domain reputation.
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">3. Spam Formatting</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Finally, it scrubs "trigger words" (like FREE, $$$) that act as red flags to Gmail and Outlook filters.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Long-Form Content: How to Use & SEO Content -->
+        <!-- VISUAL COMPARISON: Before vs After -->
+        <section class="py-20 bg-slate-50 border-b border-slate-200 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold font-heading text-slate-900 mb-6">See the Difference</h2>
+                        <p class="text-lg text-slate-600 mb-8">
+                            Most people write emails that are easy to ignore. Our tool transforms "generic" into "unignorable."
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-teal-100 p-2 rounded-lg text-teal-700 mt-1"><i data-lucide="check" class="w-4 h-4"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">Personalized Hooks</h4>
+                                    <p class="text-sm text-slate-600">Generic greetings are replaced with specific value propositions.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="bg-teal-100 p-2 rounded-lg text-teal-700 mt-1"><i data-lucide="check" class="w-4 h-4"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900">Clear Call-to-Action</h4>
+                                    <p class="text-sm text-slate-600">Vague endings are replaced with clear, low-friction requests.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Comparison Graphic -->
+                    <div class="relative">
+                        <!-- Card 1: Bad Email -->
+                        <div class="bg-white p-6 rounded-xl shadow-lg border border-red-100 absolute top-0 left-0 w-full lg:w-4/5 transform lg:-rotate-2 opacity-60 scale-95 z-0">
+                            <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                                <span class="text-xs font-bold text-red-400 uppercase">Before: Low Response</span>
+                            </div>
+                            <div class="space-y-2 font-mono text-xs text-slate-400">
+                                <p>Subject: Services</p>
+                                <p>Hi,</p>
+                                <p>I want to sell you my SEO services. We are the best. Check our website.</p>
+                                <p>Thanks.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Good Email -->
+                        <div class="bg-white p-6 rounded-xl shadow-2xl border border-teal-100 relative lg:translate-x-12 lg:translate-y-12 z-10 w-full lg:w-4/5">
+                            <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                                <div class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
+                                <span class="text-xs font-bold text-teal-600 uppercase">After: AI Optimized</span>
+                            </div>
+                            <div class="space-y-3 font-sans text-sm text-slate-700">
+                                <p class="font-semibold text-slate-900">Subject: Quick question about [Company]'s traffic</p>
+                                <p>Hi [Name],</p>
+                                <p>I noticed you're ranking for "keyword" but missing out on the top snippet. I made a quick 2-min video showing how you can fix that.</p>
+                                <p>Mind if I send it over? No strings attached.</p>
+                                <p class="text-slate-500">Best,</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Long-Form Educational Content (Compliance Fix) -->
         <article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div class="prose prose-lg prose-slate max-w-none">
                 
-                <!-- COMPLIANCE UPDATE: Added Required Text Sections -->
                 <h2 class="font-heading text-3xl font-bold text-slate-900">Why Effective Email Subject Lines Matter</h2>
                 <p>
                     Did you know that 47% of email recipients open an email based on the subject line alone? In the competitive world of digital marketing, your subject line is your first impression. If it fails to grab attention, your valuable content goes straight to the trash. Our AI Email Tool helps you bridge the "curiosity gap"—creating headers that are intriguing enough to click but honest enough to build trust.
@@ -238,77 +307,86 @@
                     One of the biggest challenges in email marketing is deliverability. Using trigger words like "Free," "Guarantee," or using all-caps can send your email directly to the Spam folder. This tool is trained on successful, non-spammy email datasets to ensure your newsletters land in the Primary Inbox, maximizing your visibility and open rates.
                 </p>
 
-                <hr class="my-12 border-slate-200">
+                <div class="bg-slate-100 p-6 rounded-xl my-8 border-l-4 border-teal-500">
+                    <h4 class="font-bold text-slate-900 mb-2 no-margin">The Spam Filter Checklist</h4>
+                    <ul class="text-sm mb-0">
+                        <li>Avoid using ALL CAPS in subject lines.</li>
+                        <li>Keep text-to-image ratio high (don't send just one big image).</li>
+                        <li>Include a visible "Unsubscribe" link (required by law).</li>
+                        <li>Avoid excessive punctuation (!!!).</li>
+                    </ul>
+                </div>
 
-                <h2 class="font-heading text-3xl font-bold text-slate-900">How to Master Email Marketing with AI</h2>
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">The Anatomy of a High-Converting Cold Email</h2>
                 <p>
-                    Email is personal. Unlike a social media post that scrolls by in a feed, an email sits in a user's inbox waiting for attention. This makes it powerful, but it also raises the stakes. If you are boring, irrelevant, or annoying, the "Unsubscribe" button is just one click away.
-                </p>
-                <p>
-                    Here is how to use our suite of tools to build a sustainable, high-converting email strategy.
+                    Cold emailing is not about closing a sale instantly; it's about starting a conversation. Most people fail because they ask for marriage on the first date. A successful cold email has four distinct parts:
                 </p>
 
-                <h3>1. Start with the Subject Line (The Gatekeeper)</h3>
+                <h3>1. The Hook (The "I Know You" Phase)</h3>
                 <p>
-                    It doesn't matter if you've written the works of Shakespeare inside the email; if the subject line is dull, no one will read it. Use the <strong>Subject Line Generator</strong> tab above.
+                    Don't start with "My name is..." nobody cares yet. Start with them. "I saw your recent post on LinkedIn about..." or "I've been following [Company] since your Series A funding..." This proves you are not a bot.
                 </p>
+
+                <h3>2. The Problem (The "Pain" Phase)</h3>
+                <p>
+                    Highlight a specific problem they are facing. "I noticed your website takes 4 seconds to load, which might be hurting your SEO rankings."
+                </p>
+
+                <h3>3. The Solution (The "Value" Phase)</h3>
+                <p>
+                    Briefly mention how you solve it. "We help SaaS companies cut load times in half." Keep it one sentence.
+                </p>
+
+                <h3>4. The Ask (The "Low Friction" Phase)</h3>
+                <p>
+                    Don't ask for a "30-minute meeting." That's a big commitment. Ask for interest. "Worth a quick chat?" or "Mind if I send a case study?" This is low pressure and gets higher reply rates.
+                </p>
+
+                <h2 class="font-heading text-3xl font-bold text-slate-900 mt-12">5 Subject Line Formulas That Work in 2025</h2>
                 <ul>
-                    <li><strong>Be Specific:</strong> Instead of "Weekly Update," try "3 tips to double your traffic this week."</li>
-                    <li><strong>Use Curiosity:</strong> "The one mistake costing you sales..." is harder to ignore than "Sales tips."</li>
-                    <li><strong>Keep it Short:</strong> Mobile devices often cut off subject lines after 40-50 characters.</li>
+                    <li><strong>The Question:</strong> "Ready for Q4?"</li>
+                    <li><strong>The How-To:</strong> "How to get 10k visitors in 30 days"</li>
+                    <li><strong>The Scarcity:</strong> "3 spots left for the workshop"</li>
+                    <li><strong>The Personal:</strong> "Quick question, [Name]"</li>
+                    <li><strong>The List:</strong> "5 tools you are missing"</li>
                 </ul>
 
-                <h3>2. The Newsletter: Value First, Sell Second</h3>
-                <p>
-                    When using the <strong>Newsletter Writer</strong>, focus your input on the <em>value</em> you are providing. A good rule of thumb is the 80/20 rule: 80% educational or entertaining content, 20% promotion.
-                </p>
-
-                <h3>3. Cold Outreach: The Art of the Soft Touch</h3>
-                <p>
-                    Cold emailing is not about closing a sale instantly; it's about starting a conversation. Use the <strong>Cold Email</strong> tool to generate brief, respectful messages.
-                </p>
-
-                <h3>4. Drip Sequences: Automate Your Funnel</h3>
-                <p>
-                    The <strong>Sequence Planner</strong> is designed for "set it and forget it" marketing. When someone signs up for your lead magnet, they should receive a series of 3-5 emails.
-                </p>
             </div>
         </article>
 
-        <!-- FAQ Section -->
+        <!-- FAQ Section (Compliance Fix) -->
         <section class="bg-slate-50 py-20 border-t border-slate-200">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-3xl font-bold font-heading text-center text-slate-900 mb-12">Frequently Asked Questions</h2>
                 
                 <div class="space-y-4">
-                    <!-- COMPLIANCE UPDATE: Replaced FAQs with specific required questions -->
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
                             Is this Email Generator free?
                             <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
                         </button>
-                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
-                            Yes, this tool is completely free to use for generating subject lines, body copy, and newsletter ideas.
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Yes, this tool is completely free to use for generating subject lines, body copy, and newsletter ideas. There are no hidden fees or credit cards required.
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
                             Do you save my generated emails?
                             <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
                         </button>
-                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
-                            No, we value your privacy. All content is generated in real-time and is not stored on our servers.
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            No, we value your privacy. All content is generated in real-time and is not stored on our servers. Once you close the page, the data is gone.
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <button class="w-full px-6 py-4 text-left font-bold text-slate-900 flex justify-between items-center focus:outline-none hover:bg-slate-50 transition-colors" onclick="toggleFaq(this)">
                             Can I use this for cold outreach?
                             <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform"></i>
                         </button>
-                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed">
-                            Absolutely. The "Cold Email Sequence" mode is specifically designed to create professional, non-intrusive opening emails for lead generation.
+                        <div class="px-6 pb-4 hidden text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                            Absolutely. The "Cold Email Sequence" mode is specifically designed to create professional, non-intrusive opening emails for lead generation that comply with general cold email etiquette.
                         </div>
                     </div>
                 </div>
