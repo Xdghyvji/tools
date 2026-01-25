@@ -22,58 +22,131 @@
 
     <div id="app-header"></div>
 
-    <main class="flex-grow pb-16 pt-8">
-        <article class="max-w-3xl mx-auto px-4 sm:px-6">
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
-            <div id="loading-state" class="text-center py-24">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
-                <p class="text-slate-500 font-medium">Loading Article...</p>
-            </div>
-
-            <div id="blog-content" class="hidden animate-fade-in opacity-0 transition-opacity duration-500">
-                <header class="mb-8 text-center">
-                    <span id="post-category" class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-4">Article</span>
-                    <h1 id="post-title" class="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-slate-900 mb-6 leading-tight"></h1>
-                    <div class="flex items-center justify-center gap-4 text-slate-500 text-sm font-medium">
-                        <span id="post-date"></span>
-                        <span class="text-slate-300">&bull;</span>
-                        <span id="read-time">5 min read</span>
-                    </div>
-                </header>
-
-                <div class="rounded-2xl overflow-hidden shadow-xl mb-12 aspect-video bg-slate-200 ring-1 ring-slate-900/5">
-                    <img id="post-image" src="" alt="Blog Cover" class="w-full h-full object-cover">
+            <article class="lg:col-span-8">
+                
+                <div id="loading-state" class="text-center py-24">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600 mx-auto mb-4"></div>
+                    <p class="text-slate-500 font-medium">Loading Article...</p>
                 </div>
 
-                <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl"></div>
-
-                <hr class="my-12 border-slate-200">
-
-                <div id="author-section" class="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left hidden">
-                    <div class="shrink-0" id="author-image-container"></div>
-                    <div class="flex-1">
-                        <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
-                            <h3 class="text-lg font-bold text-slate-900" id="author-name"></h3>
-                            <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-medium border border-slate-200" id="author-role">Writer</span>
+                <div id="blog-content" class="hidden animate-fade-in opacity-0 transition-opacity duration-500">
+                    
+                    <header id="main-header">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span id="post-category" class="px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider">
+                                Article
+                            </span>
+                            <span class="text-slate-400 text-sm">&bull;</span>
+                            <span id="read-time" class="text-slate-500 text-sm font-medium">5 min read</span>
                         </div>
-                        <p class="text-slate-600 mb-4 text-sm leading-relaxed line-clamp-2" id="author-bio"></p>
-                        <div class="flex items-center justify-center md:justify-start gap-3" id="author-socials"></div>
+
+                        <h1 id="post-title" class="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-slate-900 mb-6 leading-tight">
+                            </h1>
+
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-6">
+                            <div class="flex items-center gap-3">
+                                <a href="#" id="start-author-link" class="shrink-0">
+                                    <img id="start-author-image" src="assets/img/default-avatar.png" alt="Author" class="w-10 h-10 rounded-full object-cover border border-slate-200">
+                                </a>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-slate-500 text-sm">Written by</span>
+                                        <a href="#" id="start-author-name" class="font-bold text-slate-900 text-sm hover:text-brand-600 transition">Unknown</a>
+                                    </div>
+                                    <div class="text-slate-400 text-xs" id="post-date">Just now</div>
+                                </div>
+                            </div>
+                            
+                            <button class="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition" onclick="navigator.share({url:window.location.href})">
+                                <i data-lucide="share-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="rounded-2xl overflow-hidden shadow-lg mb-10 aspect-video bg-slate-100">
+                        <img id="post-image" src="" alt="Blog Cover" class="w-full h-full object-cover">
+                    </div>
+
+                    <div id="post-body" class="prose prose-lg prose-slate max-w-none prose-headings:font-heading prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl">
+                        </div>
+
+                    <hr class="my-12 border-slate-200">
+
+                    <div id="author-section" class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left hidden">
+                        <div class="shrink-0" id="end-author-image-container">
+                            </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                                <h3 class="text-lg font-bold text-slate-900" id="end-author-name"></h3>
+                                <span class="px-2 py-0.5 rounded bg-brand-50 text-brand-700 text-xs font-bold uppercase" id="end-author-role">Writer</span>
+                            </div>
+                            <p class="text-slate-600 mb-4 text-sm leading-relaxed" id="end-author-bio"></p>
+                            <div class="flex items-center justify-center sm:justify-start gap-3" id="author-socials"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </article>
+
+            <aside class="lg:col-span-4 space-y-8">
+                
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm sticky top-24">
+                    <h3 class="font-heading font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i data-lucide="wrench" class="w-5 h-5 text-brand-600"></i> Popular Tools
+                    </h3>
+                    <div class="space-y-3">
+                        <a href="tiktok.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 group transition-colors border border-transparent hover:border-slate-100">
+                            <div class="bg-black text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="music-2" class="w-4 h-4"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">TikTok Downloader</h4>
+                                <p class="text-xs text-slate-500">Remove watermarks instantly</p>
+                            </div>
+                        </a>
+                        <a href="instagram.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 group transition-colors border border-transparent hover:border-slate-100">
+                            <div class="bg-pink-600 text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="instagram" class="w-4 h-4"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">Instagram Tools</h4>
+                                <p class="text-xs text-slate-500">Download Reels & Stories</p>
+                            </div>
+                        </a>
+                        <a href="blog-tools.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 group transition-colors border border-transparent hover:border-slate-100">
+                            <div class="bg-blue-600 text-white p-2 rounded-lg group-hover:scale-110 transition-transform"><i data-lucide="pen-tool" class="w-4 h-4"></i></div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">AI Blog Writer</h4>
+                                <p class="text-xs text-slate-500">Generate SEO articles</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-slate-100">
+                        <div class="bg-slate-900 rounded-xl p-5 text-center text-white">
+                            <p class="font-bold mb-2">Need Pro Features?</p>
+                            <p class="text-xs text-slate-400 mb-4">Get unlimited AI usage and priority support.</p>
+                            <a href="subscription.html" class="block w-full py-2 bg-brand-600 hover:bg-brand-500 rounded-lg text-sm font-bold transition">Upgrade Now</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </article>
+
+            </aside>
+        </div>
+
     </main>
 
-    <div id="app-footer"></div>
+    <div id="main-footer"></div>
 
     <script type="module">
-        // Import appId from shared.js to build the correct path
+        // Import appId from shared.js
         import { db, loadHeader, loadFooter, appId } from './assets/js/shared.js';
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHeader();
             loadFooter();
+            if(window.lucide) lucide.createIcons();
         });
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -83,55 +156,91 @@
             if (!postId) { window.location.href = 'blog.html'; return; }
 
             try {
-                // --- CORRECTED PATH ---
-                // Uses /artifacts/{appId}/public/data/posts/{postId}
+                // Correct Path: artifacts/{appId}/public/data/posts
                 const postRef = doc(db, "artifacts", appId, "public", "data", "posts", postId);
                 const postSnap = await getDoc(postRef);
 
                 if (postSnap.exists()) {
                     const data = postSnap.data();
                     
+                    // Populate Content
                     document.title = `${data.title} | DSH`;
                     document.getElementById('post-title').innerText = data.title;
-                    document.getElementById('post-date').innerText = new Date(data.date).toLocaleDateString();
+                    document.getElementById('post-date').innerText = new Date(data.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                     document.getElementById('post-image').src = data.image || 'assets/img/blog-placeholder.jpg';
                     document.getElementById('post-body').innerHTML = data.content;
                     
-                    if (data.authorId) await loadAuthor(data.authorId);
+                    if (data.category) document.getElementById('post-category').innerText = data.category;
 
+                    // Load Author Data
+                    if (data.authorId) {
+                        await loadAuthorData(data.authorId);
+                    }
+
+                    // Reveal
                     document.getElementById('loading-state').classList.add('hidden');
                     const content = document.getElementById('blog-content');
                     content.classList.remove('hidden');
                     setTimeout(() => content.classList.remove('opacity-0'), 50);
+
                 } else {
                     document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Post not found.</div>`;
                 }
             } catch (error) {
-                console.error("Error loading post:", error);
-                document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Permission Error: Check Console</div>`;
+                console.error("Error:", error);
+                document.getElementById('loading-state').innerHTML = `<div class="text-red-500">Unable to load content.</div>`;
             }
         }
 
-        async function loadAuthor(authorId) {
+        async function loadAuthorData(authorId) {
             try {
-                // Assuming Authors are still at root. If they are in artifacts, change this to:
-                // doc(db, "artifacts", appId, "public", "data", "authors", authorId)
+                // Assuming Authors are at Root Level (Shared)
+                // If nested, change to: doc(db, "artifacts", appId, "public", "data", "authors", authorId)
                 const authorRef = doc(db, "authors", authorId);
                 const authorSnap = await getDoc(authorRef);
 
                 if (authorSnap.exists()) {
                     const author = authorSnap.data();
+                    const profileUrl = `author.html?id=${authorId}`;
+                    const imgUrl = author.photoURL || 'assets/img/default-avatar.png';
+                    const name = author.name || "Unknown Author";
+
+                    // 1. UPDATE START HEADER (Small Icon)
+                    document.getElementById('start-author-link').href = profileUrl;
+                    document.getElementById('start-author-image').src = imgUrl;
+                    document.getElementById('start-author-name').innerText = name;
+                    document.getElementById('start-author-name').href = profileUrl;
+
+                    // 2. UPDATE END CARD (Full Details)
                     const section = document.getElementById('author-section');
                     section.classList.remove('hidden');
+                    section.classList.add('flex'); // Ensure flex display matches CSS
+
+                    document.getElementById('end-author-name').innerHTML = `<a href="${profileUrl}" class="hover:text-brand-600 hover:underline">${name}</a>`;
+                    document.getElementById('end-author-role').innerText = author.role || "Writer";
+                    document.getElementById('end-author-bio').innerText = author.bio || "Content Creator at DigitalServicesHub.";
                     
-                    document.getElementById('author-name').innerHTML = `<a href="author.html?id=${authorId}" class="hover:text-brand-600 hover:underline">${author.name}</a>`;
-                    document.getElementById('author-bio').innerText = author.bio || "";
-                    document.getElementById('author-image-container').innerHTML = `<a href="author.html?id=${authorId}"><img src="${author.photoURL || 'assets/img/default-avatar.png'}" class="w-20 h-20 rounded-full object-cover"></a>`;
-                    
-                    // Socials logic omitted for brevity, looks same as before
+                    document.getElementById('end-author-image-container').innerHTML = `
+                        <a href="${profileUrl}" class="block group">
+                            <img src="${imgUrl}" alt="${name}" 
+                                class="w-20 h-20 rounded-full object-cover border-4 border-slate-50 shadow-inner group-hover:border-blue-200 transition duration-300">
+                        </a>
+                    `;
+
+                    // Socials
+                    const s = author.socials;
+                    let socialHtml = '';
+                    if (s) {
+                        if (s.twitter) socialHtml += `<a href="${s.twitter}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-blue-500 hover:text-white transition"><i data-lucide="twitter" class="w-4 h-4"></i></a>`;
+                        if (s.linkedin) socialHtml += `<a href="${s.linkedin}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-blue-700 hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a>`;
+                        if (s.website) socialHtml += `<a href="${s.website}" target="_blank" class="p-2 bg-slate-100 rounded-full hover:bg-green-600 hover:text-white transition"><i data-lucide="globe" class="w-4 h-4"></i></a>`;
+                    }
+                    document.getElementById('author-socials').innerHTML = socialHtml;
                     if(window.lucide) lucide.createIcons();
                 }
-            } catch (e) { console.warn("Author error:", e); }
+            } catch (e) {
+                console.warn("Author load error:", e);
+            }
         }
 
         loadPost();
