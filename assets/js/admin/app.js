@@ -27,8 +27,12 @@ const routes = {
 
 let currentUser = null;
 
-// Initialize
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Show initial loader if it exists
+    const loader = document.getElementById('global-loader'); // Assuming you might have one
+    if(loader) loader.classList.remove('hidden');
+    
     initAuth();
 });
 
@@ -36,28 +40,32 @@ function initAuth() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
-            // Check Admin Role
-            /* // Optional: Strict Admin Check
-            const token = await user.getIdTokenResult();
-            if(!token.claims.admin) {
-                window.location.href = '/login.html';
-                return;
-            }
-            */
-            initRouter();
+            
+            // Render basic layout parts that depend on auth
             renderNavigation();
-            // Check if element exists before setting innerText to avoid errors
             const emailEl = document.getElementById('admin-email');
             if (emailEl) emailEl.innerText = user.email;
+
+            // Initialize routing *after* auth is confirmed
+            initRouter();
+            
+            // Hide global loader if it exists
+            const loader = document.getElementById('global-loader');
+            if(loader) loader.classList.add('hidden');
+
         } else {
-            window.location.href = '/login.html';
+            // Not authenticated, redirect to login
+            // Avoid redirect loop if already on login page (though this script is likely only for admin/*)
+            if (!window.location.pathname.includes('login.html')) {
+                 window.location.href = '/login.html';
+            }
         }
     });
 }
 
 function initRouter() {
-    // Handle Navigation Clicks
-    document.addEventListener('click', (e) => {
+    // Handle Navigation Clicks via Event Delegation
+    document.body.addEventListener('click', (e) => {
         const link = e.target.closest('[data-link]');
         if (link) {
             e.preventDefault();
@@ -67,9 +75,12 @@ function initRouter() {
     });
 
     // Handle Logout
-    document.getElementById('btn-logout')?.addEventListener('click', () => {
-        signOut(auth).then(() => window.location.href = '/login.html');
-    });
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '/login.html');
+        });
+    }
 
     // Mobile Menu Toggle
     const btnMenu = document.getElementById('btn-menu');
@@ -80,20 +91,23 @@ function initRouter() {
         });
     }
 
-    // Load Initial View
+    // Load Initial View based on Hash
     const hash = window.location.hash.substring(1) || 'dashboard';
     loadView(hash);
 }
 
-// Global scope for onclick handlers
+// Global scope for onclick handlers (needed if you use onclick="..." in HTML)
 window.loadView = async function(viewName) {
     const content = document.getElementById('main-content');
-    if (!content) return; // Guard clause if main-content is missing
+    if (!content) {
+        console.error("Critical Error: 'main-content' element not found in DOM.");
+        return;
+    }
 
     const module = routes[viewName];
 
     if (module) {
-        // Update URL
+        // Update URL Hash
         window.location.hash = viewName;
 
         // Update Active Nav State
@@ -107,16 +121,44 @@ window.loadView = async function(viewName) {
             }
         });
 
+        // Show a local loader in content area while fetching module
+        content.innerHTML = `
+            <div class="flex items-center justify-center h-full min-h-[400px]">
+                <div class="flex flex-col items-center gap-4">
+                    <i data-lucide="loader-2" class="w-10 h-10 animate-spin text-brand-500"></i>
+                    <p class="text-slate-400 font-medium">Loading ${viewName}...</p>
+                </div>
+            </div>
+        `;
+        if(window.lucide) window.lucide.createIcons();
+
         // Render & Init Module
         try {
-            content.innerHTML = module.render(viewName);
-            if (module.init) await module.init();
+            // 1. Render HTML (Synchronous usually)
+            const html = module.render(viewName);
+            content.innerHTML = html;
             
-            // Initialize Icons
+            // 2. Initialize Logic (Async)
+            if (module.init) {
+                await module.init(); 
+            }
+            
+            // 3. Re-initialize Icons for new content
             if(window.lucide) window.lucide.createIcons();
+            
         } catch (error) {
             console.error(`Error loading module ${viewName}:`, error);
-            content.innerHTML = `<div class="p-10 text-center text-red-400">Error loading module: ${error.message}</div>`;
+            content.innerHTML = `
+                <div class="p-10 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Error Loading Module</h3>
+                    <p class="text-slate-500 mt-2">${error.message}</p>
+                    <button onclick="loadView('${viewName}')" class="mt-4 px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700">Retry</button>
+                </div>
+            `;
+            if(window.lucide) window.lucide.createIcons();
         }
     } else {
         content.innerHTML = `<div class="p-10 text-center text-slate-400">Module not found: ${viewName}</div>`;
@@ -140,12 +182,11 @@ function renderNavigation() {
     ];
 
     nav.innerHTML = items.map(item => `
-        <a href="#${item.id}" data-link="${item.id}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+        <a href="#${item.id}" data-link="${item.id}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group cursor-pointer">
             <i data-lucide="${item.icon}" class="w-5 h-5 group-hover:scale-110 transition-transform pointer-events-none"></i>
             <span class="font-medium pointer-events-none">${item.label}</span>
         </a>
     `).join('');
     
-    // Re-initialize icons for the newly added navigation items
     if(window.lucide) window.lucide.createIcons();
 }
