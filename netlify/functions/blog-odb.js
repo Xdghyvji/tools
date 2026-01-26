@@ -1,18 +1,16 @@
-// FORCE UPDATE: v3.0 - Fixed PROJECT_ID
+// FORCE UPDATE: v4.0 - Using Environment Variables
 const { builder } = require('@netlify/functions');
 const fetch = require('node-fetch');
 
 // ==========================================
-// 1. CONFIGURATION
+// 1. CONFIGURATION (From Netlify Dashboard)
 // ==========================================
 const CONFIG = {
-  // CRITICAL FIX: This must match 'projectId' from your firebaseConfig
-  PROJECT_ID: "mubashir-2b7cc", 
-  
-  // This is the document ID where your data lives (usually matches project ID)
-  APP_ID: "mubashir-2b7cc",             
-  
-  API_KEY: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA"
+  // Try to use the Environment Variable first. 
+  // If it's missing (like on your local PC), fall back to the string.
+  PROJECT_ID: process.env.FIREBASE_PROJECT_ID || "mubashir-2b7cc", 
+  APP_ID:     process.env.FIREBASE_APP_ID     || "mubashir-2b7cc",             
+  API_KEY:    process.env.FIREBASE_API_KEY    || "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA"
 };
 
 async function myHandler(event, context) {
@@ -21,8 +19,6 @@ async function myHandler(event, context) {
 
   console.log(`[Blog-ODB] Generating page for slug: ${slug}`);
 
-  // 3. RUN QUERY
-  // URL format: projects/{PROJECT_ID}/databases/(default)/documents/...
   const queryUrl = `https://firestore.googleapis.com/v1/projects/${CONFIG.PROJECT_ID}/databases/(default)/documents/artifacts/${CONFIG.APP_ID}/public/data:runQuery?key=${CONFIG.API_KEY}`;
 
   const queryBody = {
@@ -48,16 +44,14 @@ async function myHandler(event, context) {
     if (!response.ok) {
         const errText = await response.text();
         console.error("[Firestore API Error]", errText);
-        return { statusCode: 404, body: `<h1>Database Error: ${response.status}</h1><p>Check PROJECT_ID in function code.</p>` };
+        return { statusCode: 404, body: `<h1>Database Error: ${response.status}</h1><p>Check PROJECT_ID and API_KEY.</p>` };
     }
 
     const json = await response.json();
 
-    // 4. Handle "No Results"
     if (!json[0] || !json[0].document) {
       console.log(`[Blog-ODB] No post found for slug "${slug}", checking ID...`);
       
-      // Fallback: Try fetching by ID
       const directUrl = `https://firestore.googleapis.com/v1/projects/${CONFIG.PROJECT_ID}/databases/(default)/documents/artifacts/${CONFIG.APP_ID}/public/data/posts/${slug}?key=${CONFIG.API_KEY}`;
       const idResp = await fetch(directUrl);
       
@@ -70,7 +64,6 @@ async function myHandler(event, context) {
       return { statusCode: 404, body: "<h1>Post not found</h1>" };
     }
 
-    // Found by Slug!
     return generatePage(json[0].document.fields);
 
   } catch (error) {
