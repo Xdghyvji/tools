@@ -3,174 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="DigitalServicesHub Blog - Expert insights on AI tools, SEO strategies, social media growth, and content marketing trends.">
-    <title>Blog | DigitalServicesHub.online</title>
+    <title>Blog | DigitalServicesHub</title>
+    <meta name="description" content="Explore the latest insights, tutorials, and trends in AI and Digital Growth.">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'], heading: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } }
+                    colors: { brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' } },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
                 }
             }
         }
     </script>
-
     <style>
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #2563eb; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- Header Container -->
-    <header class="fixed w-full top-0 z-50 glass-effect border-b border-slate-200 shadow-sm transition-all duration-300 h-20" id="main-header"></header>
+    <header id="main-header" class="sticky top-0 z-50 glass border-b border-slate-200"></header>
 
-    <!-- Secondary Tool Nav -->
-    <div class="fixed top-20 w-full z-40 bg-white border-b border-slate-200 shadow-sm h-16 flex items-center">
-        <div class="max-w-7xl mx-auto w-full">
-            <div class="flex items-center overflow-x-auto px-4 space-x-4 custom-scrollbar flex-nowrap">
-                <a href="index.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-200 whitespace-nowrap transition-colors">
-                    <i data-lucide="youtube" class="w-4 h-4"></i> YouTube
-                </a>
-                <a href="instagram.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
-                </a>
-                <a href="tiktok.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="music-2" class="w-4 h-4"></i> TikTok
-                </a>
-                <a href="blog-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 border border-brand-100 font-semibold whitespace-nowrap shadow-sm transition-colors">
-                    <i data-lucide="file-text" class="w-4 h-4"></i> Blog & SEO
-                </a>
-                <a href="email-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="mail" class="w-4 h-4"></i> Email
-                </a>
-                <a href="twitter-tools.html" class="flex-shrink-0 flex items-center gap-2 px-4 py-1.5 text-slate-600 hover:bg-slate-50 whitespace-nowrap transition-colors border border-transparent hover:border-slate-200 rounded-full">
-                    <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- AD SPACE: LEADERBOARD -->
-    <div class="pt-48 pb-4 max-w-7xl mx-auto px-4 hidden" id="ad-728-90-container">
-        <p class="text-[10px] text-slate-400 text-center uppercase tracking-wider mb-1">Advertisement</p>
-        <div id="ad-728-90" class="w-[728px] h-[90px] mx-auto bg-slate-50 border border-slate-200 flex items-center justify-center"></div>
-    </div>
-
-    <!-- BLOG HERO -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <span class="text-brand-600 font-semibold text-sm uppercase tracking-wider">The Knowledge Hub</span>
-                <h1 class="text-4xl md:text-5xl font-bold font-heading text-slate-900 mt-3 mb-6">Latest Insights & Strategies</h1>
-                <p class="text-lg text-slate-600">Master the art of digital growth with our expert guides, case studies, and tool tutorials.</p>
+    <section class="bg-white border-b border-slate-200 pt-16 pb-12 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-brand-50/50 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="inline-block px-3 py-1 rounded-full bg-brand-100 text-brand-700 text-xs font-bold uppercase tracking-wider mb-4 border border-brand-200">
+                    The Knowledge Hub
+                </span>
+                <h1 class="text-4xl md:text-5xl font-bold font-heading text-slate-900 mb-6 leading-tight">
+                    Insights for the <span class="text-brand-600">Digital Age</span>
+                </h1>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Discover tutorials, case studies, and expert guides to supercharge your content creation and growth.
+                </p>
             </div>
 
-            <!-- Featured Post (Static Placeholder or Dynamic) -->
-            <!-- Note: For production, this could also be dynamic, but kept static for layout stability -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer" onclick="window.location.href='single-blog.html?id=featured'">
-                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2071&auto=format&fit=crop" alt="Featured Blog" class="w-full h-[500px] object-cover transform group-hover:scale-105 transition-transform duration-700">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 p-8 md:p-12 max-w-3xl">
-                    <span class="inline-block px-3 py-1 bg-brand-600 text-white text-xs font-bold rounded-full mb-4">FEATURED</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight group-hover:text-brand-200 transition-colors">10 AI Tools That Will Replace Your Marketing Agency</h2>
-                    <p class="text-slate-300 mb-6 line-clamp-2">Discover the cutting-edge software stack that solo creators are using to scale to 7-figures without hiring a single employee.</p>
+            <div class="max-w-2xl mx-auto relative group">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-brand-500 transition-colors"></i>
+                </div>
+                <input type="text" id="search-input" 
+                    class="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 shadow-sm focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 outline-none transition-all text-lg" 
+                    placeholder="Search articles, topics, or tags...">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <kbd class="hidden sm:inline-block px-2 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs text-slate-500 font-mono">⌘ K</kbd>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- BLOG GRID -->
-    <section class="py-16 bg-slate-50">
+    <main class="flex-grow py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div id="loading-indicator" class="flex flex-col items-center justify-center py-20">
-                <div class="loader mb-4"></div>
-                <p class="text-slate-500">Loading latest posts...</p>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden" id="blog-grid"></div>
-        </div>
-    </section>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 pb-6 border-b border-slate-200">
+                
+                <div class="w-full md:w-auto overflow-x-auto scrollbar-hide">
+                    <div class="flex gap-2" id="category-filters">
+                        <button class="filter-chip active px-4 py-2 rounded-full text-sm font-medium transition-all bg-brand-600 text-white shadow-md shadow-brand-500/20" data-category="all">
+                            All Posts
+                        </button>
+                        </div>
+                </div>
 
-    <!-- Footer Injection Point -->
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <span class="text-sm text-slate-500 font-medium whitespace-nowrap">Sort by:</span>
+                    <div class="relative w-full md:w-48">
+                        <select id="sort-select" class="w-full appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 cursor-pointer text-sm font-medium">
+                            <option value="newest">Latest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="az">Title (A-Z)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading-indicator" class="py-20 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600 mb-2"></div>
+                <p class="text-slate-500 text-sm">Fetching latest insights...</p>
+            </div>
+
+            <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden animate-fade-in">
+                </div>
+
+            <div id="no-results" class="hidden text-center py-20 bg-white rounded-2xl border border-slate-100 border-dashed">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="search-x" class="w-8 h-8 text-slate-400"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-1">No matches found</h3>
+                <p class="text-slate-500">Try adjusting your search or filters.</p>
+                <button onclick="window.resetFilters()" class="mt-4 text-brand-600 font-bold hover:underline">Clear all filters</button>
+            </div>
+
+        </div>
+    </main>
+
     <footer id="main-footer"></footer>
 
-    <!-- PRODUCTION LEVEL SCRIPT -->
     <script type="module">
-        import { loadHeader, loadFooter, loadGlobalSettings, db, appId } from './assets/js/shared.js';
+        import { loadHeader, loadFooter, db, appId } from './assets/js/shared.js';
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // State
+        let allPosts = [];
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let sortOrder = 'newest';
+
+        // Initialize
         document.addEventListener("DOMContentLoaded", async () => {
-            // 1. Load UI
             loadHeader('blog');
             loadFooter();
             
-            // 2. Load Ads
-            await loadGlobalSettings();
-            
-            // 3. Fetch Posts
-            await loadPosts();
+            // Setup Event Listeners
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderPosts();
+            });
+
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                sortOrder = e.target.value;
+                renderPosts();
+            });
+
+            // Keyboard Shortcut for Search
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('search-input').focus();
+                }
+            });
+
+            window.resetFilters = () => {
+                document.getElementById('search-input').value = '';
+                searchQuery = '';
+                setActiveCategory('all');
+            };
+
+            await fetchPosts();
         });
 
-        async function loadPosts() {
-            const grid = document.getElementById('blog-grid');
-            const loader = document.getElementById('loading-indicator');
-            
+        async function fetchPosts() {
             try {
-                // Fetch all posts
-                // Note: For thousands of posts, use pagination (limit/startAfter)
-                // For now, fetching all is fine for a starter blog
-                const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
-                let posts = [];
-                snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                // Fetch from Tenant Path: artifacts/{appId}/public/data/posts
+                const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+                const snapshot = await getDocs(postsRef);
                 
-                // Sort Descending by createdAt
-                posts.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                allPosts = [];
+                const categories = new Set();
 
-                if (posts.length === 0) {
-                    grid.innerHTML = '<p class="col-span-3 text-center text-slate-500 italic">No posts found. Check back later!</p>';
-                } else {
-                    grid.innerHTML = posts.map(post => `
-                        <article class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-full" onclick="window.location.href='single-blog.html?id=${post.id}'">
-                            <div class="relative h-48 overflow-hidden flex-shrink-0">
-                                <img src="${post.image || 'https://via.placeholder.com/400x200?text=No+Image'}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide border border-slate-200">${post.category || 'General'}</span>
-                            </div>
-                            <div class="p-6 flex flex-col flex-1">
-                                <div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
-                                    <span>${post.date}</span>
-                                    <span>•</span>
-                                    <span>${post.readTime || '5 min'} read</span>
-                                </div>
-                                <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-brand-600 transition-colors leading-snug line-clamp-2">${post.title}</h3>
-                                <div class="mt-auto flex items-center gap-2 text-sm font-medium text-slate-900">
-                                     <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500 uppercase border border-slate-300">${(post.author || 'A').charAt(0)}</div>
-                                    ${post.author || 'Admin'}
-                                </div>
-                            </div>
-                        </article>
-                    `).join('');
-                }
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Only show published posts
+                    if (data.published !== false) {
+                        allPosts.push({ id: doc.id, ...data });
+                        if (data.category) categories.add(data.category);
+                    }
+                });
+
+                // Populate Category Chips
+                const catContainer = document.getElementById('category-filters');
+                categories.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.className = "filter-chip px-4 py-2 rounded-full text-sm font-medium transition-all bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 whitespace-nowrap";
+                    btn.innerText = cat;
+                    btn.dataset.category = cat;
+                    btn.onclick = () => setActiveCategory(cat);
+                    catContainer.appendChild(btn);
+                });
+
+                document.getElementById('loading-indicator').classList.add('hidden');
+                document.getElementById('blog-grid').classList.remove('hidden');
+                
+                renderPosts();
+
             } catch (e) {
-                console.error("Error loading posts:", e);
-                grid.innerHTML = '<p class="col-span-3 text-center text-red-500">Failed to load posts. Please refresh.</p>';
-            } finally {
-                loader.classList.add('hidden');
-                grid.classList.remove('hidden');
-                if(window.lucide) window.lucide.createIcons();
+                console.error("Error fetching posts:", e);
+                document.getElementById('loading-indicator').innerHTML = `<p class="text-red-500">Unable to load posts. Please try again later.</p>`;
             }
         }
+
+        function setActiveCategory(cat) {
+            activeCategory = cat;
+            
+            // Update UI
+            document.querySelectorAll('.filter-chip').forEach(btn => {
+                if (btn.dataset.category === cat) {
+                    btn.className = "filter-chip active px-4 py-2 rounded-full text-sm font-medium transition-all bg-brand-600 text-white shadow-md shadow-brand-500/20 whitespace-nowrap";
+                } else {
+                    btn.className = "filter-chip px-4 py-2 rounded-full text-sm font-medium transition-all bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 whitespace-nowrap";
+                }
+            });
+
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const grid = document.getElementById('blog-grid');
+            const noResults = document.getElementById('no-results');
+
+            // 1. Filter
+            let filtered = allPosts.filter(post => {
+                const matchesCat = activeCategory === 'all' || post.category === activeCategory;
+                const matchesSearch = post.title.toLowerCase().includes(searchQuery) || 
+                                      (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery));
+                return matchesCat && matchesSearch;
+            });
+
+            // 2. Sort
+            filtered.sort((a, b) => {
+                const dateA = a.date ? new Date(a.date) : new Date(0);
+                const dateB = b.date ? new Date(b.date) : new Date(0);
+                
+                if (sortOrder === 'newest') return dateB - dateA;
+                if (sortOrder === 'oldest') return dateA - dateB;
+                if (sortOrder === 'az') return a.title.localeCompare(b.title);
+                return 0;
+            });
+
+            // 3. Render
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.classList.remove('hidden');
+
+            grid.innerHTML = filtered.map(post => {
+                // Fallback for image
+                const img = post.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.title)}&background=random&size=400`;
+                const dateStr = post.date ? new Date(post.date).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }) : 'Recently';
+                
+                // Use Clean URL if available (ODB), else fallback
+                const link = `/blog/${post.id}`; 
+                // Note: If you haven't deployed the Netlify Function yet, change this back to `single-blog.html?id=${post.id}`
+
+                return `
+                <article class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden group cursor-pointer h-full" onclick="window.location.href='${link}'">
+                    
+                    <div class="relative h-56 overflow-hidden bg-slate-100">
+                        <img src="${img}" alt="${post.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 bg-white/90 backdrop-blur text-slate-800 text-xs font-bold rounded-full border border-white/20 shadow-sm">
+                                ${post.category || 'Article'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="flex items-center gap-2 mb-3 text-xs text-slate-500 font-medium">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                            <span>${dateStr}</span>
+                            <span>&bull;</span>
+                            <span>${post.readTime || '5'} min read</span>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-slate-900 mb-3 leading-snug group-hover:text-brand-600 transition-colors line-clamp-2">
+                            ${post.title}
+                        </h3>
+
+                        <p class="text-slate-600 text-sm line-clamp-3 mb-6 flex-1">
+                            ${cleanExcerpt(post.content || post.excerpt)}
+                        </p>
+
+                        <div class="pt-4 border-t border-slate-50 flex items-center justify-between mt-auto">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-bold">
+                                    ${(post.author || 'A').charAt(0)}
+                                </div>
+                                <span class="text-xs font-semibold text-slate-600">${post.author || 'Admin'}</span>
+                            </div>
+                            <span class="text-brand-600 text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                Read <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </span>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+
+            // Re-init icons
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Helper to strip HTML from content to create a plain text excerpt
+        function cleanExcerpt(html) {
+            if (!html) return "Click to read more...";
+            const tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            let text = tmp.textContent || tmp.innerText || "";
+            return text.length > 120 ? text.substring(0, 120) + "..." : text;
+        }
+
     </script>
 </body>
 </html>
