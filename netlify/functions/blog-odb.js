@@ -1,34 +1,48 @@
 import { builder } from '@netlify/functions';
 
-// ==========================================
-// 1. FIREBASE CONFIGURATION (Hardcoded)
-// ==========================================
 const CONFIG = {
-  // Replace with your actual values from assets/js/shared.js
-  PROJECT_ID: "digitalserviceshub-online", 
+  PROJECT_ID: "digitalserviceshub-online", // Check your shared.js
   APP_ID: "mubashir-2b7cc",             
-  API_KEY: "AIzaSy..."                  
+  API_KEY: "AIzaSy..."  // Check your shared.js
 };
 
 async function myHandler(event, context) {
-  // 2. Extract Post ID
+  // 1. Get the SLUG from the URL
   const pathParts = event.path.split('/');
-  const postId = pathParts[pathParts.length - 1];
+  const slug = pathParts[pathParts.length - 1]; // This is now "my-cool-post"
 
-  // 3. Construct Firestore REST URL
-  const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${CONFIG.PROJECT_ID}/databases/(default)/documents/artifacts/${CONFIG.APP_ID}/public/data/posts/${postId}?key=${CONFIG.API_KEY}`;
+  // 2. RUN A QUERY (Find post where slug == URL)
+  // We target the parent collection path to run the query
+  const queryUrl = `https://firestore.googleapis.com/v1/projects/${CONFIG.PROJECT_ID}/databases/(default)/documents/artifacts/${CONFIG.APP_ID}/public/data:runQuery?key=${CONFIG.API_KEY}`;
+
+  const queryBody = {
+    structuredQuery: {
+      from: [{ collectionId: "posts" }],
+      where: {
+        fieldFilter: {
+          field: { fieldPath: "slug" },
+          op: "EQUAL",
+          value: { stringValue: slug }
+        }
+      },
+      limit: 1
+    }
+  };
 
   try {
-    // 4. Fetch Data
-    const response = await fetch(firestoreUrl);
-    
-    if (!response.ok) {
+    const response = await fetch(queryUrl, {
+      method: 'POST',
+      body: JSON.stringify(queryBody)
+    });
+
+    const json = await response.json();
+
+    // Check if any document was found
+    if (!json[0] || !json[0].document) {
       return { statusCode: 404, body: "<h1>Post not found</h1>" };
     }
 
-    const json = await response.json();
-    const fields = json.fields;
-
+    const fields = json[0].document.fields;
     const getString = (field) => field?.stringValue || "";
 
     const postData = {
@@ -39,7 +53,7 @@ async function myHandler(event, context) {
       author: getString(fields.author) || "Admin"
     };
 
-    // 5. Generate HTML
+    // 3. Generate HTML (Same as before)
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +69,7 @@ async function myHandler(event, context) {
     <style>
       body { font-family: 'Inter', sans-serif; }
       h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
-      .prose img { border-radius: 0.75rem; margin: 2rem 0; }
+      .prose img { border-radius: 0.75rem; margin: 2rem 0; max-width: 100%; height: auto; }
       .prose p { margin-bottom: 1.25rem; line-height: 1.75; color: #334155; }
       .prose h2 { font-size: 1.5rem; font-weight: 700; margin: 2rem 0 1rem; color: #0f172a; }
       .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
@@ -102,5 +116,4 @@ async function myHandler(event, context) {
   }
 }
 
-// ESM Export for Netlify Builder
 export const handler = builder(myHandler);
