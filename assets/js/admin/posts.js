@@ -103,8 +103,6 @@ export async function init() {
 
         tbody.innerHTML = postsData.map(p => {
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
-            
-            // UPDATED: Use Slug in the Admin Link
             const liveLink = `/blog/${p.slug || p.id}`;
             
             return `
@@ -165,11 +163,11 @@ async function fetchAuthors() {
         authorsList = [];
         snap.forEach(doc => authorsList.push({ id: doc.id, ...doc.data() }));
     } catch (e) {
-        console.warn("Could not fetch authors (Admin Panel):", e);
+        console.warn("Could not fetch authors:", e);
     }
 }
 
-// --- GENERATE ALL STATIC PAGES (SLUG AWARE) ---
+// --- GENERATE ALL STATIC PAGES (FIXED FOR 404s & NETWORK ERRORS) ---
 async function generateAllStaticPages() {
     const modal = document.getElementById('gen-modal');
     const bar = document.getElementById('gen-progress-bar');
@@ -185,11 +183,20 @@ async function generateAllStaticPages() {
 
     for (const post of publishedPosts) {
         try {
-            // UPDATED: Ping the Slug URL to cache it
             const identifier = post.slug || post.id;
-            await fetch(`${baseUrl}/blog/${identifier}`, { method: 'HEAD' }); 
+            
+            // 1. DELAY: Wait 300ms to prevent network crash
+            await new Promise(r => setTimeout(r, 300)); 
+
+            // 2. FORCE GENERATION: Use 'GET' (not HEAD) and 'no-cors'
+            await fetch(`${baseUrl}/blog/${identifier}`, { 
+                method: 'GET',
+                mode: 'no-cors' 
+            }); 
+            
+            // console.log(`Triggered: ${identifier}`);
         } catch (e) {
-            console.warn(`Failed to generate ${post.id}`, e);
+            console.warn(`Failed to generate ${post.title}`, e);
         }
         
         completed++;
@@ -200,7 +207,7 @@ async function generateAllStaticPages() {
 
     setTimeout(() => {
         modal.classList.add('hidden');
-        alert(`Success! ${total} pages have been generated and cached.`);
+        alert(`Success! Triggered generation for ${total} pages.`);
     }, 500);
 }
 
@@ -228,7 +235,7 @@ function createSlug(text) {
         .replace(/^-+/, '').replace(/-+$/, '');
 }
 
-// --- SITEMAP (SLUG AWARE) ---
+// --- SITEMAP ---
 export async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
     if(btn) { btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Updating...`; btn.disabled = true; }
@@ -243,7 +250,6 @@ export async function updateSitemap(force = false) {
         q.forEach(doc => {
             const d = doc.data();
             if (d.published !== false) {
-                // UPDATED: Use Slug for Sitemap URL
                 const identifier = d.slug || doc.id;
                 urls.push({ loc: `https://digitalserviceshub.online/blog/${identifier}`, priority: '0.9' });
             }
@@ -252,7 +258,6 @@ export async function updateSitemap(force = false) {
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${u.loc}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><priority>${u.priority}</priority></url>`).join('')}</urlset>`;
 
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { xml: xmlContent, updatedAt: serverTimestamp() });
-        console.log("Sitemap Updated!");
         if(force && btn) alert("Sitemap updated successfully!");
 
     } catch(e) { console.error("Sitemap Error", e); } 
@@ -486,12 +491,6 @@ async function savePost() {
         }
         
         await updateSitemap();
-        
-        // Trigger specific ODB regeneration for this post immediately
-        // UPDATED: Use Slug or ID for ODB ping
-        if (data.published) {
-            try { await fetch(`/blog/${slug || id}`, { method: 'HEAD' }); } catch(e) {}
-        }
 
         document.getElementById('save-status').innerText = "Saved successfully";
         document.getElementById('save-status').className = "text-xs text-emerald-600 font-bold hidden sm:block mr-2";
