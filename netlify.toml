@@ -1,10 +1,11 @@
 [build]
-  # FORCE the install command
   command = "npm install"
   publish = "."
   functions = "netlify/functions"
 
-# --- Security Headers ---
+# =======================
+# 1. SECURITY HEADERS
+# =======================
 [[headers]]
   for = "/*"
   [headers.values]
@@ -19,34 +20,37 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# --- Redirects & Rewrites ---
+# =======================
+# 2. REDIRECTS & REWRITES
+# =======================
 
-# 1. Sitemap
+# A. Sitemap (High Priority)
 [[redirects]]
   from = "/sitemap.xml"
   to = "/.netlify/functions/sitemap"
   status = 200
 
-# 2. Blog Static Pages (ODB)
+# B. Blog Engine (On-Demand Builder)
 [[redirects]]
   from = "/blog/*"
   to = "/.netlify/builders/blog-odb"
   status = 200
 
-# 3. Admin Panel
+# C. Admin Panel Shortcut
 [[redirects]]
   from = "/admin"
   to = "/admin/index.html"
   status = 200
 
-# 4. Clean URLs
+# D. Clean URLs (e.g. /about loads /about.html)
 [[redirects]]
   from = "/*"
   to = "/:splat.html"
   status = 200
 
-# 5. 404 Fallback
+# E. Fallback / Single Page App (Catch-All)
+# Changed to 200 so your main app can handle routing without error pages
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 404
+  status = 200
