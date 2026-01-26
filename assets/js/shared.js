@@ -179,7 +179,7 @@ export function loadHeader(activePage = '') {
             <div class="flex justify-between h-16">
                 
                 <div class="flex items-center">
-                    <a href="/assets/img/digitalserviceshub.jpg" class="flex-shrink-0 flex items-center gap-2 group">
+                    <a href="/assets/img/digitalserviceshub.png" class="flex-shrink-0 flex items-center gap-2 group">
                         <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">D</div>
                         <span class="font-bold text-xl tracking-tight text-slate-900">DigitalServices<span class="text-brand-600">Hub</span></span>
                     </a>
