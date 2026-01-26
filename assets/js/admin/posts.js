@@ -89,6 +89,7 @@ export async function init() {
         console.error("Error attaching listeners:", e);
     }
 
+    // Path: artifacts/{appId}/public/data/posts
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
@@ -102,8 +103,9 @@ export async function init() {
 
         tbody.innerHTML = postsData.map(p => {
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
-            // Use new static URL structure
-            const liveLink = `/blog/${p.id}`;
+            
+            // UPDATED: Use Slug in the Admin Link
+            const liveLink = `/blog/${p.slug || p.id}`;
             
             return `
             <tr class="hover:bg-slate-50 group transition-colors">
@@ -167,7 +169,7 @@ async function fetchAuthors() {
     }
 }
 
-// --- NEW: GENERATE ALL STATIC PAGES ---
+// --- GENERATE ALL STATIC PAGES (SLUG AWARE) ---
 async function generateAllStaticPages() {
     const modal = document.getElementById('gen-modal');
     const bar = document.getElementById('gen-progress-bar');
@@ -176,31 +178,26 @@ async function generateAllStaticPages() {
     
     if (publishedPosts.length === 0) return alert("No published posts to generate.");
 
-    // Show Modal
     modal.classList.remove('hidden');
     let completed = 0;
     const total = publishedPosts.length;
-
-    // Use origin to ensure we hit the correct Netlify function path
     const baseUrl = window.location.origin;
 
     for (const post of publishedPosts) {
         try {
-            // Trigger the ODB (On-Demand Builder)
-            // By fetching the URL, Netlify runs the function and caches the result
-            await fetch(`${baseUrl}/blog/${post.id}`, { method: 'HEAD' }); // HEAD request is faster
+            // UPDATED: Ping the Slug URL to cache it
+            const identifier = post.slug || post.id;
+            await fetch(`${baseUrl}/blog/${identifier}`, { method: 'HEAD' }); 
         } catch (e) {
             console.warn(`Failed to generate ${post.id}`, e);
         }
         
-        // Update Progress
         completed++;
         const percent = Math.round((completed / total) * 100);
         bar.style.width = `${percent}%`;
         status.innerText = `${percent}% (${completed}/${total})`;
     }
 
-    // Finish
     setTimeout(() => {
         modal.classList.add('hidden');
         alert(`Success! ${total} pages have been generated and cached.`);
@@ -224,9 +221,14 @@ async function logAction(action, details) {
 }
 
 function createSlug(text) {
-    return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
+    return text.toString().toLowerCase().trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '').replace(/-+$/, '');
 }
 
+// --- SITEMAP (SLUG AWARE) ---
 export async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
     if(btn) { btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Updating...`; btn.disabled = true; }
@@ -237,9 +239,14 @@ export async function updateSitemap(force = false) {
         const staticPages = [ 'index.html', 'about.html', 'blog.html', 'contact.html', 'subscription.html', 'tiktok.html', 'instagram.html', 'twitter-tools.html', 'email-tools.html', 'blog-tools.html' ];
 
         staticPages.forEach(page => urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' }));
+        
         q.forEach(doc => {
             const d = doc.data();
-            if (d.published !== false) urls.push({ loc: `https://digitalserviceshub.online/blog/${doc.id}`, priority: '0.9' });
+            if (d.published !== false) {
+                // UPDATED: Use Slug for Sitemap URL
+                const identifier = d.slug || doc.id;
+                urls.push({ loc: `https://digitalserviceshub.online/blog/${identifier}`, priority: '0.9' });
+            }
         });
 
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${u.loc}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><priority>${u.priority}</priority></url>`).join('')}</urlset>`;
@@ -481,8 +488,9 @@ async function savePost() {
         await updateSitemap();
         
         // Trigger specific ODB regeneration for this post immediately
+        // UPDATED: Use Slug or ID for ODB ping
         if (data.published) {
-            try { await fetch(`/blog/${id || slug}`, { method: 'HEAD' }); } catch(e) {}
+            try { await fetch(`/blog/${slug || id}`, { method: 'HEAD' }); } catch(e) {}
         }
 
         document.getElementById('save-status').innerText = "Saved successfully";
