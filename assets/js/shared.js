@@ -158,7 +158,6 @@ export function loadHeader(activePage = '') {
     const path = window.location.pathname;
     const current = activePage || (path === '/' || path.includes('index') ? 'home' : 
                                   path.includes('blog') ? 'blog' : 
-                                  path.includes('pricing') || path.includes('subscription') ? 'pricing' :
                                   path.includes('about') ? 'about' :
                                   path.includes('contact') ? 'contact' : '');
 
@@ -188,7 +187,6 @@ export function loadHeader(activePage = '') {
                     </div>
                 </div>
                 <a href="/blog.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('blog')}">Blog</a>
-                <a href="/subscription.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('pricing')}">Pricing</a>
                 <a href="/about.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('about')}">About</a>
                 <a href="/contact.html" class="px-4 py-2 rounded-lg text-sm font-bold transition-all ${isActive('contact')}">Contact</a>
             </div>
@@ -201,7 +199,7 @@ export function loadHeader(activePage = '') {
                 </a>
 
                 <a href="/login.html" id="nav-auth-btn" class="hidden md:flex px-4 py-2 text-sm font-bold text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">Log in</a>
-                <a href="/subscription.html" class="px-5 py-2.5 bg-slate-900 hover:bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-slate-900/20 hover:shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-0.5">Get Started</a>
+                <a href="/login.html" class="px-5 py-2.5 bg-slate-900 hover:bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-slate-900/20 hover:shadow-brand-600/30 transition-all duration-300 transform hover:-translate-y-0.5">Get Started</a>
                 <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"><i data-lucide="menu" class="w-6 h-6"></i></button>
             </div>
         </nav>
@@ -322,7 +320,9 @@ export function loadFooter() {
                 <div>
                     <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Product</h3>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="/tiktok.html" class="hover:text-brand-400 transition-colors">TikTok Downloader</a></li>
+                        <li><a href="/index.html" class="hover:text-brand-400 transition-colors">youtube seo</a></li>
+                        <li><a href="/twitter.html" class="hover:text-brand-400 transition-colors">Twitter seo</a></li>
+                        <li><a href="/tiktok.html" class="hover:text-brand-400 transition-colors">TikTok seo</a></li>
                         <li><a href="/instagram.html" class="hover:text-brand-400 transition-colors">Instagram Tools</a></li>
                         <li><a href="/email-tools.html" class="hover:text-brand-400 transition-colors">Email Extractor</a></li>
                     </ul>
@@ -333,6 +333,8 @@ export function loadFooter() {
                         <li><a href="/privacy.html" class="hover:text-brand-400 transition-colors">Privacy Policy</a></li>
                         <li><a href="/terms.html" class="hover:text-brand-400 transition-colors">Terms of Service</a></li>
                         <li><a href="/about.html" class="hover:text-brand-400 transition-colors">About Us</a></li>
+                         <li><a href="/cookie-policy.html" class="hover:text-brand-400 transition-colors">cookies</a></li>
+                          <li><a href="/disclaimer.html" class="hover:text-brand-400 transition-colors">disclaimer</a></li>
                         <li><a href="/contact.html" class="hover:text-brand-400 transition-colors">Contact Support</a></li>
                     </ul>
                 </div>
