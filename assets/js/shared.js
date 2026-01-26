@@ -179,7 +179,7 @@ export function loadHeader(activePage = '') {
             <div class="flex justify-between h-16">
                 
                 <div class="flex items-center">
-                    <a href="/" class="flex-shrink-0 flex items-center gap-2 group">
+                    <a href="/assets/img/digitalserviceshub.jpg" class="flex-shrink-0 flex items-center gap-2 group">
                         <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">D</div>
                         <span class="font-bold text-xl tracking-tight text-slate-900">DigitalServices<span class="text-brand-600">Hub</span></span>
                     </a>
@@ -241,7 +241,7 @@ export function loadHeader(activePage = '') {
             <div class="px-4 py-6 space-y-6">
                 
                 <div class="grid gap-2">
-                    <a href="/" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
+                    <a href="/assets/img/digitalserviceshub.jpg" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
                         <i data-lucide="home" class="w-5 h-5 text-slate-400"></i> Home
                     </a>
                     <a href="/blog.html" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
@@ -359,7 +359,6 @@ export function loadFooter() {
                         <li><a href="/blog.html" class="hover:text-brand-400 transition-colors">Latest Articles</a></li>
                         <li><a href="/about.html" class="hover:text-brand-400 transition-colors">About Us</a></li>
                         <li><a href="/contact.html" class="hover:text-brand-400 transition-colors">Contact Support</a></li>
-                        <li><a href="/admin/index.html" class="hover:text-brand-400 transition-colors">Admin Login</a></li>
                     </ul>
                 </div>
                 
