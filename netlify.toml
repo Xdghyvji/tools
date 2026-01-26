@@ -1,12 +1,10 @@
 [build]
+  # FORCE the install command
+  command = "npm install"
   publish = "."
   functions = "netlify/functions"
 
-# ====================================
-# 1. SECURITY & CACHING HEADERS
-# ====================================
-
-# Default headers for all assets
+# --- Security Headers ---
 [[headers]]
   for = "/*"
   [headers.values]
@@ -16,39 +14,38 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Cache-Control = "public, max-age=31536000, immutable"
 
-# HTML files should not be cached aggressively (to see updates instantly)
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# ====================================
-# 2. REDIRECTS & REWRITES
-# (Order matters: Specific -> General)
-# ====================================
+# --- Redirects & Rewrites ---
 
-# A. Sitemap (Dynamic Function)
+# 1. Sitemap
 [[redirects]]
   from = "/sitemap.xml"
   to = "/.netlify/functions/sitemap"
   status = 200
 
-# B. Admin Panel Redirect
-# Ensures 'yoursite.com/admin' loads the dashboard correctly
+# 2. Blog Static Pages (ODB)
+[[redirects]]
+  from = "/blog/*"
+  to = "/.netlify/builders/blog-odb"
+  status = 200
+
+# 3. Admin Panel
 [[redirects]]
   from = "/admin"
   to = "/admin/index.html"
   status = 200
 
-# C. Fallback for clean URLs (Pretty URLs)
-# Example: /about -> serves /about.html
+# 4. Clean URLs
 [[redirects]]
   from = "/*"
   to = "/:splat.html"
   status = 200
 
-# D. Final 404 Fallback
-# If no file exists, load the homepage (or a custom 404.html if you have one)
+# 5. 404 Fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
