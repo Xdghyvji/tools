@@ -5,6 +5,7 @@
   "main": "netlify/functions/generate-content.js",
   "type": "module",
   "dependencies": {
+    "@netlify/functions": "^2.6.0",
     "firebase": "^11.0.0",
     "node-fetch": "^2.7.0"
   },
