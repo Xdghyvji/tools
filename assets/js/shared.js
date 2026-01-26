@@ -1,17 +1,15 @@
 /**
- * DigitalServicesHub - Shared Core Logic (Production Grade v3.1)
+ * DigitalServicesHub - Shared Core Logic (Production Grade v3.2)
  * Features:
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
  * - Session-Based High Quality Cookie Consent (AdSense Compliant)
- * - Global Adsterra & AdSense Injection System (Lazy Loaded for LCP)
- * - Dynamic Header/Footer (Responsive Mobile Menu + Dropdowns)
- * - Real-time Presence & Performance Monitoring
- * - Multi-Tab Persistence Fix (No more Internal Assertion Failures)
+ * - Global Adsterra & AdSense Injection System (Lazy Loaded)
+ * - Dynamic Header/Footer (Logo + Socials + App Download)
+ * - Multi-Tab Persistence Fix
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-// UPDATED IMPORTS: Added 'enableMultiTabIndexedDbPersistence' and all Firestore helpers needed for Admin
 import { 
     getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, setDoc, 
     writeBatch, query, where, limit, orderBy, serverTimestamp, 
@@ -20,7 +18,7 @@ import {
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-console.log("🚀 System: Initializing Core Services v3.1...");
+console.log("🚀 System: Initializing Core Services v3.2...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -46,7 +44,7 @@ try {
     provider = new GoogleAuthProvider();
     analyticsInstance = getAnalytics(app);
     
-    // CRITICAL FIX: Use Multi-Tab Persistence instead of standard
+    // CRITICAL FIX: Use Multi-Tab Persistence
     enableMultiTabIndexedDbPersistence(db).catch((err) => {
         if (err.code == 'failed-precondition') console.warn('Persistence failed: Multiple tabs open.');
         else if (err.code == 'unimplemented') console.warn('Persistence not supported by browser.');
@@ -70,14 +68,12 @@ class AuthManager {
     init() {
         onAuthStateChanged(auth, async (user) => {
             this.currentUser = user;
-            
             if (user) {
                 const cached = sessionStorage.getItem(`dsh_user_${user.uid}`);
                 if (cached) {
                     this.userProfile = JSON.parse(cached);
                     this.broadcast(user, this.userProfile);
                 }
-                
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
                     const snap = await getDoc(docRef);
@@ -85,14 +81,11 @@ class AuthManager {
                         this.userProfile = snap.data();
                         sessionStorage.setItem(`dsh_user_${user.uid}`, JSON.stringify(this.userProfile));
                     }
-                } catch (e) {
-                    console.warn("Auth: Profile fetch warning", e);
-                }
+                } catch (e) {}
             } else {
                 this.userProfile = null;
                 sessionStorage.clear();
             }
-            
             this.broadcast(user, this.userProfile);
             this.updateUI(user);
         });
@@ -108,22 +101,19 @@ class AuthManager {
     }
 
     updateUI(user) {
-        // Desktop Button
         const authBtn = document.getElementById('nav-auth-btn');
-        // Mobile Button
         const mobileAuthBtn = document.getElementById('mobile-nav-auth-btn');
         
         const updateBtn = (btn) => {
             if (!btn) return;
             if (user) {
-                const isAdmin = user.email === "admin@dsh.online"; // Update with your actual admin email if different
+                const isAdmin = user.email === "admin@dsh.online"; 
                 const target = isAdmin ? '/admin/index.html' : '/userprofile.html';
                 const label = isAdmin ? 'Admin Panel' : 'Dashboard';
                 
                 btn.href = target;
                 btn.innerHTML = `<i data-lucide="user" class="w-4 h-4"></i> ${label}`;
                 
-                // Style adjustment for logged in state
                 if(btn.id === 'nav-auth-btn') {
                     btn.classList.remove('text-slate-600');
                     btn.classList.add('text-brand-600', 'bg-brand-50');
@@ -143,10 +133,9 @@ class AuthManager {
 const authManager = new AuthManager();
 
 // ==========================================
-// 3. UI INJECTOR (Responsive Header & Footer)
+// 3. UI INJECTOR (Header & Footer)
 // ==========================================
 
-// Global Favicon Injector
 function injectFavicon() {
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
@@ -158,11 +147,23 @@ function injectFavicon() {
     link.type = 'image/png';
 }
 
+// Helper to generate Social Icons HTML
+function generateSocialIcons(settings) {
+    if (!settings) return '';
+    let html = '';
+    // Check for common social keys in your settings
+    if (settings.twitter) html += `<a href="${settings.twitter}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>`;
+    if (settings.facebook) html += `<a href="${settings.facebook}" target="_blank" class="text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>`;
+    if (settings.instagram) html += `<a href="${settings.instagram}" target="_blank" class="text-slate-400 hover:text-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>`;
+    if (settings.linkedin) html += `<a href="${settings.linkedin}" target="_blank" class="text-slate-400 hover:text-blue-700 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>`;
+    if (settings.youtube) html += `<a href="${settings.youtube}" target="_blank" class="text-slate-400 hover:text-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>`;
+    return html;
+}
+
 export function loadHeader(activePage = '') {
     injectFavicon();
-
     const container = document.getElementById('app-header') || document.getElementById('main-header');
-    if (!container) return; // Silent fail if container missing
+    if (!container) return;
 
     const path = window.location.pathname;
     const current = activePage || (path === '/' || path.includes('index') ? 'home' : 
@@ -172,20 +173,20 @@ export function loadHeader(activePage = '') {
 
     const isActive = (name) => current === name ? 'text-brand-600 font-bold bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50';
     
-    // NEW RESPONSIVE HEADER HTML
+    // Header HTML
     container.innerHTML = `
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 w-full shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between h-20 items-center">
                 
                 <div class="flex items-center">
-                    <a href="/assets/img/digitalserviceshub.png" class="flex-shrink-0 flex items-center gap-2 group">
-                        <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">D</div>
-                        <span class="font-bold text-xl tracking-tight text-slate-900">DigitalServices<span class="text-brand-600">Hub</span></span>
+                    <a href="/" class="flex-shrink-0 flex items-center gap-2 group">
+                        <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub" class="h-10 w-auto object-contain transition-transform group-hover:scale-105">
+                        <span class="font-bold text-xl tracking-tight text-slate-900 hidden sm:block">DigitalServices<span class="text-brand-600">Hub</span></span>
                     </a>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-1">
+                <div class="hidden lg:flex items-center space-x-1">
                     <a href="/" class="px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('home')}">Home</a>
                     
                     <div class="relative group">
@@ -205,7 +206,6 @@ export function loadHeader(activePage = '') {
 
                     <a href="/blog.html" class="px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('blog')}">Blog</a>
                     <a href="/about.html" class="px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('about')}">About</a>
-                    <a href="/contact.html" class="px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive('contact')}">Contact</a>
 
                     <div class="relative group">
                         <button class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-brand-600 inline-flex items-center gap-1 transition-colors">
@@ -221,27 +221,29 @@ export function loadHeader(activePage = '') {
                         </div>
                     </div>
 
-                    <div class="pl-4 ml-4 border-l border-slate-200">
-                        <a href="/login.html" id="nav-auth-btn" class="px-4 py-2 text-sm font-bold text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-2">
-                            <i data-lucide="log-in" class="w-4 h-4"></i> Log in
-                        </a>
-                    </div>
+                    <div id="header-socials" class="flex items-center gap-2 pl-2 border-l border-slate-200 ml-2"></div>
                 </div>
 
-                <div class="flex items-center md:hidden gap-3">
-                    <a href="/login.html" id="mobile-top-auth" class="text-sm font-bold text-brand-600 bg-brand-50 px-3 py-1.5 rounded-lg">Log in</a>
-                    <button id="mobile-menu-btn" class="p-2 rounded-md text-slate-600 hover:text-brand-600 hover:bg-slate-100 focus:outline-none">
+                <div class="flex items-center gap-3">
+                    <a href="/app-release.apk" class="hidden xl:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-bold rounded-xl shadow-md hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i data-lucide="smartphone" class="w-4 h-4"></i> Get App
+                    </a>
+
+                    <a href="/login.html" id="nav-auth-btn" class="hidden md:flex px-4 py-2 text-sm font-bold text-slate-600 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors items-center gap-2">
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Log in
+                    </a>
+
+                    <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-md text-slate-600 hover:text-brand-600 hover:bg-slate-100 focus:outline-none">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full left-0 shadow-2xl h-[calc(100vh-64px)] overflow-y-auto transform transition-transform duration-300">
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-slate-100 absolute w-full left-0 shadow-2xl h-[calc(100vh-80px)] overflow-y-auto transform transition-transform duration-300">
             <div class="px-4 py-6 space-y-6">
-                
                 <div class="grid gap-2">
-                    <a href="/assets/img/digitalserviceshub.jpg" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
+                    <a href="/" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
                         <i data-lucide="home" class="w-5 h-5 text-slate-400"></i> Home
                     </a>
                     <a href="/blog.html" class="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 text-slate-700 font-semibold text-lg">
@@ -255,24 +257,17 @@ export function loadHeader(activePage = '') {
                     </a>
                 </div>
 
+                <a href="/app-release.apk" class="flex items-center gap-3 px-3 py-3 rounded-xl bg-emerald-50 text-emerald-700 font-semibold text-lg">
+                     <i data-lucide="smartphone" class="w-5 h-5"></i> Download App
+                </a>
+
                 <div>
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">AI Tools</h3>
                     <div class="grid grid-cols-1 gap-2">
-                        <a href="/tiktok.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <i data-lucide="music-2" class="w-4 h-4"></i> TikTok Tools
-                        </a>
-                        <a href="/instagram.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <i data-lucide="instagram" class="w-4 h-4"></i> Instagram Tools
-                        </a>
-                        <a href="/twitter-tools.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <i data-lucide="twitter" class="w-4 h-4"></i> Twitter Tools
-                        </a>
-                        <a href="/email-tools.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <i data-lucide="mail" class="w-4 h-4"></i> Email Tools
-                        </a>
-                        <a href="/blog-tools.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors">
-                            <i data-lucide="pen-tool" class="w-4 h-4"></i> Blog Tools
-                        </a>
+                        <a href="/tiktok.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors"><i data-lucide="music-2" class="w-4 h-4"></i> TikTok Tools</a>
+                        <a href="/instagram.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i> Instagram Tools</a>
+                        <a href="/twitter-tools.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i> Twitter Tools</a>
+                        <a href="/email-tools.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-brand-50 text-slate-600 hover:text-brand-600 font-medium transition-colors"><i data-lucide="mail" class="w-4 h-4"></i> Email Tools</a>
                     </div>
                 </div>
 
@@ -296,7 +291,7 @@ export function loadHeader(activePage = '') {
     </nav>
     `;
 
-    // Initialize Mobile Menu Logic
+    // Logic
     setTimeout(() => {
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
@@ -304,23 +299,29 @@ export function loadHeader(activePage = '') {
         if(btn && menu) {
             btn.onclick = () => {
                 menu.classList.toggle('hidden');
-                
-                // Animate Icon
                 if (menu.classList.contains('hidden')) {
                     btn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
                     document.body.style.overflow = '';
                 } else {
                     btn.innerHTML = `<i data-lucide="x" class="w-6 h-6"></i>`;
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling when menu open
+                    document.body.style.overflow = 'hidden';
                 }
                 if(window.lucide) window.lucide.createIcons();
             };
         }
         if(window.lucide) window.lucide.createIcons();
         
-        // Init Auth Manager and Ads
         authManager.init();
         lazyLoadAds();
+
+        // Populate Social Icons from Firestore Settings
+        loadGlobalSettings().then(settings => {
+            const iconsHtml = generateSocialIcons(settings);
+            const headerSocials = document.getElementById('header-socials');
+            if(headerSocials) headerSocials.innerHTML = iconsHtml;
+            if(window.lucide) window.lucide.createIcons();
+        });
+
     }, 50);
 }
 
@@ -328,6 +329,7 @@ export function loadFooter() {
     const container = document.getElementById('app-footer') || document.getElementById('main-footer');
     if (!container) return;
 
+    // Footer HTML
     container.innerHTML = `
     <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -335,12 +337,14 @@ export function loadFooter() {
                 
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-6 h-6 bg-brand-600 rounded flex items-center justify-center text-white font-bold text-xs">D</div>
+                        <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub" class="h-8 w-auto brightness-200 grayscale contrast-200 opacity-90">
                         <span class="font-bold text-lg text-white">DigitalServicesHub</span>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
                         Empowering creators with free, professional-grade AI tools. Built for scale, security, and speed.
                     </p>
+                    
+                    <div id="footer-socials" class="flex items-center gap-4 mt-4"></div>
                 </div>
                 
                 <div>
@@ -380,6 +384,15 @@ export function loadFooter() {
         </div>
     </footer>
     `;
+    
+    // Populate Footer Socials
+    loadGlobalSettings().then(settings => {
+        const iconsHtml = generateSocialIcons(settings);
+        const footerSocials = document.getElementById('footer-socials');
+        if(footerSocials) footerSocials.innerHTML = iconsHtml;
+        if(window.lucide) window.lucide.createIcons();
+    });
+
     if(window.lucide) window.lucide.createIcons();
 }
 
@@ -404,9 +417,7 @@ class AnalyticsEngine {
     }
 
     async init() {
-        // Cookie Consent Logic
         const consent = localStorage.getItem('dsh_cookie_consent');
-        
         if (consent === 'rejected') {
             console.log("Analytics: Tracking disabled by user.");
             this.isTracking = false;
@@ -414,25 +425,21 @@ class AnalyticsEngine {
             this.isTracking = true;
         }
 
-        // Show popup on every session visit if not already shown
         if (!sessionStorage.getItem('dsh_consent_session_viewed')) {
             CookieManager.show();
         }
 
         if (this.isTracking) {
-            // Lazy load geo to improve LCP
             requestIdleCallback(() => {
                 this.fetchGeo().then(data => this.ipData = data);
             });
             
-            // Track Page View
             this.track('page_view', {
                 path: window.location.pathname,
                 title: document.title,
                 referrer: document.referrer || 'Direct'
             });
 
-            // Start Services
             this.setupClickTracking();
             this.setupScrollTracking();
             this.setupPerformanceTracking();
@@ -459,7 +466,6 @@ class AnalyticsEngine {
 
     track(eventName, details = {}) {
         if (!this.isTracking) return;
-
         const event = {
             type: eventName,
             sessionId: this.sessionId,
@@ -469,7 +475,6 @@ class AnalyticsEngine {
             url: window.location.href,
             device: this.getDeviceType()
         };
-
         this.queue.push(event);
         if (this.queue.length >= 5) this.flush();
     }
@@ -544,7 +549,6 @@ class AnalyticsEngine {
         const batch = writeBatch(db);
         const eventsToSend = [...this.queue];
         this.queue = []; 
-
         try {
             eventsToSend.forEach(evt => {
                 const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', 'traffic_logs'));
@@ -567,12 +571,11 @@ class AnalyticsEngine {
 const analytics = new AnalyticsEngine();
 
 // ==========================================
-// 5. COOKIE MANAGER (AdSense Enhanced)
+// 5. COOKIE MANAGER
 // ==========================================
 const CookieManager = {
     show: () => {
         if (document.getElementById('cookie-consent-modal')) return;
-        
         sessionStorage.setItem('dsh_consent_session_viewed', 'true');
 
         const modal = document.createElement('div');
@@ -583,23 +586,16 @@ const CookieManager = {
             <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-200 p-6 max-w-2xl w-full flex flex-col md:flex-row gap-6 items-center transform transition-all duration-500 translate-y-full opacity-0" id="cookie-inner">
                 <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
-                        <div class="p-2 bg-brand-100 rounded-lg text-brand-600">
-                            <i data-lucide="cookie" class="w-5 h-5"></i>
-                        </div>
+                        <div class="p-2 bg-brand-100 rounded-lg text-brand-600"><i data-lucide="cookie" class="w-5 h-5"></i></div>
                         <h3 class="font-bold text-slate-900 text-lg">We value your privacy</h3>
                     </div>
                     <p class="text-sm text-slate-600 leading-relaxed">
-                        We use cookies to enhance your experience and analyze site traffic. By clicking "Accept All", you consent to our use of cookies.
-                        <a href="/cookies-policy.html" class="text-brand-600 hover:underline font-semibold ml-1">Read Policy</a>
+                        We use cookies to enhance your experience. <a href="/cookies-policy.html" class="text-brand-600 hover:underline font-semibold ml-1">Read Policy</a>
                     </p>
                 </div>
                 <div class="flex items-center gap-3 w-full md:w-auto">
-                    <button id="cookie-reject" class="flex-1 md:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:border-slate-300 transition-all text-sm whitespace-nowrap">
-                        Essential Only
-                    </button>
-                    <button id="cookie-accept" class="flex-1 md:flex-none px-8 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-brand-600 text-sm shadow-lg shadow-slate-900/20 hover:shadow-brand-600/20 transition-all transform hover:-translate-y-0.5 whitespace-nowrap">
-                        Accept All
-                    </button>
+                    <button id="cookie-reject" class="flex-1 md:flex-none px-6 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-50 text-sm whitespace-nowrap">Essential Only</button>
+                    <button id="cookie-accept" class="flex-1 md:flex-none px-8 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-brand-600 text-sm shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap">Accept All</button>
                 </div>
             </div>
             <style>
@@ -638,7 +634,7 @@ const CookieManager = {
 };
 
 // ==========================================
-// 6. AD SYSTEM (Lazy Loaded)
+// 6. AD SYSTEM
 // ==========================================
 let globalSettings = null;
 export async function loadGlobalSettings() {
@@ -691,7 +687,7 @@ function injectAdsterraAds() {
 }
 
 // ==========================================
-// 7. AI BRIDGE
+// 7. AI BRIDGE & EXPORTS
 // ==========================================
 export function getPromptForTool(toolKey, input) {
     const fallbacks = { 'default': `Generate content for ${input}` };
@@ -716,35 +712,14 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
     }
 }
 
-// Initializer
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => analytics.init());
 } else {
     analytics.init();
 }
 
-// ==========================================
-// 8. EXPORTS (Comprehensive for Admin)
-// ==========================================
 export { 
-    db, 
-    auth, 
-    provider, 
-    analytics,
-    collection, 
-    addDoc, 
-    getDocs, 
-    doc, 
-    getDoc, 
-    query, 
-    where, 
-    limit, 
-    orderBy, 
-    updateDoc, 
-    setDoc,
-    serverTimestamp, 
-    onAuthStateChanged, 
-    signOut, 
-    signInWithPopup,
-    appId
+    db, auth, provider, analytics,
+    collection, addDoc, getDocs, doc, getDoc, query, where, limit, orderBy, updateDoc, setDoc,
+    serverTimestamp, onAuthStateChanged, signOut, signInWithPopup, appId
 };
