@@ -39,6 +39,7 @@ exports.handler = async (event, context) => {
       { path: '/privacy-policy', priority: '0.5', freq: 'yearly' },
       { path: '/terms-conditions', priority: '0.5', freq: 'yearly' },
       { path: '/cookie-policy', priority: '0.5', freq: 'yearly' }
+      { path: '/disclaimer', priority: '0.5', freq: 'yearly' }
     ];
 
     // ==========================================
