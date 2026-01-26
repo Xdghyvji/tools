@@ -29,7 +29,6 @@ exports.handler = async (event, context) => {
       { path: '/twitter-tools', priority: '0.8', freq: 'weekly' },
       { path: '/email-tools', priority: '0.8', freq: 'weekly' },
       { path: '/blog-tools', priority: '0.8', freq: 'weekly' },
-      { path: '/subscription', priority: '0.8', freq: 'monthly' },
       
       // Info Pages
       { path: '/about', priority: '0.7', freq: 'monthly' },
