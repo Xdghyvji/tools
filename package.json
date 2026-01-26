@@ -1,8 +1,6 @@
 {
   "name": "digitalserviceshub-backend",
   "version": "1.0.0",
-  "description": "Serverless functions for AI generation",
-  "main": "netlify/functions/generate-content.js",
   "type": "module",
   "dependencies": {
     "@netlify/functions": "^2.6.0",
