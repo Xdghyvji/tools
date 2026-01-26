@@ -6,33 +6,60 @@ import { collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serv
 // ==========================================
 export function render() {
     return `
-    <div class="animate-fade-in">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-slate-900">Blog Posts</h1>
-            <div class="flex gap-3">
-                 <button id="update-sitemap-btn" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors flex items-center gap-2">
-                    <i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap
+    <div class="animate-fade-in max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Blog Management</h1>
+                <p class="text-sm text-slate-500 mt-1">Manage articles, authors, and static generation.</p>
+            </div>
+            
+            <div class="flex flex-wrap gap-3">
+                 <button id="generate-static-btn" class="bg-indigo-50 text-indigo-700 border border-indigo-100 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors flex items-center gap-2 shadow-sm">
+                    <i data-lucide="zap" class="w-4 h-4"></i> Generate Static Pages
                 </button>
-                <button id="new-post-btn" class="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-700 transition-colors flex items-center gap-2">
+
+                 <button id="update-sitemap-btn" class="bg-white text-slate-600 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2 shadow-sm">
+                    <i data-lucide="map" class="w-4 h-4"></i> Update Sitemap
+                </button>
+                
+                <button id="new-post-btn" class="bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-brand-700 transition-all flex items-center gap-2 shadow-md shadow-brand-500/20">
                     <i data-lucide="plus" class="w-4 h-4"></i> New Post
                 </button>
             </div>
         </div>
+
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
-                    <tr>
-                        <th class="px-6 py-4">Title</th>
-                        <th class="px-6 py-4">Author</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Date</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200" id="posts-table-body">
-                    <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Loading posts...</td></tr>
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-xs">
+                        <tr>
+                            <th class="px-6 py-4">Article Details</th>
+                            <th class="px-6 py-4">Author</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Published</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="posts-table-body">
+                        <tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">Loading your content...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div id="gen-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center">
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="loader-2" class="w-8 h-8 animate-spin"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Generating Static Pages</h3>
+            <p class="text-sm text-slate-500 mb-6">Converting database content to static HTML...</p>
+            
+            <div class="w-full bg-slate-100 rounded-full h-2 mb-2 overflow-hidden">
+                <div id="gen-progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+            </div>
+            <p id="gen-status-text" class="text-xs font-bold text-indigo-600">0%</p>
         </div>
     </div>`;
 }
@@ -43,7 +70,7 @@ let originalModalClasses = "";
 let originalParentClasses = "";
 
 // ==========================================
-// 2. INITIALIZATION & LISTENERS
+// 2. INITIALIZATION
 // ==========================================
 export async function init() {
     try {
@@ -52,15 +79,16 @@ export async function init() {
 
         const sitemapBtn = document.getElementById('update-sitemap-btn');
         if (sitemapBtn) sitemapBtn.addEventListener('click', () => updateSitemap(true));
+
+        const genBtn = document.getElementById('generate-static-btn');
+        if (genBtn) genBtn.addEventListener('click', generateAllStaticPages);
         
-        // Fetch authors immediately so they are ready for the modal
         await fetchAuthors();
 
     } catch (e) {
         console.error("Error attaching listeners:", e);
     }
 
-    // Real-time Posts Listener (Fixed Path)
     const unsub = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), (snapshot) => {
         postsData = [];
         snapshot.forEach(doc => postsData.push({ id: doc.id, ...doc.data() }));
@@ -68,36 +96,49 @@ export async function init() {
         
         const tbody = document.getElementById('posts-table-body');
         if (postsData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No posts found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-400">No posts found. Create your first article!</td></tr>`;
             return;
         }
 
         tbody.innerHTML = postsData.map(p => {
-            // Find author name from ID
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
+            // Use new static URL structure
+            const liveLink = `/blog/${p.id}`;
             
             return `
             <tr class="hover:bg-slate-50 group transition-colors">
-                <td class="px-6 py-4 font-medium text-slate-900">
-                    <a href="/single-blog.html?id=${p.id}" target="_blank" class="hover:text-brand-600 hover:underline flex items-center gap-2">
-                        ${p.title} <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
-                    </a>
-                </td>
-                <td class="px-6 py-4 text-slate-600">
-                    <div class="flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold">${authorName.charAt(0)}</span>
-                        ${authorName}
+                <td class="px-6 py-4">
+                    <div class="flex flex-col">
+                        <a href="${liveLink}" target="_blank" class="font-bold text-slate-900 hover:text-brand-600 hover:underline flex items-center gap-2 mb-1">
+                            ${p.title} <i data-lucide="external-link" class="w-3 h-3 text-slate-300 group-hover:text-brand-400"></i>
+                        </a>
+                        <span class="text-xs text-slate-500">${p.category || 'Uncategorized'}</span>
                     </div>
                 </td>
                 <td class="px-6 py-4">
-                     <span class="text-xs px-2 py-1 rounded-full border ${p.published !== false ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 border border-slate-200">
+                            ${authorName.charAt(0)}
+                        </span>
+                        <span class="text-sm text-slate-600 font-medium">${authorName}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${p.published !== false ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}">
+                        <span class="w-1.5 h-1.5 rounded-full ${p.published !== false ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
                         ${p.published !== false ? 'Published' : 'Draft'}
                      </span>
                 </td>
-                <td class="px-6 py-4 text-slate-600">${p.date}</td>
+                <td class="px-6 py-4 text-sm text-slate-500 font-mono">${p.date}</td>
                 <td class="px-6 py-4 text-right">
-                    <button class="text-brand-600 hover:text-brand-800 mr-3 font-medium edit-btn transition-colors" data-id="${p.id}">Edit</button>
-                    <button class="text-red-500 hover:text-red-700 font-medium delete-btn transition-colors" data-id="${p.id}">Delete</button>
+                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition-colors edit-btn" data-id="${p.id}" title="Edit">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors delete-btn" data-id="${p.id}" title="Delete">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
             `;
@@ -105,8 +146,8 @@ export async function init() {
 
         if(window.lucide) window.lucide.createIcons();
 
-        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openModal(e.target.dataset.id)));
-        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deletePost(e.target.dataset.id)));
+        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.id)));
+        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deletePost(e.currentTarget.dataset.id)));
     });
 
     return unsub;
@@ -118,14 +159,52 @@ export async function init() {
 
 async function fetchAuthors() {
     try {
-        // --- FIXED PATH: Use 'artifacts/{appId}/public/data/authors' ---
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'authors'));
         authorsList = [];
         snap.forEach(doc => authorsList.push({ id: doc.id, ...doc.data() }));
-        console.log("Authors Loaded:", authorsList.length);
     } catch (e) {
-        console.warn("Could not fetch authors:", e);
+        console.warn("Could not fetch authors (Admin Panel):", e);
     }
+}
+
+// --- NEW: GENERATE ALL STATIC PAGES ---
+async function generateAllStaticPages() {
+    const modal = document.getElementById('gen-modal');
+    const bar = document.getElementById('gen-progress-bar');
+    const status = document.getElementById('gen-status-text');
+    const publishedPosts = postsData.filter(p => p.published !== false);
+    
+    if (publishedPosts.length === 0) return alert("No published posts to generate.");
+
+    // Show Modal
+    modal.classList.remove('hidden');
+    let completed = 0;
+    const total = publishedPosts.length;
+
+    // Use origin to ensure we hit the correct Netlify function path
+    const baseUrl = window.location.origin;
+
+    for (const post of publishedPosts) {
+        try {
+            // Trigger the ODB (On-Demand Builder)
+            // By fetching the URL, Netlify runs the function and caches the result
+            await fetch(`${baseUrl}/blog/${post.id}`, { method: 'HEAD' }); // HEAD request is faster
+        } catch (e) {
+            console.warn(`Failed to generate ${post.id}`, e);
+        }
+        
+        // Update Progress
+        completed++;
+        const percent = Math.round((completed / total) * 100);
+        bar.style.width = `${percent}%`;
+        status.innerText = `${percent}% (${completed}/${total})`;
+    }
+
+    // Finish
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        alert(`Success! ${total} pages have been generated and cached.`);
+    }, 500);
 }
 
 async function deletePost(id) {
@@ -150,32 +229,31 @@ function createSlug(text) {
 
 export async function updateSitemap(force = false) {
     const btn = document.getElementById('update-sitemap-btn');
-    if(btn) { btn.innerText = "Updating..."; btn.disabled = true; }
+    if(btn) { btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Updating...`; btn.disabled = true; }
 
     try {
         const q = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
         let urls = [];
-        
         const staticPages = [ 'index.html', 'about.html', 'blog.html', 'contact.html', 'subscription.html', 'tiktok.html', 'instagram.html', 'twitter-tools.html', 'email-tools.html', 'blog-tools.html' ];
 
         staticPages.forEach(page => urls.push({ loc: `https://digitalserviceshub.online/${page}`, priority: '0.8' }));
         q.forEach(doc => {
             const d = doc.data();
-            if (d.published !== false) urls.push({ loc: `https://digitalserviceshub.online/single-blog.html?id=${doc.id}`, priority: '0.9' });
+            if (d.published !== false) urls.push({ loc: `https://digitalserviceshub.online/blog/${doc.id}`, priority: '0.9' });
         });
 
         const xmlContent = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${u.loc}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><priority>${u.priority}</priority></url>`).join('')}</urlset>`;
 
         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'sitemap', 'xml'), { xml: xmlContent, updatedAt: serverTimestamp() });
-        console.log("Sitemap Updated Successfully!");
-        if(force && btn) alert("Sitemap updated!");
+        console.log("Sitemap Updated!");
+        if(force && btn) alert("Sitemap updated successfully!");
 
     } catch(e) { console.error("Sitemap Error", e); } 
-    finally { if(btn) { btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Force Update Sitemap`; btn.disabled = false; if(window.lucide) window.lucide.createIcons(); } }
+    finally { if(btn) { btn.innerHTML = `<i data-lucide="map" class="w-4 h-4"></i> Update Sitemap`; btn.disabled = false; if(window.lucide) window.lucide.createIcons(); } }
 }
 
 // ==========================================
-// 4. FULL SCREEN EDITOR MODAL
+// 4. EDITOR MODAL (Full Screen)
 // ==========================================
 
 async function loadTinyMCE() {
@@ -197,33 +275,27 @@ async function openModal(id = null) {
     if (!originalModalClasses) originalModalClasses = content.className;
     if (!originalParentClasses) originalParentClasses = content.parentElement.className;
 
-    // Apply Full Screen
+    // Full Screen Styles
     content.parentElement.className = "absolute inset-0 flex items-center justify-center p-0"; 
     content.className = "bg-white w-full h-full shadow-none rounded-none overflow-hidden flex flex-col transform transition-all opacity-0 scale-95";
 
     const post = id ? postsData.find(p => p.id === id) : null;
     await loadTinyMCE();
 
-    // Re-fetch authors to ensure list is fresh
     if(authorsList.length === 0) await fetchAuthors();
 
-    // Build Dropdown
-    const authorOptions = authorsList.map(a => 
-        `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`
-    ).join('');
-    
-    // Admin Fallback
+    const authorOptions = authorsList.map(a => `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`).join('');
     const defaultOption = `<option value="admin" ${!post?.authorId ? 'selected' : ''}>Admin (Me)</option>`;
 
     content.innerHTML = `
         <div class="h-16 px-6 border-b border-slate-200 flex justify-between items-center bg-white shrink-0 z-20">
             <div class="flex items-center gap-4">
-                <button id="close-modal-btn" class="p-2 -ml-2 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full transition-colors group" title="Close Editor">
-                    <i data-lucide="x" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
+                <button id="close-modal-btn" class="p-2 -ml-2 hover:bg-slate-100 text-slate-500 rounded-full transition-colors group">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
                 </button>
                 <div class="h-6 w-px bg-slate-200"></div>
-                <h3 class="text-lg font-bold text-slate-900">${id ? 'Editing Post' : 'New Article'}</h3>
-                ${id ? '<span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">Live Edit</span>' : ''}
+                <h3 class="text-lg font-bold text-slate-900">${id ? 'Edit Article' : 'New Article'}</h3>
+                ${id ? '<span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-100">Live Mode</span>' : ''}
             </div>
             
             <div class="flex items-center gap-3">
@@ -238,11 +310,11 @@ async function openModal(id = null) {
         <div class="flex-1 flex overflow-hidden bg-slate-50">
             <div class="flex-1 flex flex-col h-full overflow-hidden relative">
                 <div class="p-6 pb-2 shrink-0 bg-white">
-                    <input type="text" id="post-title" class="w-full text-3xl font-bold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900" placeholder="Type your title here..." value="${post?.title || ''}">
+                    <input type="text" id="post-title" class="w-full text-4xl font-extrabold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900 tracking-tight" placeholder="Article Title..." value="${post?.title || ''}">
                     <input type="hidden" id="post-id" value="${id || ''}">
                     <input type="hidden" id="post-slug" value="${post?.slug || ''}">
                 </div>
-                <div class="flex-1 overflow-hidden bg-white relative">
+                <div class="flex-1 overflow-hidden bg-white relative border-t border-slate-100">
                     <textarea id="post-content-editor" class="w-full h-full border-0 outline-none">${post?.content || ''}</textarea>
                 </div>
             </div>
@@ -250,34 +322,34 @@ async function openModal(id = null) {
             <div class="w-80 bg-white border-l border-slate-200 overflow-y-auto shrink-0 z-10 hidden lg:block">
                 <div class="p-5 space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publish Status</label>
-                        <div class="bg-slate-50 p-1 rounded-lg border border-slate-200 flex">
-                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-slate-800" id="btn-status-pub">Public</button>
-                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md text-slate-500 hover:text-slate-700" id="btn-status-draft">Draft</button>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publishing</label>
+                        <div class="bg-slate-100 p-1 rounded-lg border border-slate-200 flex">
+                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-slate-800 transition-all" id="btn-status-pub">Public</button>
+                            <button type="button" class="flex-1 py-1.5 text-xs font-bold rounded-md text-slate-500 hover:text-slate-700 transition-all" id="btn-status-draft">Draft</button>
                         </div>
                         <input type="hidden" id="post-status" value="${post?.published !== false ? 'true' : 'false'}">
                     </div>
 
-                    <div class="space-y-3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Settings</label>
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Metadata</label>
                         <div>
-                            <span class="text-xs text-slate-400 mb-1 block">Author</span>
-                            <select id="post-author" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
+                            <span class="text-xs text-slate-400 mb-1.5 block font-medium">Author</span>
+                            <select id="post-author" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all">
                                 ${authorOptions || defaultOption}
                             </select>
                         </div>
                         <div>
-                            <span class="text-xs text-slate-400 mb-1 block">Category</span>
-                            <select id="post-category" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-1 focus:ring-brand-500 outline-none">
-                                ${['AI Tools','SEO','YouTube','Instagram','TikTok','Marketing','Updates'].map(c => `<option ${post?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+                            <span class="text-xs text-slate-400 mb-1.5 block font-medium">Category</span>
+                            <select id="post-category" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all">
+                                ${['AI Tools','SEO','YouTube','Instagram','TikTok','Marketing','Updates','Tutorials'].map(c => `<option ${post?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
                             </select>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Featured Image</label>
-                        <div class="space-y-2">
-                            <input type="text" id="post-image" class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Paste Image URL..." value="${post?.image || ''}">
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cover Image</label>
+                        <div class="space-y-3">
+                            <input type="text" id="post-image" class="w-full p-2.5 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 outline-none" placeholder="https://example.com/image.jpg" value="${post?.image || ''}">
                             <div class="aspect-video bg-slate-50 rounded-lg border border-slate-200 border-dashed flex items-center justify-center overflow-hidden relative group">
                                 <img id="preview-image" src="${post?.image || ''}" class="w-full h-full object-cover absolute inset-0 ${post?.image ? '' : 'hidden'}">
                                 <div class="text-center p-4 ${post?.image ? 'hidden' : ''}" id="preview-placeholder">
@@ -293,29 +365,27 @@ async function openModal(id = null) {
     `;
 
     modal.classList.remove('hidden');
-    setTimeout(() => { 
-        content.classList.remove('opacity-0', 'scale-95'); 
-        content.classList.add('opacity-100', 'scale-100'); 
-    }, 50);
+    setTimeout(() => { content.classList.remove('opacity-0', 'scale-95'); content.classList.add('opacity-100', 'scale-100'); }, 50);
 
     if(window.lucide) window.lucide.createIcons();
     initTinyMCE(); 
 
+    // Listeners
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('save-post-btn').onclick = savePost;
 
-    // Status UI
+    // Status UI Toggle
     const btnPub = document.getElementById('btn-status-pub');
     const btnDraft = document.getElementById('btn-status-draft');
     const inputStatus = document.getElementById('post-status');
     const updateStatusUI = (isPub) => {
         if(isPub) {
-            btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-emerald-600";
+            btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-emerald-600 border border-slate-200";
             btnDraft.className = "flex-1 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-slate-600";
             inputStatus.value = "true";
         } else {
             btnPub.className = "flex-1 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-slate-600";
-            btnDraft.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-amber-600";
+            btnDraft.className = "flex-1 py-1.5 text-xs font-bold rounded-md shadow-sm bg-white text-amber-600 border border-slate-200";
             inputStatus.value = "false";
         }
     };
@@ -326,35 +396,22 @@ async function openModal(id = null) {
     // Image Preview
     document.getElementById('post-image').addEventListener('input', (e) => {
         const img = document.getElementById('preview-image');
-        const placeholder = document.getElementById('preview-placeholder');
-        if(e.target.value) {
-            img.src = e.target.value;
-            img.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-        } else {
-            img.classList.add('hidden');
-            placeholder.classList.remove('hidden');
-        }
+        const ph = document.getElementById('preview-placeholder');
+        if(e.target.value) { img.src = e.target.value; img.classList.remove('hidden'); ph.classList.add('hidden'); }
+        else { img.classList.add('hidden'); ph.classList.remove('hidden'); }
     });
 }
 
 function initTinyMCE() {
     if (tinymce.get('post-content-editor')) tinymce.get('post-content-editor').remove();
-
     tinymce.init({
         selector: '#post-content-editor',
         height: "100%", 
         menubar: false,
         statusbar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | blocks | bold italic forecolor | ' +
-            'alignleft aligncenter alignright | bullist numlist outdent indent | ' +
-            'link image media table | code fullscreen',
-        content_style: `body { font-family:Inter,sans-serif; font-size:16px; color:#334155; max-width: 800px; margin: 0 auto; padding: 20px; } img { max-width: 100%; height: auto; border-radius: 8px; }`,
+        plugins: [ 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen', 'insertdatetime', 'media', 'table', 'help', 'wordcount' ],
+        toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright | bullist numlist outdent indent | link image media table | code fullscreen',
+        content_style: `body { font-family:Inter,sans-serif; font-size:17px; line-height:1.7; color:#334155; max-width: 800px; margin: 0 auto; padding: 20px; } img { max-width: 100%; height: auto; border-radius: 8px; } blockquote { border-left: 4px solid #e2e8f0; padding-left: 1em; color: #64748b; font-style: italic; }`,
         branding: false,
         resize: false
     });
@@ -422,8 +479,14 @@ async function savePost() {
         }
         
         await updateSitemap();
-        document.getElementById('save-status').innerText = "Saved just now";
-        document.getElementById('save-status').className = "text-xs text-emerald-500 font-bold hidden sm:block mr-2";
+        
+        // Trigger specific ODB regeneration for this post immediately
+        if (data.published) {
+            try { await fetch(`/blog/${id || slug}`, { method: 'HEAD' }); } catch(e) {}
+        }
+
+        document.getElementById('save-status').innerText = "Saved successfully";
+        document.getElementById('save-status').className = "text-xs text-emerald-600 font-bold hidden sm:block mr-2";
         
         setTimeout(() => closeModal(), 500);
 
