@@ -3,7 +3,7 @@ import { builder } from '@netlify/functions';
 const CONFIG = {
   PROJECT_ID: "digitalserviceshub-online", // Check your shared.js
   APP_ID: "mubashir-2b7cc",             
-  API_KEY: "AIzaSy..."  // Check your shared.js
+  apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
 };
 
 async function myHandler(event, context) {
