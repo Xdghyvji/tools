@@ -100,7 +100,7 @@ function generatePage(fields, config) {
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
     
-    <div id="app-header" class="sticky top-0 z-50"></div> 
+    <div id="main-header" class="sticky top-0 z-50"></div> 
 
     <main class="flex-grow w-full max-w-7xl mx-auto px-4 py-8 md:py-12">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -185,7 +185,7 @@ function generatePage(fields, config) {
         </div>
     </main>
 
-    <div id="app-footer"></div>
+    <div id="main-footer"></div>
 
     <script type="module">
         import { loadHeader, loadFooter } from '/assets/js/shared.js';
