@@ -249,7 +249,7 @@
                 const dateStr = post.date ? new Date(post.date).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }) : 'Recently';
                 
                 // Use Clean URL if available (ODB), else fallback
-                const link = `/blog/${post.id}`; 
+               const link = `/blog/${post.slug || post.id}`; 
                 // Note: If you haven't deployed the Netlify Function yet, change this back to `single-blog.html?id=${post.id}`
 
                 return `
