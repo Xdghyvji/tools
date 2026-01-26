@@ -1,8 +1,8 @@
 import { builder } from '@netlify/functions';
 
 const CONFIG = {
-  PROJECT_ID: "digitalserviceshub-online", // Check your shared.js
-  APP_ID: "mubashir-2b7cc",             
+  projectId: "mubashir-2b7cc",
+appId: "1:107494735119:web:1fc0eab2bc0b8cb39e527a",            
   apiKey: "AIzaSyBPyGJ_qX58Ye3Z8BTiKnYGNMYROnyHlGA",
 };
 
