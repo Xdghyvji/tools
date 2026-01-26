@@ -1,5 +1,5 @@
 /**
- * DigitalServicesHub - Shared Core Logic (Production Grade v3.2)
+ * DigitalServicesHub - Shared Core Logic (Production Grade v3.3)
  * Features:
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
@@ -18,7 +18,7 @@ import {
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-console.log("🚀 System: Initializing Core Services v3.2...");
+console.log("🚀 System: Initializing Core Services v3.3...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -147,16 +147,28 @@ function injectFavicon() {
     link.type = 'image/png';
 }
 
-// Helper to generate Social Icons HTML
+// Helper: Generate Social Icons HTML
 function generateSocialIcons(settings) {
-    if (!settings) return '';
+    if (!settings) {
+        console.warn("System: No Global Settings found for Socials");
+        return '';
+    }
+    console.log("System: Generating Social Icons...", settings); // Debug Log
+
     let html = '';
-    // Check for common social keys in your settings
-    if (settings.twitter) html += `<a href="${settings.twitter}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>`;
-    if (settings.facebook) html += `<a href="${settings.facebook}" target="_blank" class="text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>`;
-    if (settings.instagram) html += `<a href="${settings.instagram}" target="_blank" class="text-slate-400 hover:text-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>`;
-    if (settings.linkedin) html += `<a href="${settings.linkedin}" target="_blank" class="text-slate-400 hover:text-blue-700 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>`;
-    if (settings.youtube) html += `<a href="${settings.youtube}" target="_blank" class="text-slate-400 hover:text-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>`;
+    // Checks for various common key names
+    const twitter = settings.twitter || settings.social_twitter;
+    const facebook = settings.facebook || settings.social_facebook;
+    const instagram = settings.instagram || settings.social_instagram;
+    const linkedin = settings.linkedin || settings.social_linkedin;
+    const youtube = settings.youtube || settings.social_youtube;
+
+    if (twitter) html += `<a href="${twitter}" target="_blank" class="text-slate-400 hover:text-blue-400 transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>`;
+    if (facebook) html += `<a href="${facebook}" target="_blank" class="text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>`;
+    if (instagram) html += `<a href="${instagram}" target="_blank" class="text-slate-400 hover:text-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>`;
+    if (linkedin) html += `<a href="${linkedin}" target="_blank" class="text-slate-400 hover:text-blue-700 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>`;
+    if (youtube) html += `<a href="${youtube}" target="_blank" class="text-slate-400 hover:text-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>`;
+    
     return html;
 }
 
@@ -221,7 +233,8 @@ export function loadHeader(activePage = '') {
                         </div>
                     </div>
 
-                    <div id="header-socials" class="flex items-center gap-2 pl-2 border-l border-slate-200 ml-2"></div>
+                    <div id="header-socials" class="flex items-center gap-2 pl-2 border-l border-slate-200 ml-2">
+                        </div>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -314,12 +327,14 @@ export function loadHeader(activePage = '') {
         authManager.init();
         lazyLoadAds();
 
-        // Populate Social Icons from Firestore Settings
+        // LOAD SOCIAL ICONS FROM DB
         loadGlobalSettings().then(settings => {
             const iconsHtml = generateSocialIcons(settings);
             const headerSocials = document.getElementById('header-socials');
-            if(headerSocials) headerSocials.innerHTML = iconsHtml;
-            if(window.lucide) window.lucide.createIcons();
+            if(headerSocials) {
+                headerSocials.innerHTML = iconsHtml;
+                if(window.lucide) window.lucide.createIcons();
+            }
         });
 
     }, 50);
@@ -344,7 +359,8 @@ export function loadFooter() {
                         Empowering creators with free, professional-grade AI tools. Built for scale, security, and speed.
                     </p>
                     
-                    <div id="footer-socials" class="flex items-center gap-4 mt-4"></div>
+                    <div id="footer-socials" class="flex items-center gap-4 mt-4">
+                        </div>
                 </div>
                 
                 <div>
@@ -385,12 +401,14 @@ export function loadFooter() {
     </footer>
     `;
     
-    // Populate Footer Socials
+    // LOAD SOCIAL ICONS FROM DB
     loadGlobalSettings().then(settings => {
         const iconsHtml = generateSocialIcons(settings);
         const footerSocials = document.getElementById('footer-socials');
-        if(footerSocials) footerSocials.innerHTML = iconsHtml;
-        if(window.lucide) window.lucide.createIcons();
+        if(footerSocials) {
+            footerSocials.innerHTML = iconsHtml;
+            if(window.lucide) window.lucide.createIcons();
+        }
     });
 
     if(window.lucide) window.lucide.createIcons();
@@ -425,6 +443,7 @@ class AnalyticsEngine {
             this.isTracking = true;
         }
 
+        // Show popup on every session visit if not already shown
         if (!sessionStorage.getItem('dsh_consent_session_viewed')) {
             CookieManager.show();
         }
@@ -575,7 +594,10 @@ const analytics = new AnalyticsEngine();
 // ==========================================
 const CookieManager = {
     show: () => {
+        // Double check if element already exists to avoid duplicates
         if (document.getElementById('cookie-consent-modal')) return;
+        
+        // Mark as viewed for this session
         sessionStorage.setItem('dsh_consent_session_viewed', 'true');
 
         const modal = document.createElement('div');
@@ -644,6 +666,7 @@ export async function loadGlobalSettings() {
         const snap = await getDoc(docRef);
         if (snap.exists()) {
             globalSettings = snap.data();
+            console.log("System: Settings Loaded", globalSettings); // DEBUG
             if(globalSettings.title) document.title = globalSettings.title;
             return globalSettings;
         }
