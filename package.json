@@ -4,8 +4,8 @@
   "type": "module",
   "dependencies": {
     "@netlify/functions": "^2.6.0",
-    "firebase": "^11.0.0",
-    "node-fetch": "^2.7.0"
+    "firebase": "^10.8.0",
+    "node-fetch": "^3.3.0"
   },
   "scripts": {
     "build": "echo 'No build step needed for static site'"
