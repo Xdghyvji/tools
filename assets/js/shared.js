@@ -1,13 +1,13 @@
 /**
- * DigitalServicesHub - Shared Core Logic (Production Grade v3.7)
+ * DigitalServicesHub - Shared Core Logic (Production Grade v3.8)
  * Features:
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (CORS Fixed)
  * - Session-Based High Quality Cookie Consent
  * - Global Adsterra & AdSense Injection System
- * - Dynamic Header/Footer
+ * - Dynamic Header/Footer (Logo + Socials + App Download)
  * - Multi-Tab Persistence Fix
- * - DYNAMIC AI ENGINE (Full DB Integration)
+ * - DYNAMIC AI ENGINE (Updated to Gemini 2.5 Flash)
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -19,7 +19,7 @@ import {
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-console.log("🚀 System: Initializing Core Services v3.7 (Stable)...");
+console.log("🚀 System: Initializing Core Services v3.8 (Gemini 2.5 Ready)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -45,10 +45,9 @@ try {
     provider = new GoogleAuthProvider();
     analyticsInstance = getAnalytics(app);
     
-    // CRITICAL FIX: Use Multi-Tab Persistence with Error Handling
+    // CRITICAL FIX: Use Multi-Tab Persistence
     enableMultiTabIndexedDbPersistence(db).catch((err) => {
-        // Silently fail on persistence errors to prevent console spam
-        // This is expected behavior in some multi-tab scenarios
+        // Silently fail on persistence errors (common in multi-tab usage)
     });
 
     console.log("✅ Firebase: Services Connected");
@@ -381,7 +380,7 @@ export function loadFooter() {
 }
 
 // ==========================================
-// 4. POWERFUL ANALYTICS (CORS FIXED)
+// 4. POWERFUL ANALYTICS
 // ==========================================
 class AnalyticsEngine {
     constructor() {
@@ -419,7 +418,6 @@ class AnalyticsEngine {
     }
     async fetchGeo() {
         try {
-            // FIX: Using ip-api.com because it supports CORS for browser requests (unlike ipapi.co)
             const controller = new AbortController();
             setTimeout(() => controller.abort(), 2000);
             const res = await fetch('http://ip-api.com/json', { signal: controller.signal });
@@ -434,9 +432,7 @@ class AnalyticsEngine {
                     longitude: data.lon 
                 }; 
             }
-        } catch (e) {
-            // Silently fail to avoid console red ink
-        }
+        } catch (e) {}
         return this.defaultGeo;
     }
     track(eventName, details = {}) {
@@ -562,7 +558,6 @@ export async function loadSystemPrompts() {
         const snap = await getDocs(colRef);
         snap.forEach(doc => {
             const data = doc.data();
-            // Try different field names just in case
             systemPrompts[doc.id] = data.prompt || data.text || data.value || "";
         });
         console.log("System: AI Prompts Loaded", Object.keys(systemPrompts));
@@ -577,9 +572,7 @@ async function loadApiKeys() {
         const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'api_keys');
         const snap = await getDocs(colRef);
         if (!snap.empty) {
-            // Try to find a working key from the first doc
             const data = snap.docs[0].data();
-            // Check keys like 'key', 'apiKey', 'value', or just grab the first string value
             dynamicApiKey = data.key || data.apiKey || data.value || Object.values(data)[0];
             if(dynamicApiKey) console.log("System: API Key Loaded (Ready)");
         }
@@ -631,14 +624,15 @@ export function getPromptForTool(toolKey, input) {
 export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
     // Ensure dependencies are loaded
     if(Object.keys(systemPrompts).length === 0) await loadSystemPrompts();
-    if(!dynamicApiKey) await loadApiKeys(); // Assuming loadApiKeys is defined above
+    if(!dynamicApiKey) await loadApiKeys();
 
     analytics.track('funnel_step', { step: 'generation_request', tool, topic });
 
     try {
         if (!dynamicApiKey) throw new Error("System Configuration Error: No API Key found in Database.");
 
-        console.log("System: Sending request to Netlify Proxy..."); // Debug Log
+        // STRATEGY: Try Server-Side Proxy First (Safest)
+        console.log("System: Sending request to Netlify Proxy..."); 
 
         const response = await fetch('/.netlify/functions/generate-content', {
             method: 'POST',
@@ -649,18 +643,19 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        // 1. Check if Response is JSON
+        // 1. JSON Validation to prevent "Unexpected token" errors
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-            // If Netlify returns HTML (503/500/404), get text to see the real error
             const textError = await response.text();
             console.error("Netlify Raw Error:", textError);
-            throw new Error(`Server Error (${response.status}): The function crashed. Check Netlify Logs.`);
+            
+            // FALLBACK: If Server crashes (503/500), try Client-Side Direct (Gemini 2.5)
+            console.warn("Server Failed. Attempting Client-Side Direct Fallback...");
+            return await generateAIContentDirect(prompt, dynamicApiKey);
         }
 
         const data = await response.json();
 
-        // 2. Handle Logic Errors
         if (!response.ok) {
             throw new Error(data.error || 'Generation failed');
         }
@@ -673,6 +668,34 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
         console.error("AI Generation Error:", e);
         throw new Error(e.message || "AI Service Busy. Please try again.");
     }
+}
+
+// CLIENT-SIDE DIRECT FALLBACK (Gemini 2.5 Flash)
+// Only used if the Netlify Server fails completely.
+async function generateAIContentDirect(prompt, apiKey) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await response.json();
+    if(data.candidates && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+    }
+    throw new Error("Direct Fallback Failed");
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { 
+        analytics.init(); 
+        loadSystemPrompts(); 
+        loadApiKeys();
+    });
+} else {
+    analytics.init();
+    loadSystemPrompts();
+    loadApiKeys();
 }
 
 export { 
