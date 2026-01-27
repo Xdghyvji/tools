@@ -1,13 +1,13 @@
 /**
- * DigitalServicesHub - Shared Core Logic (Production Grade v3.6)
+ * DigitalServicesHub - Shared Core Logic (Production Grade v3.7)
  * Features:
  * - Robust Firebase Auth with User Profile Caching
- * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
+ * - Batched Analytics Engine (CORS Fixed)
  * - Session-Based High Quality Cookie Consent
  * - Global Adsterra & AdSense Injection System
  * - Dynamic Header/Footer
  * - Multi-Tab Persistence Fix
- * - DYNAMIC AI ENGINE (Fetches Prompts & Keys from Firestore -> Proxies via Netlify)
+ * - DYNAMIC AI ENGINE (Full DB Integration)
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -19,7 +19,7 @@ import {
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-console.log("🚀 System: Initializing Core Services v3.6 (DB-Driven AI + CORS Safe)...");
+console.log("🚀 System: Initializing Core Services v3.7 (Stable)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -45,10 +45,10 @@ try {
     provider = new GoogleAuthProvider();
     analyticsInstance = getAnalytics(app);
     
-    // CRITICAL FIX: Use Multi-Tab Persistence
+    // CRITICAL FIX: Use Multi-Tab Persistence with Error Handling
     enableMultiTabIndexedDbPersistence(db).catch((err) => {
-        if (err.code == 'failed-precondition') console.warn('Persistence failed: Multiple tabs open.');
-        else if (err.code == 'unimplemented') console.warn('Persistence not supported by browser.');
+        // Silently fail on persistence errors to prevent console spam
+        // This is expected behavior in some multi-tab scenarios
     });
 
     console.log("✅ Firebase: Services Connected");
@@ -162,7 +162,6 @@ function generateSocialIcons(settings) {
     if (instagram) html += `<a href="${instagram}" target="_blank" class="text-slate-400 hover:text-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>`;
     if (linkedin) html += `<a href="${linkedin}" target="_blank" class="text-slate-400 hover:text-blue-700 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>`;
     if (youtube) html += `<a href="${youtube}" target="_blank" class="text-slate-400 hover:text-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>`;
-    
     return html;
 }
 
@@ -382,7 +381,7 @@ export function loadFooter() {
 }
 
 // ==========================================
-// 4. POWERFUL ANALYTICS
+// 4. POWERFUL ANALYTICS (CORS FIXED)
 // ==========================================
 class AnalyticsEngine {
     constructor() {
@@ -420,11 +419,24 @@ class AnalyticsEngine {
     }
     async fetchGeo() {
         try {
+            // FIX: Using ip-api.com because it supports CORS for browser requests (unlike ipapi.co)
             const controller = new AbortController();
             setTimeout(() => controller.abort(), 2000);
-            const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-            if(res.ok) { const data = await res.json(); return { ...this.defaultGeo, ...data }; }
-        } catch (e) {}
+            const res = await fetch('http://ip-api.com/json', { signal: controller.signal });
+            if(res.ok) { 
+                const data = await res.json(); 
+                return { 
+                    ip: data.query, 
+                    country_name: data.country, 
+                    city: data.city, 
+                    region: data.regionName, 
+                    latitude: data.lat, 
+                    longitude: data.lon 
+                }; 
+            }
+        } catch (e) {
+            // Silently fail to avoid console red ink
+        }
         return this.defaultGeo;
     }
     track(eventName, details = {}) {
@@ -527,7 +539,7 @@ let globalSettings = null;
 let systemPrompts = {};
 let dynamicApiKey = null;
 
-// A. Load Global Settings (Title, Socials, Ads)
+// A. Load Global Settings
 export async function loadGlobalSettings() {
     if (globalSettings) return globalSettings;
     try {
@@ -542,36 +554,34 @@ export async function loadGlobalSettings() {
     return {};
 }
 
-// B. Load System Prompts (From 'system_prompts' Collection)
+// B. Load System Prompts
 export async function loadSystemPrompts() {
     if (Object.keys(systemPrompts).length > 0) return systemPrompts;
     try {
-        // Correct Path based on screenshot: artifacts > ... > public > data > system_prompts
         const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'system_prompts');
         const snap = await getDocs(colRef);
         snap.forEach(doc => {
-            // Map Document ID (e.g. youtube_tags_vip) to its content
             const data = doc.data();
-            systemPrompts[doc.id] = data.prompt || data.text || data.value;
+            // Try different field names just in case
+            systemPrompts[doc.id] = data.prompt || data.text || data.value || "";
         });
         console.log("System: AI Prompts Loaded", Object.keys(systemPrompts));
     } catch (e) { console.warn("Prompts load failed", e); }
     return systemPrompts;
 }
 
-// C. Load API Keys (From 'api_keys' Collection)
+// C. Load API Keys
 async function loadApiKeys() {
     if (dynamicApiKey) return dynamicApiKey;
     try {
-        // Correct Path based on screenshot: artifacts > ... > public > data > api_keys
         const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'api_keys');
         const snap = await getDocs(colRef);
         if (!snap.empty) {
-            // Grab the first available key document
+            // Try to find a working key from the first doc
             const data = snap.docs[0].data();
-            // Look for common field names
-            dynamicApiKey = data.key || data.apiKey || data.value || data.secret;
-            console.log("System: API Key Loaded (Secure Proxy Ready)");
+            // Check keys like 'key', 'apiKey', 'value', or just grab the first string value
+            dynamicApiKey = data.key || data.apiKey || data.value || Object.values(data)[0];
+            if(dynamicApiKey) console.log("System: API Key Loaded (Ready)");
         }
     } catch (e) { console.warn("API Key load failed", e); }
     return dynamicApiKey;
@@ -609,45 +619,48 @@ function injectAdsterraAds() {
 }
 
 // ==========================================
-// 7. AI BRIDGE & EXPORTS (CORS SAFE)
+// 7. AI BRIDGE & EXPORTS (Server-Proxy Strategy)
 // ==========================================
 export function getPromptForTool(toolKey, input) {
-    // 1. Check DB Prompts first
     if (systemPrompts[toolKey]) {
         return systemPrompts[toolKey].replace(/\{input\}/g, input).replace(/\{\{input\}\}/g, input);
     }
-    // 2. Fallback
     return `Generate content for ${input}`;
 }
 
 export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
-    // 1. Ensure Dependencies are Loaded
+    // Ensure dependencies are loaded
     if(Object.keys(systemPrompts).length === 0) await loadSystemPrompts();
     if(!dynamicApiKey) await loadApiKeys();
 
     analytics.track('funnel_step', { step: 'generation_request', tool, topic });
 
     try {
-        // 2. CALL NETLIFY FUNCTION (Not Google Direct)
-        // We pass the API Key found in Firestore to the server function
+        if (!dynamicApiKey) throw new Error("System Configuration Error: No API Key found in Database.");
+
+        // PROXY REQUEST VIA NETLIFY (To avoid CORS & Protect Key usage)
         const response = await fetch('/.netlify/functions/generate-content', {
             method: 'POST',
             body: JSON.stringify({ 
                 prompt: prompt,
-                apiKey: dynamicApiKey // Pass the DB key securely to the server function
+                apiKey: dynamicApiKey // Sending the DB key to the server function
             }),
             headers: { 'Content-Type': 'application/json' }
         });
 
-        if (!response.ok) throw new Error('Generation failed');
-        const data = await response.json();
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || 'Generation failed');
+        }
         
+        const data = await response.json();
         analytics.track('funnel_step', { step: 'generation_success', tool });
         return data.text;
 
     } catch (e) {
         analytics.track('funnel_step', { step: 'generation_fail', tool, error: e.message });
-        throw new Error("AI Service Busy. Please try again.");
+        console.error("AI Generation Error:", e);
+        throw new Error(e.message || "AI Service Busy. Please try again.");
     }
 }
 
