@@ -631,29 +631,40 @@ export function getPromptForTool(toolKey, input) {
 export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
     // Ensure dependencies are loaded
     if(Object.keys(systemPrompts).length === 0) await loadSystemPrompts();
-    if(!dynamicApiKey) await loadApiKeys();
+    if(!dynamicApiKey) await loadApiKeys(); // Assuming loadApiKeys is defined above
 
     analytics.track('funnel_step', { step: 'generation_request', tool, topic });
 
     try {
         if (!dynamicApiKey) throw new Error("System Configuration Error: No API Key found in Database.");
 
-        // PROXY REQUEST VIA NETLIFY (To avoid CORS & Protect Key usage)
+        console.log("System: Sending request to Netlify Proxy..."); // Debug Log
+
         const response = await fetch('/.netlify/functions/generate-content', {
             method: 'POST',
             body: JSON.stringify({ 
                 prompt: prompt,
-                apiKey: dynamicApiKey // Sending the DB key to the server function
+                apiKey: dynamicApiKey 
             }),
             headers: { 'Content-Type': 'application/json' }
         });
 
+        // 1. Check if Response is JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            // If Netlify returns HTML (503/500/404), get text to see the real error
+            const textError = await response.text();
+            console.error("Netlify Raw Error:", textError);
+            throw new Error(`Server Error (${response.status}): The function crashed. Check Netlify Logs.`);
+        }
+
+        const data = await response.json();
+
+        // 2. Handle Logic Errors
         if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || 'Generation failed');
+            throw new Error(data.error || 'Generation failed');
         }
         
-        const data = await response.json();
         analytics.track('funnel_step', { step: 'generation_success', tool });
         return data.text;
 
@@ -662,18 +673,6 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
         console.error("AI Generation Error:", e);
         throw new Error(e.message || "AI Service Busy. Please try again.");
     }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { 
-        analytics.init(); 
-        loadSystemPrompts(); 
-        loadApiKeys();
-    });
-} else {
-    analytics.init();
-    loadSystemPrompts();
-    loadApiKeys();
 }
 
 export { 
