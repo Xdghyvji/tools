@@ -1,5 +1,5 @@
 /**
- * DigitalServicesHub - Shared Core Logic (Production Grade v3.3)
+ * DigitalServicesHub - Shared Core Logic (Production Grade v3.5)
  * Features:
  * - Robust Firebase Auth with User Profile Caching
  * - Batched Analytics Engine (Immediate Tracking / Soft Opt-in)
@@ -7,6 +7,7 @@
  * - Global Adsterra & AdSense Injection System (Lazy Loaded)
  * - Dynamic Header/Footer (Logo + Socials + App Download)
  * - Multi-Tab Persistence Fix
+ * - DYNAMIC AI ENGINE (Fetches Keys & Prompts from Firestore)
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -18,7 +19,7 @@ import {
 import { getAuth, onAuthStateChanged, signOut, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-console.log("🚀 System: Initializing Core Services v3.3...");
+console.log("🚀 System: Initializing Core Services v3.5 (DB-Driven AI)...");
 
 // ==========================================
 // 1. FIREBASE CONFIGURATION & INIT
@@ -44,7 +45,6 @@ try {
     provider = new GoogleAuthProvider();
     analyticsInstance = getAnalytics(app);
     
-    // CRITICAL FIX: Use Multi-Tab Persistence
     enableMultiTabIndexedDbPersistence(db).catch((err) => {
         if (err.code == 'failed-precondition') console.warn('Persistence failed: Multiple tabs open.');
         else if (err.code == 'unimplemented') console.warn('Persistence not supported by browser.');
@@ -147,16 +147,9 @@ function injectFavicon() {
     link.type = 'image/png';
 }
 
-// Helper: Generate Social Icons HTML
 function generateSocialIcons(settings) {
-    if (!settings) {
-        console.warn("System: No Global Settings found for Socials");
-        return '';
-    }
-    console.log("System: Generating Social Icons...", settings); // Debug Log
-
+    if (!settings) return '';
     let html = '';
-    // Checks for various common key names
     const twitter = settings.twitter || settings.social_twitter;
     const facebook = settings.facebook || settings.social_facebook;
     const instagram = settings.instagram || settings.social_instagram;
@@ -168,7 +161,6 @@ function generateSocialIcons(settings) {
     if (instagram) html += `<a href="${instagram}" target="_blank" class="text-slate-400 hover:text-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>`;
     if (linkedin) html += `<a href="${linkedin}" target="_blank" class="text-slate-400 hover:text-blue-700 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>`;
     if (youtube) html += `<a href="${youtube}" target="_blank" class="text-slate-400 hover:text-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>`;
-    
     return html;
 }
 
@@ -185,7 +177,6 @@ export function loadHeader(activePage = '') {
 
     const isActive = (name) => current === name ? 'text-brand-600 font-bold bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50';
     
-    // Header HTML
     container.innerHTML = `
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 w-full shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -233,8 +224,7 @@ export function loadHeader(activePage = '') {
                         </div>
                     </div>
 
-                    <div id="header-socials" class="flex items-center gap-2 pl-2 border-l border-slate-200 ml-2">
-                        </div>
+                    <div id="header-socials" class="flex items-center gap-2 pl-2 border-l border-slate-200 ml-2"></div>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -304,39 +294,26 @@ export function loadHeader(activePage = '') {
     </nav>
     `;
 
-    // Logic
     setTimeout(() => {
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
-        
         if(btn && menu) {
             btn.onclick = () => {
                 menu.classList.toggle('hidden');
-                if (menu.classList.contains('hidden')) {
-                    btn.innerHTML = `<i data-lucide="menu" class="w-6 h-6"></i>`;
-                    document.body.style.overflow = '';
-                } else {
-                    btn.innerHTML = `<i data-lucide="x" class="w-6 h-6"></i>`;
-                    document.body.style.overflow = 'hidden';
-                }
+                btn.innerHTML = menu.classList.contains('hidden') ? `<i data-lucide="menu" class="w-6 h-6"></i>` : `<i data-lucide="x" class="w-6 h-6"></i>`;
+                document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
                 if(window.lucide) window.lucide.createIcons();
             };
         }
         if(window.lucide) window.lucide.createIcons();
-        
         authManager.init();
         lazyLoadAds();
-
-        // LOAD SOCIAL ICONS FROM DB
+        
         loadGlobalSettings().then(settings => {
             const iconsHtml = generateSocialIcons(settings);
             const headerSocials = document.getElementById('header-socials');
-            if(headerSocials) {
-                headerSocials.innerHTML = iconsHtml;
-                if(window.lucide) window.lucide.createIcons();
-            }
+            if(headerSocials) { headerSocials.innerHTML = iconsHtml; if(window.lucide) window.lucide.createIcons(); }
         });
-
     }, 50);
 }
 
@@ -344,12 +321,10 @@ export function loadFooter() {
     const container = document.getElementById('app-footer') || document.getElementById('main-footer');
     if (!container) return;
 
-    // Footer HTML
     container.innerHTML = `
     <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         <img src="/assets/img/digitalserviceshub.png" alt="DigitalServicesHub" class="h-8 w-auto brightness-200 grayscale contrast-200 opacity-90">
@@ -358,11 +333,8 @@ export function loadFooter() {
                     <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
                         Empowering creators with free, professional-grade AI tools. Built for scale, security, and speed.
                     </p>
-                    
-                    <div id="footer-socials" class="flex items-center gap-4 mt-4">
-                        </div>
+                    <div id="footer-socials" class="flex items-center gap-4 mt-4"></div>
                 </div>
-                
                 <div>
                     <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Free Tools</h3>
                     <ul class="space-y-3 text-sm text-slate-400">
@@ -372,7 +344,6 @@ export function loadFooter() {
                         <li><a href="/email-tools.html" class="hover:text-brand-400 transition-colors">Email Validator</a></li>
                     </ul>
                 </div>
-                
                 <div>
                     <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Resources</h3>
                     <ul class="space-y-3 text-sm text-slate-400">
@@ -381,7 +352,6 @@ export function loadFooter() {
                         <li><a href="/contact.html" class="hover:text-brand-400 transition-colors">Contact Support</a></li>
                     </ul>
                 </div>
-                
                 <div>
                     <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Legal</h3>
                     <ul class="space-y-3 text-sm text-slate-400">
@@ -392,7 +362,6 @@ export function loadFooter() {
                     </ul>
                 </div>
             </div>
-            
             <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-slate-500 text-sm">© ${new Date().getFullYear()} Digital Services Hub.</p>
                 <div class="flex items-center gap-2 text-xs text-slate-500"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Systems Operational</div>
@@ -401,21 +370,17 @@ export function loadFooter() {
     </footer>
     `;
     
-    // LOAD SOCIAL ICONS FROM DB
     loadGlobalSettings().then(settings => {
         const iconsHtml = generateSocialIcons(settings);
         const footerSocials = document.getElementById('footer-socials');
-        if(footerSocials) {
-            footerSocials.innerHTML = iconsHtml;
-            if(window.lucide) window.lucide.createIcons();
-        }
+        if(footerSocials) { footerSocials.innerHTML = iconsHtml; if(window.lucide) window.lucide.createIcons(); }
     });
 
     if(window.lucide) window.lucide.createIcons();
 }
 
 // ==========================================
-// 4. POWERFUL ANALYTICS (Enhanced)
+// 4. POWERFUL ANALYTICS
 // ==========================================
 class AnalyticsEngine {
     constructor() {
@@ -423,66 +388,43 @@ class AnalyticsEngine {
         this.ipData = null;
         this.sessionId = sessionStorage.getItem('dsh_session_id') || this.createSession();
         this.isTracking = false;
-        this.flushInterval = null;
         this.defaultGeo = { ip: 'Anonymous', country_name: 'Unknown', city: 'Unknown', region: 'Unknown', latitude: 0, longitude: 0 };
-        this.scrollDepth = 0;
     }
-
     createSession() {
         const id = 'sess_' + Math.random().toString(36).substring(2, 15);
         sessionStorage.setItem('dsh_session_id', id);
         return id;
     }
-
     async init() {
         const consent = localStorage.getItem('dsh_cookie_consent');
         if (consent === 'rejected') {
-            console.log("Analytics: Tracking disabled by user.");
             this.isTracking = false;
         } else {
             this.isTracking = true;
         }
 
-        // Show popup on every session visit if not already shown
         if (!sessionStorage.getItem('dsh_consent_session_viewed')) {
             CookieManager.show();
         }
 
         if (this.isTracking) {
-            requestIdleCallback(() => {
-                this.fetchGeo().then(data => this.ipData = data);
-            });
-            
-            this.track('page_view', {
-                path: window.location.pathname,
-                title: document.title,
-                referrer: document.referrer || 'Direct'
-            });
-
+            requestIdleCallback(() => { this.fetchGeo().then(data => this.ipData = data); });
+            this.track('page_view', { path: window.location.pathname, title: document.title, referrer: document.referrer || 'Direct' });
             this.setupClickTracking();
-            this.setupScrollTracking();
-            this.setupPerformanceTracking();
             this.startHeartbeat();
-            
-            this.flushInterval = setInterval(() => this.flush(), 10000);
+            setInterval(() => this.flush(), 10000);
             window.addEventListener('beforeunload', () => this.flush());
         }
     }
-
     async fetchGeo() {
         try {
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 2000);
+            setTimeout(() => controller.abort(), 2000);
             const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-            clearTimeout(id);
-            if(res.ok) {
-                const data = await res.json();
-                return { ...this.defaultGeo, ...data };
-            }
+            if(res.ok) { const data = await res.json(); return { ...this.defaultGeo, ...data }; }
         } catch (e) {}
         return this.defaultGeo;
     }
-
     track(eventName, details = {}) {
         if (!this.isTracking) return;
         const event = {
@@ -497,72 +439,26 @@ class AnalyticsEngine {
         this.queue.push(event);
         if (this.queue.length >= 5) this.flush();
     }
-
-    setupScrollTracking() {
-        let maxScroll = 0;
-        window.addEventListener('scroll', () => {
-            const scrollPercent = Math.round((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100);
-            if (scrollPercent > maxScroll) {
-                maxScroll = scrollPercent;
-                if (maxScroll >= 25 && this.scrollDepth < 25) { this.track('scroll_depth', { depth: 25 }); this.scrollDepth = 25; }
-                if (maxScroll >= 50 && this.scrollDepth < 50) { this.track('scroll_depth', { depth: 50 }); this.scrollDepth = 50; }
-                if (maxScroll >= 75 && this.scrollDepth < 75) { this.track('scroll_depth', { depth: 75 }); this.scrollDepth = 75; }
-                if (maxScroll >= 90 && this.scrollDepth < 90) { this.track('scroll_depth', { depth: 100 }); this.scrollDepth = 100; }
-            }
-        });
-    }
-
-    setupPerformanceTracking() {
-        window.addEventListener('load', () => {
-            if (window.performance) {
-                const navEntry = performance.getEntriesByType('navigation')[0];
-                if (navEntry) {
-                    this.track('performance', {
-                        loadTime: navEntry.loadEventEnd - navEntry.startTime,
-                        domReady: navEntry.domContentLoadedEventEnd - navEntry.startTime,
-                        ttfb: navEntry.responseStart - navEntry.requestStart
-                    });
-                }
-            }
-        });
-    }
-
-    trackFunnelStep(stepName, toolName) {
-        this.track('funnel_step', { step: stepName, tool: toolName });
-    }
-
     startHeartbeat() {
         const beat = async () => {
             if (!this.isTracking) return;
             try {
                 const presenceRef = doc(db, 'artifacts', appId, 'public', 'data', 'presence', this.sessionId);
-                await setDoc(presenceRef, {
-                    lastActive: serverTimestamp(),
-                    path: window.location.pathname,
-                    device: this.getDeviceType(),
-                    country: this.ipData?.country_name || 'Unknown'
-                });
+                await setDoc(presenceRef, { lastActive: serverTimestamp(), path: window.location.pathname, device: this.getDeviceType(), country: this.ipData?.country_name || 'Unknown' });
             } catch (e) {}
         };
         beat();
         setInterval(beat, 60000);
     }
-
     setupClickTracking() {
         document.addEventListener('click', (e) => {
             const target = e.target.closest('a, button, .trackable');
             if (target) {
                 const isAd = target.id.includes('ad') || target.closest('[id*="ad-"]');
-                this.track(isAd ? 'ad_click' : 'click', {
-                    tag: target.tagName,
-                    id: target.id || 'na',
-                    text: target.innerText?.substring(0, 50) || 'icon',
-                    href: target.href || null
-                });
+                this.track(isAd ? 'ad_click' : 'click', { tag: target.tagName, id: target.id || 'na', text: target.innerText?.substring(0, 50) || 'icon', href: target.href || null });
             }
         });
     }
-
     async flush() {
         if (this.queue.length === 0) return;
         const batch = writeBatch(db);
@@ -574,11 +470,8 @@ class AnalyticsEngine {
                 batch.set(ref, evt);
             });
             await batch.commit();
-        } catch (e) {
-            console.warn("Analytics: Flush failed", e);
-        }
+        } catch (e) {}
     }
-
     getDeviceType() {
         const ua = navigator.userAgent;
         if (/Mobile|Android|iP(hone|od)/.test(ua)) return "Mobile";
@@ -586,7 +479,6 @@ class AnalyticsEngine {
         return "Desktop";
     }
 }
-
 const analytics = new AnalyticsEngine();
 
 // ==========================================
@@ -594,16 +486,11 @@ const analytics = new AnalyticsEngine();
 // ==========================================
 const CookieManager = {
     show: () => {
-        // Double check if element already exists to avoid duplicates
         if (document.getElementById('cookie-consent-modal')) return;
-        
-        // Mark as viewed for this session
         sessionStorage.setItem('dsh_consent_session_viewed', 'true');
-
         const modal = document.createElement('div');
         modal.id = 'cookie-consent-modal';
         modal.className = "fixed bottom-0 left-0 right-0 z-[9999] p-4 flex justify-center animate-slide-up";
-        
         modal.innerHTML = `
             <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-200 p-6 max-w-2xl w-full flex flex-col md:flex-row gap-6 items-center transform transition-all duration-500 translate-y-full opacity-0" id="cookie-inner">
                 <div class="flex-1">
@@ -620,43 +507,19 @@ const CookieManager = {
                     <button id="cookie-accept" class="flex-1 md:flex-none px-8 py-2.5 rounded-xl bg-slate-900 text-white font-bold hover:bg-brand-600 text-sm shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap">Accept All</button>
                 </div>
             </div>
-            <style>
-                @keyframes slideUpCookie { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-                .animate-slide-up { animation: slideUpCookie 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-            </style>
+            <style>@keyframes slideUpCookie { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } } .animate-slide-up { animation: slideUpCookie 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }</style>
         `;
         document.body.appendChild(modal);
         if(window.lucide) window.lucide.createIcons();
-
-        setTimeout(() => {
-            const inner = document.getElementById('cookie-inner');
-            inner.classList.remove('translate-y-full', 'opacity-0');
-        }, 100);
-
-        document.getElementById('cookie-accept').onclick = () => {
-            localStorage.setItem('dsh_cookie_consent', 'accepted');
-            closeModal();
-            analytics.isTracking = true;
-            lazyLoadAds();
-        };
-        
-        document.getElementById('cookie-reject').onclick = () => {
-            localStorage.setItem('dsh_cookie_consent', 'rejected');
-            closeModal();
-            analytics.isTracking = false; 
-        };
-
-        function closeModal() {
-            const inner = document.getElementById('cookie-inner');
-            inner.style.transform = 'translateY(100%)';
-            inner.style.opacity = '0';
-            setTimeout(() => modal.remove(), 500);
-        }
+        setTimeout(() => { document.getElementById('cookie-inner').classList.remove('translate-y-full', 'opacity-0'); }, 100);
+        document.getElementById('cookie-accept').onclick = () => { localStorage.setItem('dsh_cookie_consent', 'accepted'); closeModal(); analytics.isTracking = true; lazyLoadAds(); };
+        document.getElementById('cookie-reject').onclick = () => { localStorage.setItem('dsh_cookie_consent', 'rejected'); closeModal(); analytics.isTracking = false; };
+        function closeModal() { const inner = document.getElementById('cookie-inner'); inner.style.transform = 'translateY(100%)'; inner.style.opacity = '0'; setTimeout(() => modal.remove(), 500); }
     }
 };
 
 // ==========================================
-// 6. AD SYSTEM
+// 6. AD & SETTINGS SYSTEM (DB DRIVEN)
 // ==========================================
 let globalSettings = null;
 export async function loadGlobalSettings() {
@@ -666,7 +529,6 @@ export async function loadGlobalSettings() {
         const snap = await getDoc(docRef);
         if (snap.exists()) {
             globalSettings = snap.data();
-            console.log("System: Settings Loaded", globalSettings); // DEBUG
             if(globalSettings.title) document.title = globalSettings.title;
             return globalSettings;
         }
@@ -674,15 +536,26 @@ export async function loadGlobalSettings() {
     return {};
 }
 
+// SYSTEM PROMPTS (Fetch from: artifacts -> public -> data -> system_prompts)
+let systemPrompts = {};
+export async function loadSystemPrompts() {
+    if (Object.keys(systemPrompts).length > 0) return systemPrompts;
+    try {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'system_prompts'); //
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+            systemPrompts = snap.data();
+            console.log("System: AI Prompts Loaded", systemPrompts);
+        }
+    } catch (e) { console.warn("Prompts load failed", e); }
+    return systemPrompts;
+}
+
 function lazyLoadAds() {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
     const delay = isMobile ? 3500 : 1500; 
     const scheduleLoad = window.requestIdleCallback || ((cb) => setTimeout(cb, delay));
-
-    scheduleLoad(() => {
-        injectAdSense();
-        injectAdsterraAds();
-    }, { timeout: 5000 });
+    scheduleLoad(() => { injectAdSense(); injectAdsterraAds(); }, { timeout: 5000 });
 }
 
 function injectAdSense() {
@@ -710,15 +583,56 @@ function injectAdsterraAds() {
 }
 
 // ==========================================
-// 7. AI BRIDGE & EXPORTS
+// 7. AI BRIDGE & EXPORTS (Hybrid Client/Server)
 // ==========================================
 export function getPromptForTool(toolKey, input) {
+    // 1. Check DB Prompts first (Replaces {input} with user text)
+    if (systemPrompts[toolKey]) {
+        // Support {input} and {{input}} syntax
+        return systemPrompts[toolKey].replace(/\{input\}/g, input).replace(/\{\{input\}\}/g, input);
+    }
+    // 2. Fallbacks
     const fallbacks = { 'default': `Generate content for ${input}` };
     return fallbacks[toolKey] || `Act as an expert. ${input}`;
 }
 
 export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
+    // Ensure prompts are loaded (JIT)
+    if(Object.keys(systemPrompts).length === 0) await loadSystemPrompts();
+
     analytics.track('funnel_step', { step: 'generation_request', tool, topic });
+
+    // STRATEGY: Check if we have a direct API Key in Settings to bypass Netlify
+    // This allows you to manage keys in DB without redeploying code
+    if (!globalSettings) await loadGlobalSettings();
+    
+    if (globalSettings && globalSettings.gemini_api_key) {
+        try {
+            // DIRECT CLIENT-SIDE CALL (Fastest)
+            const apiKey = globalSettings.gemini_api_key;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            });
+
+            if (!response.ok) throw new Error(`Gemini API Error: ${response.status}`);
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text;
+            
+            analytics.track('funnel_step', { step: 'generation_success', tool, method: 'direct' });
+            return text;
+
+        } catch (e) {
+            console.warn("Direct AI failed, falling back to server...", e);
+        }
+    }
+
+    // FALLBACK: Server-Side Netlify Function
     try {
         const response = await fetch('/.netlify/functions/generate-content', {
             method: 'POST',
@@ -727,7 +641,7 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
         });
         if (!response.ok) throw new Error('Generation failed');
         const data = await response.json();
-        analytics.track('funnel_step', { step: 'generation_success', tool });
+        analytics.track('funnel_step', { step: 'generation_success', tool, method: 'server' });
         return data.text;
     } catch (e) {
         analytics.track('funnel_step', { step: 'generation_fail', tool, error: e.message });
@@ -736,9 +650,10 @@ export async function generateAIContent(prompt, tool = 'unknown', topic = '') {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => analytics.init());
+    document.addEventListener('DOMContentLoaded', () => { analytics.init(); loadSystemPrompts(); });
 } else {
     analytics.init();
+    loadSystemPrompts();
 }
 
 export { 
