@@ -10,7 +10,7 @@ export function render() {
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Blog Management</h1>
-                <p class="text-sm text-slate-500 mt-1">Manage articles, authors, and static generation.</p>
+                <p class="text-sm text-slate-500 mt-1">Manage articles, authors, SEO, and static generation.</p>
             </div>
             
             <div class="flex flex-wrap gap-3">
@@ -104,6 +104,7 @@ export async function init() {
         tbody.innerHTML = postsData.map(p => {
             const authorName = authorsList.find(a => a.id === p.authorId)?.name || p.author || 'Admin';
             const liveLink = `/blog/${p.slug || p.id}`;
+            const seoTitle = p.seo?.title ? `<span class="text-[10px] bg-indigo-50 text-indigo-600 px-1 rounded border border-indigo-100 ml-1" title="SEO Title Set">SEO</span>` : '';
             
             return `
             <tr class="hover:bg-slate-50 group transition-colors">
@@ -112,7 +113,10 @@ export async function init() {
                         <a href="${liveLink}" target="_blank" class="font-bold text-slate-900 hover:text-brand-600 hover:underline flex items-center gap-2 mb-1">
                             ${p.title} <i data-lucide="external-link" class="w-3 h-3 text-slate-300 group-hover:text-brand-400"></i>
                         </a>
-                        <span class="text-xs text-slate-500">${p.category || 'Uncategorized'}</span>
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs text-slate-500">${p.category || 'Uncategorized'}</span>
+                             ${seoTitle}
+                        </div>
                     </div>
                 </td>
                 <td class="px-6 py-4">
@@ -124,10 +128,10 @@ export async function init() {
                     </div>
                 </td>
                 <td class="px-6 py-4">
-                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${p.published !== false ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${p.published !== false ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}">
                         <span class="w-1.5 h-1.5 rounded-full ${p.published !== false ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
                         ${p.published !== false ? 'Published' : 'Draft'}
-                     </span>
+                      </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-slate-500 font-mono">${p.date}</td>
                 <td class="px-6 py-4 text-right">
@@ -299,6 +303,15 @@ async function openModal(id = null) {
     const authorOptions = authorsList.map(a => `<option value="${a.id}" ${post?.authorId === a.id ? 'selected' : ''}>${a.name}</option>`).join('');
     const defaultOption = `<option value="admin" ${!post?.authorId ? 'selected' : ''}>Admin (Me)</option>`;
 
+    // --- SEO VALUES & COUNTERS ---
+    const seoTitle = post?.seo?.title || '';
+    const seoDesc = post?.seo?.description || '';
+    const seoKey = post?.seo?.keywords || '';
+    const canonical = post?.seo?.canonical || '';
+    const noIndex = post?.seo?.noIndex || false;
+    const noFollow = post?.seo?.noFollow || false;
+    const schema = post?.seo?.schema || 'Article';
+
     content.innerHTML = `
         <div class="h-16 px-6 border-b border-slate-200 flex justify-between items-center bg-white shrink-0 z-20">
             <div class="flex items-center gap-4">
@@ -320,9 +333,10 @@ async function openModal(id = null) {
         </div>
         
         <div class="flex-1 flex overflow-hidden bg-slate-50">
+            <!-- Main Content -->
             <div class="flex-1 flex flex-col h-full overflow-hidden relative">
                 <div class="p-6 pb-2 shrink-0 bg-white">
-                    <input type="text" id="post-title" class="w-full text-4xl font-extrabold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900 tracking-tight" placeholder="Article Title..." value="${post?.title || ''}">
+                    <input type="text" id="post-title" class="w-full text-4xl font-extrabold placeholder-slate-300 border-none outline-none ring-0 p-0 text-slate-900 tracking-tight" placeholder="Article Title (H1)..." value="${post?.title || ''}">
                     <input type="hidden" id="post-id" value="${id || ''}">
                     <input type="hidden" id="post-slug" value="${post?.slug || ''}">
                 </div>
@@ -331,8 +345,11 @@ async function openModal(id = null) {
                 </div>
             </div>
 
-            <div class="w-80 bg-white border-l border-slate-200 overflow-y-auto shrink-0 z-10 hidden lg:block">
+            <!-- Sidebar -->
+            <div class="w-80 bg-white border-l border-slate-200 overflow-y-auto shrink-0 z-10 hidden lg:block scrollbar-thin scrollbar-thumb-slate-200">
                 <div class="p-5 space-y-6">
+                    
+                    <!-- Publishing -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Publishing</label>
                         <div class="bg-slate-100 p-1 rounded-lg border border-slate-200 flex">
@@ -342,6 +359,7 @@ async function openModal(id = null) {
                         <input type="hidden" id="post-status" value="${post?.published !== false ? 'true' : 'false'}">
                     </div>
 
+                    <!-- Metadata -->
                     <div class="space-y-4 pt-4 border-t border-slate-100">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Metadata</label>
                         <div>
@@ -358,6 +376,7 @@ async function openModal(id = null) {
                         </div>
                     </div>
 
+                    <!-- Cover Image -->
                     <div class="pt-4 border-t border-slate-100">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cover Image</label>
                         <div class="space-y-3">
@@ -369,6 +388,74 @@ async function openModal(id = null) {
                                     <span class="text-[10px] text-slate-400">Preview</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO SECTION -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            SEO & Social
+                            <span class="text-[10px] font-normal text-slate-400 normal-case ml-1">(Search Engine Optimization)</span>
+                        </label>
+                        <div class="space-y-4">
+                            <!-- SEO Title -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-xs text-slate-400 block font-medium">Meta Title</span>
+                                    <span id="title-count" class="text-[10px] text-slate-400">0/60</span>
+                                </div>
+                                <input type="text" id="post-seo-title" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all" value="${seoTitle}" placeholder="Page title in search results">
+                            </div>
+
+                            <!-- Meta Description -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-xs text-slate-400 block font-medium">Meta Description</span>
+                                    <span id="desc-count" class="text-[10px] text-slate-400">0/160</span>
+                                </div>
+                                <textarea id="post-seo-desc" rows="3" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all resize-none" placeholder="Brief summary for search snippets...">${seoDesc}</textarea>
+                            </div>
+
+                            <!-- Keywords -->
+                            <div>
+                                <span class="text-xs text-slate-400 mb-1.5 block font-medium">Keywords <span class="text-slate-300 font-normal">(Comma separated)</span></span>
+                                <input type="text" id="post-seo-keywords" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all" value="${seoKey}" placeholder="e.g. ai, marketing, seo">
+                            </div>
+
+                            <!-- Canonical URL -->
+                            <div>
+                                <span class="text-xs text-slate-400 mb-1.5 block font-medium">Canonical URL <span class="text-slate-300 font-normal">(Optional)</span></span>
+                                <input type="text" id="post-seo-canonical" class="w-full p-2.5 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all" value="${canonical}" placeholder="https://...">
+                            </div>
+
+                             <!-- Robots -->
+                            <div class="grid grid-cols-2 gap-3">
+                                 <div>
+                                    <span class="text-xs text-slate-400 mb-1.5 block font-medium">Indexing</span>
+                                    <select id="post-seo-index" class="w-full p-2 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:bg-white outline-none">
+                                        <option value="index" ${!noIndex ? 'selected' : ''}>Index</option>
+                                        <option value="noindex" ${noIndex ? 'selected' : ''}>No Index</option>
+                                    </select>
+                                 </div>
+                                 <div>
+                                    <span class="text-xs text-slate-400 mb-1.5 block font-medium">Following</span>
+                                     <select id="post-seo-follow" class="w-full p-2 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:bg-white outline-none">
+                                        <option value="follow" ${!noFollow ? 'selected' : ''}>Follow</option>
+                                        <option value="nofollow" ${noFollow ? 'selected' : ''}>No Follow</option>
+                                    </select>
+                                 </div>
+                            </div>
+                            
+                             <!-- Schema Type -->
+                             <div>
+                                <span class="text-xs text-slate-400 mb-1.5 block font-medium">Schema Type</span>
+                                <select id="post-seo-schema" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white outline-none">
+                                    <option value="Article" ${schema === 'Article' ? 'selected' : ''}>Article</option>
+                                    <option value="BlogPosting" ${schema === 'BlogPosting' ? 'selected' : ''}>Blog Posting</option>
+                                    <option value="NewsArticle" ${schema === 'NewsArticle' ? 'selected' : ''}>News Article</option>
+                                </select>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -385,6 +472,30 @@ async function openModal(id = null) {
     // Listeners
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('save-post-btn').onclick = savePost;
+    
+    // SEO Char Counters
+    const updateCount = (id, target, max) => {
+        const el = document.getElementById(id);
+        const count = document.getElementById(target);
+        if(el && count) {
+            const len = el.value.length;
+            count.innerText = `${len}/${max}`;
+            if(len > max) count.classList.add('text-red-500'); else count.classList.remove('text-red-500');
+        }
+    }
+    
+    const titleInput = document.getElementById('post-seo-title');
+    const descInput = document.getElementById('post-seo-desc');
+    
+    if(titleInput) {
+        updateCount('post-seo-title', 'title-count', 60);
+        titleInput.addEventListener('input', () => updateCount('post-seo-title', 'title-count', 60));
+    }
+    if(descInput) {
+        updateCount('post-seo-desc', 'desc-count', 160);
+        descInput.addEventListener('input', () => updateCount('post-seo-desc', 'desc-count', 160));
+    }
+
 
     // Status UI Toggle
     const btnPub = document.getElementById('btn-status-pub');
@@ -461,6 +572,17 @@ async function savePost() {
     let slug = document.getElementById('post-slug').value;
     if (!slug || slug === 'undefined') slug = createSlug(title);
 
+    // --- GATHER SEO DATA ---
+    const seoData = {
+        title: document.getElementById('post-seo-title').value.trim() || title, // Fallback to main title
+        description: document.getElementById('post-seo-desc').value.trim(),
+        keywords: document.getElementById('post-seo-keywords').value.trim(),
+        canonical: document.getElementById('post-seo-canonical').value.trim(),
+        noIndex: document.getElementById('post-seo-index').value === 'noindex',
+        noFollow: document.getElementById('post-seo-follow').value === 'nofollow',
+        schema: document.getElementById('post-seo-schema').value || 'Article'
+    };
+
     const data = {
         title: title,
         slug: slug, 
@@ -470,6 +592,7 @@ async function savePost() {
         published: document.getElementById('post-status').value === 'true',
         authorId: authorId, 
         author: authorName,
+        seo: seoData, // <--- SAVING SEO DATA HERE
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         updatedAt: serverTimestamp()
     };
