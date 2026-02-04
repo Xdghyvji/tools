@@ -4,10 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - Digital Services Hub</title>
-    <meta name="description" content="Explore the latest insights, tutorials, and updates on digital marketing, AI tools, and SEO strategies.">
     
-    <!-- Favicon -->
+    <!-- Core SEO & Wikipedia-Inspired Tags -->
+    <meta name="description" content="Explore the latest insights, tutorials, and updates on digital marketing, AI tools, and SEO strategies.">
+    <meta name="generator" content="DigitalServicesHub v1.0">
+    <meta name="referrer" content="origin-when-cross-origin">
+    <meta name="robots" content="index, follow, max-image-preview:standard">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Blog - Digital Services Hub">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Digital Services Hub">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Canonical (Dynamic) -->
+    <link rel="canonical" href="https://digitalserviceshub.online/blog.html">
+    <link rel="license" href="https://digitalserviceshub.online/terms.html">
+    
+    <!-- Performance & Preconnect -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com">
+    
+    <!-- Icons -->
     <link rel="icon" type="image/png" href="assets/img/digitalserviceshub.png">
+    <link rel="apple-touch-icon" href="assets/img/digitalserviceshub.png">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,6 +43,7 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
                     }
                 }
             }
@@ -27,61 +51,32 @@
     </script>
     
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         /* Typography for Blog Content */
-        .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; color: #1e293b; }
-        .prose h2 { font-size: 1.75em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; color: #1e293b; }
-        .prose h3 { font-size: 1.5em; font-weight: 600; margin-top: 1.25em; margin-bottom: 0.5em; color: #334155; }
-        .prose p { margin-bottom: 1.25em; line-height: 1.75; color: #475569; }
-        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
-        .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1.25em; color: #475569; }
-        .prose a { color: #0284c7; text-decoration: underline; font-weight: 500; }
-        .prose a:hover { color: #0369a1; }
-        .prose img { border-radius: 0.75rem; margin-top: 1.5em; margin-bottom: 1.5em; width: 100%; height: auto; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .prose blockquote { border-left: 4px solid #e2e8f0; padding-left: 1rem; font-style: italic; color: #64748b; margin-bottom: 1.25em; }
+        .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; color: #0f172a; }
+        .prose h2 { font-size: 1.875em; font-weight: 700; margin-top: 2em; margin-bottom: 1em; color: #0f172a; }
+        .prose h3 { font-size: 1.5em; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.75em; color: #334155; }
+        .prose p { margin-bottom: 1.25em; line-height: 1.8; color: #334155; font-size: 1.125rem; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.25em; color: #334155; }
+        .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1.25em; color: #334155; }
+        .prose a { color: #2563eb; text-decoration: underline; text-underline-offset: 4px; font-weight: 500; }
+        .prose a:hover { color: #1d4ed8; }
+        .prose img { border-radius: 0.75rem; margin: 2rem 0; width: 100%; height: auto; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .prose blockquote { border-left: 4px solid #3b82f6; padding-left: 1.5rem; font-style: italic; color: #475569; background: #eff6ff; padding: 1.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 2rem; }
         
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-900 antialiased selection:bg-brand-200 selection:text-brand-900 flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- Navbar (Injection Target) -->
-    <div id="main-header">
-        <!-- Default Fallback Header -->
-        <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16 items-center">
-                    <a href="/" class="flex items-center gap-2 group">
-                        <div class="bg-gradient-to-br from-brand-600 to-indigo-600 text-white p-2 rounded-lg group-hover:shadow-lg group-hover:shadow-brand-500/20 transition-all duration-300">
-                            <i data-lucide="zap" class="w-5 h-5"></i>
-                        </div>
-                        <span class="font-bold text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">DigitalServicesHub</span>
-                    </a>
-                    
-                    <div class="hidden md:flex items-center gap-8">
-                        <a href="/" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Home</a>
-                        <a href="/blog.html" class="text-sm font-medium text-brand-600">Blog</a>
-                        <a href="/tools.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Tools</a>
-                        <a href="/about.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">About</a>
-                        <a href="/contact.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Contact</a>
-                    </div>
-    
-                    <div class="flex items-center gap-4">
-                        <a href="/subscription.html" class="hidden sm:flex bg-slate-900 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/30 transform hover:-translate-y-0.5">
-                            Subscribe
-                        </a>
-                        <button class="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
-                            <i data-lucide="menu" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </div>
+    <!-- Header Injection Target -->
+    <div id="main-header" class="sticky top-0 z-50"></div>
 
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-grow w-full">
@@ -99,12 +94,12 @@
 
                 <!-- 1. Blog List View -->
                 <div id="blog-list-view" class="hidden">
-                    <div class="mb-8">
-                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">
-                            Latest <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Insights</span>
+                    <div class="mb-10 text-center md:text-left">
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">
+                            Latest <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Insights</span>
                         </h1>
-                        <p class="text-slate-600">
-                            Expert strategies, tutorials, and updates on digital marketing and AI.
+                        <p class="text-lg text-slate-600 max-w-2xl">
+                            Expert strategies, tutorials, and updates on digital marketing, AI tools, and SEO.
                         </p>
                     </div>
 
@@ -114,73 +109,85 @@
 
                     <!-- Pagination -->
                     <div id="pagination-controls" class="mt-12 flex justify-center items-center gap-2 hidden">
-                        <!-- Pagination buttons injected here -->
+                        <!-- Pagination injected here -->
                     </div>
                 </div>
 
                 <!-- 2. Single Post View -->
-                <article id="single-post-view" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                     <!-- ODB/Static Content Injection Targets -->
-                    <div class="p-6 md:p-8 lg:p-10">
-                        <div class="mb-6">
-                            <a href="/blog.html" class="inline-flex items-center text-sm font-medium text-slate-500 hover:text-brand-600 transition-colors mb-6 group">
-                                <i data-lucide="arrow-left" class="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform"></i>
-                                Back to Blog
-                            </a>
-                            
-                            <div class="flex flex-wrap items-center gap-3 mb-4">
-                                <span id="post-category" class="px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-700 border border-brand-100 uppercase tracking-wide">
-                                    <!-- Category -->
+                <div id="single-post-view" class="hidden">
+                    <article class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                        <!-- Image Container -->
+                        <div class="w-full h-64 md:h-96 bg-slate-100 relative overflow-hidden group">
+                            <img id="post-image" src="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="">
+                        </div>
+                        
+                        <div class="p-6 md:p-10">
+                            <!-- Meta -->
+                            <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500 mb-6">
+                                <span id="post-category" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wider">
+                                    General
                                 </span>
-                                <span id="post-date" class="text-sm text-slate-500 font-medium">
-                                    <!-- Date -->
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="calendar" class="w-4 h-4"></i>
+                                    <span id="post-date">...</span>
+                                </div>
                             </div>
 
-                            <h1 id="post-title" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
-                                <!-- Title -->
+                            <!-- Title -->
+                            <h1 id="post-title" class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-8 leading-tight">
+                                <!-- Title Here -->
                             </h1>
+
+                            <!-- Content -->
+                            <div id="post-content" class="prose prose-lg max-w-none prose-headings:font-display">
+                                <!-- Content Here -->
+                            </div>
                             
-                            <div class="flex items-center gap-3 border-b border-slate-200 pb-8 mb-8">
-                                <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm border border-indigo-200 shadow-sm" id="author-avatar">
-                                    <!-- Author Initial -->
+                            <!-- Author Box -->
+                            <div class="mt-12 pt-8 border-t border-slate-100 flex items-center gap-4">
+                                <div class="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center text-xl font-bold text-slate-600 uppercase" id="author-avatar">
+                                    A
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-slate-900" id="post-author"><!-- Author --></p>
-                                    <p class="text-xs text-slate-500">Content Creator</p>
+                                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider mb-1">Written By</p>
+                                    <a href="#" class="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors" id="post-author">
+                                        Admin
+                                    </a>
+                                    <p class="text-sm text-slate-500">Content Creator</p>
                                 </div>
                             </div>
                         </div>
+                    </article>
 
-                        <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md mb-10 bg-slate-100 group">
-                            <img id="post-image" src="" alt="" class="w-full h-full object-cover">
+                    <!-- COMMENTS SECTION -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-10">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-2xl font-bold text-slate-900">Discussion</h3>
+                            <span class="text-sm text-slate-500" id="comment-count">0 Comments</span>
                         </div>
+                        
+                        <!-- Comment Form -->
+                        <form id="comment-form" class="mb-10 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h4 class="font-bold text-slate-700 mb-4 text-sm uppercase tracking-wide">Leave a Reply</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <input type="text" id="comment-name" placeholder="Name *" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" required>
+                                <input type="email" id="comment-email" placeholder="Email (Optional)" class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+                            </div>
+                            <textarea id="comment-body" rows="3" placeholder="Join the discussion..." class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" required></textarea>
+                            <button type="submit" id="submit-comment-btn" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex items-center gap-2">
+                                <span>Post Comment</span>
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </form>
 
-                        <div id="post-content" class="prose prose-lg prose-slate max-w-none prose-headings:font-bold prose-a:text-brand-600 hover:prose-a:text-brand-700 prose-img:rounded-xl">
-                            <!-- Content -->
+                        <!-- Comments List -->
+                        <div id="comments-list" class="space-y-8">
+                            <!-- Injected via JS -->
+                            <div class="text-center py-4 text-slate-400 italic" id="no-comments-msg">Be the first to share your thoughts!</div>
                         </div>
                     </div>
-                    
-                    <!-- Share Section -->
-                    <div class="bg-slate-50 p-6 md:p-10 border-t border-slate-200">
-                        <p class="text-sm font-bold text-slate-900 mb-4">Share this article</p>
-                        <div class="flex gap-3">
-                            <button onclick="share('twitter')" class="p-2 rounded-full bg-white text-sky-500 border border-slate-200 hover:border-sky-200 hover:bg-sky-50 transition-all">
-                                <i data-lucide="twitter" class="w-5 h-5"></i>
-                            </button>
-                            <button onclick="share('facebook')" class="p-2 rounded-full bg-white text-blue-600 border border-slate-200 hover:border-blue-200 hover:bg-blue-50 transition-all">
-                                <i data-lucide="facebook" class="w-5 h-5"></i>
-                            </button>
-                            <button onclick="share('linkedin')" class="p-2 rounded-full bg-white text-indigo-600 border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50 transition-all">
-                                <i data-lucide="linkedin" class="w-5 h-5"></i>
-                            </button>
-                             <button onclick="share('copy')" class="p-2 rounded-full bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 transition-all">
-                                <i data-lucide="link" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-                
+                </div>
+
                 <!-- Not Found State -->
                 <div id="not-found-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
                      <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
@@ -188,7 +195,7 @@
                     </div>
                     <h2 class="text-2xl font-bold text-slate-900 mb-2">Article Not Found</h2>
                     <p class="text-slate-500 mb-8 max-w-md">The article you are looking for might have been removed or is temporarily unavailable.</p>
-                    <a href="/blog.html" class="bg-brand-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-brand-700 transition-colors">
+                    <a href="/blog.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">
                         Browse All Articles
                     </a>
                 </div>
@@ -200,35 +207,21 @@
                 
                 <!-- Search Widget -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                    <h3 class="font-bold text-slate-900 mb-4">Search</h3>
+                    <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2 font-display">
+                        <i data-lucide="search" class="w-4 h-4 text-blue-500"></i> Search
+                    </h4>
                     <div class="relative">
-                        <input type="text" id="search-input" placeholder="Search articles..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                        <input type="text" id="search-input" placeholder="Search articles..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
                     </div>
                 </div>
 
-                <!-- Newsletter Widget (Sticky) -->
-                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 shadow-lg text-white">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="p-2 bg-white/10 rounded-lg">
-                            <i data-lucide="mail" class="w-5 h-5 text-brand-300"></i>
-                        </div>
-                        <h3 class="font-bold">Newsletter</h3>
-                    </div>
-                    <p class="text-slate-300 text-sm mb-4 leading-relaxed">Get the latest AI tools and SEO tips delivered to your inbox weekly.</p>
-                    <a href="/subscription.html" class="block w-full text-center bg-brand-600 hover:bg-brand-500 text-white font-bold py-2 rounded-lg transition-colors text-sm">
-                        Subscribe Free
-                    </a>
-                </div>
-
-                <!-- Popular Posts -->
+                <!-- Trending Widget -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                    <div class="flex items-center gap-2 mb-6">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-brand-600"></i>
-                        <h3 class="font-bold text-slate-900">Popular Posts</h3>
-                    </div>
-                    <div id="popular-posts-list" class="space-y-4">
-                        <!-- Popular posts injected here -->
+                    <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2 font-display">
+                        <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Trending Now
+                    </h4>
+                    <div id="popular-posts-list" class="space-y-5">
                         <div class="animate-pulse space-y-4">
                             <div class="h-16 bg-slate-100 rounded-lg"></div>
                             <div class="h-16 bg-slate-100 rounded-lg"></div>
@@ -239,12 +232,15 @@
 
                 <!-- Categories -->
                 <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                     <h3 class="font-bold text-slate-900 mb-4">Categories</h3>
+                     <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2 font-display">
+                        <i data-lucide="tag" class="w-4 h-4 text-emerald-500"></i> Categories
+                    </h4>
                      <div class="flex flex-wrap gap-2" id="categories-list">
-                        <span class="px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 cursor-pointer transition-colors">AI Tools</span>
-                        <span class="px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 cursor-pointer transition-colors">SEO</span>
-                        <span class="px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 cursor-pointer transition-colors">Marketing</span>
-                        <span class="px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium text-slate-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 cursor-pointer transition-colors">Tutorials</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 cursor-pointer transition-colors">AI Tools</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 cursor-pointer transition-colors">Marketing</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 cursor-pointer transition-colors">SEO</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 cursor-pointer transition-colors">Business</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold hover:bg-slate-200 cursor-pointer transition-colors">Social Media</span>
                      </div>
                 </div>
 
@@ -252,307 +248,373 @@
         </div>
     </div>
 
-    <!-- Footer (Injection Target) -->
-    <div id="main-footer">
-        <footer class="bg-white border-t border-slate-200 py-12 mt-auto">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <p class="text-slate-500 text-sm">© 2026 Digital Services Hub. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
+    <!-- Footer Injection Target -->
+    <div id="main-footer"></div>
 
-    <!-- Firebase Logic -->
+    <!-- Logic -->
     <script type="module">
         import { db, appId } from './assets/js/shared.js';
-        import { collection, getDocs, query, where, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, getDocs, query, where, limit, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Inject Default Header/Footer if module fails (Fallback)
+        const renderHeader = () => `
+            <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+                    <a href="/" class="flex items-center gap-2 font-display font-bold text-xl text-slate-900">
+                        <div class="bg-blue-600 text-white p-1.5 rounded-lg"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                        DigitalServicesHub
+                    </a>
+                    <div class="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+                        <a href="/" class="hover:text-blue-600">Home</a>
+                        <a href="/blog.html" class="text-blue-600">Blog</a>
+                        <a href="/tools.html" class="hover:text-blue-600">Tools</a>
+                        <a href="/contact.html" class="hover:text-blue-600">Contact</a>
+                    </div>
+                </div>
+            </nav>
+        `;
+        const renderFooter = () => `
+            <footer class="bg-white border-t border-slate-200 py-12 mt-auto">
+                <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+                    © 2026 Digital Services Hub. All rights reserved.
+                </div>
+            </footer>
+        `;
+        document.getElementById('main-header').innerHTML = renderHeader();
+        document.getElementById('main-footer').innerHTML = renderFooter();
+
+        // --- CORE VARIABLES ---
         const loading = document.getElementById('loading-state');
         const listView = document.getElementById('blog-list-view');
         const singleView = document.getElementById('single-post-view');
         const notFound = document.getElementById('not-found-state');
         const postsGrid = document.getElementById('posts-grid');
         const popularList = document.getElementById('popular-posts-list');
-        const searchInput = document.getElementById('search-input');
         const paginationContainer = document.getElementById('pagination-controls');
-
-        // Config
-        const POSTS_PER_PAGE = 20;
+        
         let allPosts = [];
         let filteredPosts = [];
         let currentPage = 1;
+        const POSTS_PER_PAGE = 20;
 
         // --- INIT ---
         async function init() {
-            // 1. Inject Shared UI (Optional: Move to shared.js later)
-            injectSharedUI();
-
-            // 2. Route Handling
             const slug = getSlug();
+            
+            // Initial Load
             if (slug) {
-                // If content is already present (Pre-rendered by Netlify ODB), skip fetch
-                const existingTitle = document.getElementById('post-title').innerText.trim();
-                if (existingTitle && existingTitle.length > 0) {
-                    loading.classList.add('hidden');
-                    singleView.classList.remove('hidden');
-                } else {
-                    await loadSinglePost(slug);
-                }
+                await loadSinglePost(slug);
             } else {
                 await loadPostList();
             }
             
-            // 3. Load Widgets
-            await loadPopularPosts(); // Always load widgets for sidebar
-
+            loadSidebar(); // Runs parallel
             lucide.createIcons();
         }
 
         function getSlug() {
             const path = window.location.pathname;
-            if (path.startsWith('/blog/') && path.length > 6) {
-                return path.split('/blog/')[1].replace('.html', '');
-            }
+            if (path.startsWith('/blog/') && path.length > 6) return path.split('/blog/')[1].replace('.html', '');
             const params = new URLSearchParams(window.location.search);
             return params.get('p');
         }
 
-        // --- SHARED COMPONENT INJECTION ---
-        function injectSharedUI() {
-            // Check if shared.js/window has a global renderer, otherwise use default
-            if (window.renderSharedHeader) {
-                document.getElementById('shared-header').innerHTML = window.renderSharedHeader();
-            }
-            if (window.renderSharedFooter) {
-                document.getElementById('shared-footer').innerHTML = window.renderSharedFooter();
-            }
+        // --- LIST VIEW ---
+        async function loadPostList() {
+            try {
+                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
+                const raw = [];
+                snap.forEach(doc => raw.push({ id: doc.id, ...doc.data() }));
+                
+                allPosts = raw.filter(p => p.published !== false).sort((a,b) => new Date(b.date) - new Date(a.date));
+                filteredPosts = [...allPosts];
+                
+                renderPaginatedList();
+                loading.classList.add('hidden');
+                listView.classList.remove('hidden');
+            } catch(e) { console.error(e); }
         }
 
-        // --- SINGLE POST LOGIC ---
+        function renderPaginatedList() {
+            const total = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+            if(currentPage > total) currentPage = total || 1;
+            
+            const start = (currentPage - 1) * POSTS_PER_PAGE;
+            const slice = filteredPosts.slice(start, start + POSTS_PER_PAGE);
+            
+            if(slice.length === 0) {
+                postsGrid.innerHTML = `<div class="text-center py-10 text-slate-500">No posts found.</div>`;
+            } else {
+                postsGrid.innerHTML = slice.map(p => `
+                    <div class="flex flex-col md:flex-row gap-6 bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300 group">
+                        <a href="/blog/${p.slug || p.id}" class="w-full md:w-5/12 aspect-video md:aspect-auto bg-slate-100 relative overflow-hidden shrink-0">
+                            ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">` : ''}
+                        </a>
+                        <div class="p-6 md:py-8 flex flex-col justify-center flex-grow">
+                            <div class="flex items-center gap-3 mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+                                <span class="text-blue-600">${p.category || 'Article'}</span>
+                                <span>•</span>
+                                <span>${p.date || 'Recent'}</span>
+                            </div>
+                            <h3 class="text-xl font-bold font-display text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                                <a href="/blog/${p.slug || p.id}">${p.title}</a>
+                            </h3>
+                            <p class="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-6">
+                                ${p.content ? p.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'Read article...'}
+                            </p>
+                            <a href="/blog/${p.slug || p.id}" class="text-sm font-bold text-slate-900 hover:text-blue-600 inline-flex items-center">
+                                Read Article <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            renderPagination(total);
+            lucide.createIcons();
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        function renderPagination(total) {
+            if(total <= 1) { paginationContainer.classList.add('hidden'); return; }
+            let html = '';
+            for(let i=1; i<=total; i++) {
+                html += `<button onclick="window.setPage(${i})" class="w-10 h-10 rounded-lg text-sm font-bold border transition-colors ${i === currentPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">${i}</button>`;
+            }
+            paginationContainer.innerHTML = html;
+            paginationContainer.classList.remove('hidden');
+        }
+        window.setPage = (p) => { currentPage = p; renderPaginatedList(); }
+
+        // --- SINGLE POST & COMMENTS ---
         async function loadSinglePost(slug) {
             try {
                 let q = query(collection(db, 'artifacts', appId, 'public', 'data', 'posts'), where('slug', '==', slug), limit(1));
                 let snap = await getDocs(q);
-
-                // Fallback to ID if slug not found
-                if (snap.empty) {
-                     // logic to fetch by ID could go here if needed
-                }
-
-                if (!snap.empty) {
+                
+                if(!snap.empty) {
                     const post = snap.docs[0].data();
                     renderPost(post);
                     updateSEO(post);
+                    loadComments(slug); // Load comments for this slug
+                    
+                    // Attach Comment Submit Listener
+                    document.getElementById('comment-form').onsubmit = (e) => submitComment(e, slug);
+                    
                     loading.classList.add('hidden');
                     singleView.classList.remove('hidden');
                 } else {
                     loading.classList.add('hidden');
                     notFound.classList.remove('hidden');
                 }
-            } catch (e) {
-                console.error("Error loading post:", e);
-                loading.classList.add('hidden');
-                notFound.classList.remove('hidden');
-            }
+            } catch(e) { console.error(e); }
         }
 
         function renderPost(post) {
             document.getElementById('post-title').innerText = post.title;
             document.getElementById('post-category').innerText = post.category || 'General';
-            document.getElementById('post-date').innerText = post.date || new Date().toLocaleDateString();
+            document.getElementById('post-date').innerText = post.date;
             document.getElementById('post-author').innerText = post.author || 'Admin';
             document.getElementById('author-avatar').innerText = (post.author || 'A').charAt(0);
             
             const img = document.getElementById('post-image');
-            if (post.image) {
-                img.src = post.image;
-                img.alt = post.title;
-            } else {
-                img.parentElement.style.display = 'none'; 
-            }
+            if(post.image) img.src = post.image; else img.parentElement.style.display = 'none';
             document.getElementById('post-content').innerHTML = post.content || '';
         }
 
+        // --- COMMENTS LOGIC ---
+        function loadComments(slug) {
+            const list = document.getElementById('comments-list');
+            const countEl = document.getElementById('comment-count');
+            const noMsg = document.getElementById('no-comments-msg');
+            
+            const q = query(
+                collection(db, 'artifacts', appId, 'public', 'data', 'comments'), 
+                where('postSlug', '==', slug)
+                // orderBy requires index, doing client sort for now
+            );
+
+            onSnapshot(q, (snap) => {
+                const comments = [];
+                snap.forEach(d => comments.push(d.data()));
+                comments.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                
+                countEl.innerText = `${comments.length} Comments`;
+                
+                if(comments.length === 0) {
+                    noMsg.style.display = 'block';
+                    list.innerHTML = '';
+                    list.appendChild(noMsg);
+                } else {
+                    noMsg.style.display = 'none';
+                    list.innerHTML = comments.map(c => `
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                                ${c.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h5 class="font-bold text-slate-900 text-sm">${c.name}</h5>
+                                    <span class="text-xs text-slate-400">${new Date(c.createdAt?.seconds * 1000 || Date.now()).toLocaleDateString()}</span>
+                                </div>
+                                <p class="text-slate-600 text-sm leading-relaxed">${c.text}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            });
+        }
+
+        async function submitComment(e, slug) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-comment-btn');
+            const name = document.getElementById('comment-name').value;
+            const email = document.getElementById('comment-email').value;
+            const text = document.getElementById('comment-body').value;
+            
+            if(!name || !text) return;
+
+            const originalBtn = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Posting...`;
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'comments'), {
+                    postSlug: slug,
+                    name,
+                    email, // Optional, maybe don't display it publicly
+                    text,
+                    createdAt: serverTimestamp()
+                });
+                e.target.reset();
+                alert("Comment posted!");
+            } catch(err) {
+                alert("Failed to post comment.");
+                console.error(err);
+            } finally {
+                btn.innerHTML = originalBtn;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // --- SEO & SIDEBAR ---
         function updateSEO(post) {
             const seo = post.seo || {};
+            
+            // 1. Title
             document.title = seo.title || post.title;
+            
+            // 2. Meta Helper
             const setMeta = (name, content) => {
                 let tag = document.querySelector(`meta[name="${name}"]`);
-                if (!tag) { tag = document.createElement('meta'); tag.name = name; document.head.appendChild(tag); }
+                if (!tag) {
+                    tag = document.createElement('meta');
+                    tag.name = name;
+                    document.head.appendChild(tag);
+                }
                 tag.content = content || '';
             };
+
+            // 3. Update Canonical Link
+            let canonical = document.querySelector('link[rel="canonical"]');
+            if (!canonical) {
+                canonical = document.createElement('link');
+                canonical.rel = 'canonical';
+                document.head.appendChild(canonical);
+            }
+            // Use user-defined canonical or default to current URL
+            canonical.href = seo.canonical || window.location.href;
+
+            // 4. Update Meta Description & Keywords
             const fallbackDesc = post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...' : '';
             setMeta('description', seo.description || fallbackDesc);
             if (seo.keywords) setMeta('keywords', seo.keywords);
+
+            // 5. Open Graph Updates
+            let ogTitle = document.querySelector('meta[property="og:title"]');
+            if(ogTitle) ogTitle.content = seo.title || post.title;
             
-            // Canonical
-            let canonical = document.querySelector('link[rel="canonical"]');
-            if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
-            canonical.href = seo.canonical || window.location.href;
-        }
-
-        // --- LIST VIEW LOGIC & PAGINATION ---
-        async function loadPostList() {
-            try {
-                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
-                const rawPosts = [];
-                snap.forEach(doc => rawPosts.push({ id: doc.id, ...doc.data() }));
-
-                // Filter published and Sort
-                allPosts = rawPosts.filter(p => p.published !== false);
-                allPosts.sort((a, b) => new Date(b.createdAt?.seconds * 1000 || b.date) - new Date(a.createdAt?.seconds * 1000 || a.date));
-                
-                filteredPosts = [...allPosts]; // Initial filter is all
-                
-                renderPaginatedList();
-                
-                loading.classList.add('hidden');
-                listView.classList.remove('hidden');
-
-            } catch (e) {
-                console.error("Error loading list:", e);
-                loading.innerHTML = `<p class="text-red-500">Failed to load articles.</p>`;
+            let ogUrl = document.querySelector('meta[property="og:url"]');
+            if(!ogUrl) {
+                ogUrl = document.createElement('meta');
+                ogUrl.setAttribute('property', 'og:url');
+                document.head.appendChild(ogUrl);
             }
-        }
+            ogUrl.content = window.location.href;
 
-        function renderPaginatedList() {
-            const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-            
-            // Boundary checks
-            if (currentPage < 1) currentPage = 1;
-            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            // 6. Local SEO Schema (Organization) + Article Schema
+            const localSeoSchema = {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "Digital Services Hub",
+                "url": "https://digitalserviceshub.online",
+                "logo": "https://digitalserviceshub.online/assets/img/digitalserviceshub.png",
+                "sameAs": [
+                    "https://twitter.com/digitalserviceshub", 
+                    "https://facebook.com/digitalserviceshub"
+                ]
+            };
 
-            const start = (currentPage - 1) * POSTS_PER_PAGE;
-            const end = start + POSTS_PER_PAGE;
-            const currentSlice = filteredPosts.slice(start, end);
-
-            // Render Posts
-            if (currentSlice.length === 0) {
-                postsGrid.innerHTML = `<p class="col-span-full text-center text-slate-500 py-10">No articles found matching your criteria.</p>`;
-            } else {
-                postsGrid.innerHTML = currentSlice.map(post => `
-                    <div class="flex flex-col md:flex-row gap-6 bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                        <a href="/blog/${post.slug || post.id}" class="w-full md:w-1/3 aspect-video md:aspect-auto bg-slate-100 relative overflow-hidden shrink-0">
-                             ${post.image 
-                                ? `<img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">`
-                                : `<div class="absolute inset-0 flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-10 h-10"></i></div>`
-                            }
-                        </a>
-                        <div class="p-6 flex flex-col justify-center flex-grow">
-                            <div class="flex items-center gap-2 mb-2 text-xs text-slate-500 font-medium uppercase tracking-wide">
-                                <span class="text-brand-600">${post.category || 'Article'}</span>
-                                <span>•</span>
-                                <span>${post.date || 'Recent'}</span>
-                            </div>
-                            <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition-colors">
-                                <a href="/blog/${post.slug || post.id}">${post.title}</a>
-                            </h3>
-                            <p class="text-slate-500 text-sm line-clamp-2 mb-4">
-                                ${post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 140) + '...' : 'Read more...'}
-                            </p>
-                            <div class="mt-auto">
-                                <a href="/blog/${post.slug || post.id}" class="text-sm font-bold text-slate-900 hover:text-brand-600 inline-flex items-center">
-                                    Read Article <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            
-            renderPaginationControls(totalPages);
-            lucide.createIcons();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function renderPaginationControls(totalPages) {
-            if (totalPages <= 1) {
-                paginationContainer.classList.add('hidden');
-                return;
-            }
-
-            let html = '';
-            
-            // Prev
-            html += `<button onclick="changePage(${currentPage - 1})" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === 1 ? 'disabled' : ''}><i data-lucide="chevron-left" class="w-5 h-5"></i></button>`;
-            
-            // Page Numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    html += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-lg text-sm font-bold border transition-colors ${i === currentPage ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">${i}</button>`;
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
-                    html += `<span class="text-slate-400">...</span>`;
+            const articleSchema = {
+                "@context": "https://schema.org",
+                "@type": seo.schema || "Article",
+                "headline": post.title,
+                "image": post.image ? [post.image] : [],
+                "datePublished": post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
+                "author": {
+                    "@type": "Person",
+                    "name": post.author || "Admin"
                 }
-            }
+            };
+            
+            // Clean up old JSON-LD scripts
+            document.querySelectorAll('script[type="application/ld+json"]').forEach(s => s.remove());
 
-            // Next
-            html += `<button onclick="changePage(${currentPage + 1})" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-500 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" ${currentPage === totalPages ? 'disabled' : ''}><i data-lucide="chevron-right" class="w-5 h-5"></i></button>`;
+            // Inject New Scripts
+            const script1 = document.createElement('script');
+            script1.type = 'application/ld+json';
+            script1.textContent = JSON.stringify(localSeoSchema);
+            document.head.appendChild(script1);
 
-            paginationContainer.innerHTML = html;
-            paginationContainer.classList.remove('hidden');
-            lucide.createIcons();
+            const script2 = document.createElement('script');
+            script2.type = 'application/ld+json';
+            script2.textContent = JSON.stringify(articleSchema);
+            document.head.appendChild(script2);
         }
 
-        window.changePage = (page) => {
-            currentPage = page;
-            renderPaginatedList();
-        }
-
-        // --- SIDEBAR WIDGETS ---
-        async function loadPopularPosts() {
-            // Check if we already fetched all posts, if not fetch them (for sidebar on single view)
-            if (allPosts.length === 0) {
+        async function loadSidebar() {
+             // Simple logic: fetch all, shuffle, pick 4.
+             // In production, use a specific 'featured' flag or orderBy date desc limit 5
+             if(allPosts.length === 0) {
                  try {
-                    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
-                    const rawPosts = [];
-                    snap.forEach(doc => rawPosts.push({ id: doc.id, ...doc.data() }));
-                    allPosts = rawPosts.filter(p => p.published !== false);
-                } catch(e) { console.warn("Widget fetch failed", e); }
-            }
-
-            // Simple "Popular" simulation: Shuffle and pick 5
-            const shuffled = [...allPosts].sort(() => 0.5 - Math.random());
-            const popular = shuffled.slice(0, 5);
-
-            popularList.innerHTML = popular.map(p => `
-                <a href="/blog/${p.slug || p.id}" class="flex items-start gap-3 group">
-                    <div class="w-16 h-16 rounded-lg bg-slate-100 overflow-hidden shrink-0">
-                         ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : ``}
+                     const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'posts'));
+                     s.forEach(d => allPosts.push({id:d.id, ...d.data()}));
+                 } catch(e) {}
+             }
+             
+             const shuffled = [...allPosts].filter(p => p.published !== false).sort(()=>0.5-Math.random()).slice(0,5);
+             popularList.innerHTML = shuffled.map(p => `
+                <a href="/blog/${p.slug || p.id}" class="flex gap-4 group items-start">
+                    <div class="w-16 h-16 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
+                         ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity">` : ''}
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900 group-hover:text-brand-600 line-clamp-2 transition-colors">${p.title}</h4>
-                        <span class="text-xs text-slate-500 mt-1 block">${p.date}</span>
+                        <h5 class="text-sm font-bold text-slate-800 leading-snug group-hover:text-blue-600 transition-colors line-clamp-2 font-display">${p.title}</h5>
+                        <span class="text-xs text-slate-400 mt-1 block">${p.date}</span>
                     </div>
                 </a>
-            `).join('');
+             `).join('');
         }
-
-        // --- SEARCH ---
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            filteredPosts = allPosts.filter(p => 
-                p.title.toLowerCase().includes(term) || 
-                (p.category && p.category.toLowerCase().includes(term))
-            );
+        
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const t = e.target.value.toLowerCase();
+            filteredPosts = allPosts.filter(p => p.title.toLowerCase().includes(t) || (p.category && p.category.toLowerCase().includes(t)));
             currentPage = 1;
-            
-            // If on single view, switch to list view to show results
-            if (!singleView.classList.contains('hidden')) {
-                singleView.classList.add('hidden');
-                listView.classList.remove('hidden');
-            }
-            
+            singleView.classList.add('hidden');
+            listView.classList.remove('hidden');
             renderPaginatedList();
         });
-
-        // Global share
-        window.share = (platform) => {
-            const url = window.location.href;
-            const text = document.title;
-            if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-            if (platform === 'facebook') window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-            if (platform === 'linkedin') window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-            if (platform === 'copy') { navigator.clipboard.writeText(url); alert('Link copied!'); }
-        }
 
         init();
     </script>
