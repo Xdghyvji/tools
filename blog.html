@@ -17,6 +17,8 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Digital Services Hub">
     <meta property="og:locale" content="en_US">
+    <meta property="og:url" content="https://digitalserviceshub.online/blog.html">
+    <meta property="og:image" content="https://digitalserviceshub.online/assets/img/digitalserviceshub.png">
     
     <!-- Canonical (Dynamic) -->
     <link rel="canonical" href="https://digitalserviceshub.online/blog.html">
@@ -255,6 +257,16 @@
     <script type="module">
         import { db, appId } from './assets/js/shared.js';
         import { collection, getDocs, query, where, limit, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Initialize Auth
+        const auth = getAuth();
+        // Ensure anonymous sign-in for commenting if not logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                signInAnonymously(auth).catch((error) => console.error("Auth Error", error));
+            }
+        });
 
         // Inject Default Header/Footer if module fails (Fallback)
         const renderHeader = () => `
@@ -473,6 +485,11 @@
             
             if(!name || !text) return;
 
+            // Double check auth
+            if (!auth.currentUser) {
+                await signInAnonymously(auth);
+            }
+
             const originalBtn = btn.innerHTML;
             btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Posting...`;
             btn.disabled = true;
@@ -488,7 +505,7 @@
                 e.target.reset();
                 alert("Comment posted!");
             } catch(err) {
-                alert("Failed to post comment.");
+                alert("Failed to post comment: " + err.message);
                 console.error(err);
             } finally {
                 btn.innerHTML = originalBtn;
@@ -514,8 +531,19 @@
                 }
                 tag.content = content || '';
             };
+            
+             // 3. Open Graph Helper
+             const setOg = (property, content) => {
+                let tag = document.querySelector(`meta[property="${property}"]`);
+                if (!tag) {
+                    tag = document.createElement('meta');
+                    tag.setAttribute('property', property);
+                    document.head.appendChild(tag);
+                }
+                tag.content = content || '';
+            };
 
-            // 3. Update Canonical Link
+            // 4. Update Canonical Link
             let canonical = document.querySelector('link[rel="canonical"]');
             if (!canonical) {
                 canonical = document.createElement('link');
@@ -525,24 +553,28 @@
             // Use user-defined canonical or default to current URL
             canonical.href = seo.canonical || window.location.href;
 
-            // 4. Update Meta Description & Keywords
+            // 5. Update Meta Description & Keywords
             const fallbackDesc = post.content ? post.content.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...' : '';
             setMeta('description', seo.description || fallbackDesc);
             if (seo.keywords) setMeta('keywords', seo.keywords);
-
-            // 5. Open Graph Updates
-            let ogTitle = document.querySelector('meta[property="og:title"]');
-            if(ogTitle) ogTitle.content = seo.title || post.title;
             
-            let ogUrl = document.querySelector('meta[property="og:url"]');
-            if(!ogUrl) {
-                ogUrl = document.createElement('meta');
-                ogUrl.setAttribute('property', 'og:url');
-                document.head.appendChild(ogUrl);
-            }
-            ogUrl.content = window.location.href;
+            // Robots
+            const robots = [];
+            if (seo.noIndex) robots.push('noindex'); else robots.push('index');
+            if (seo.noFollow) robots.push('nofollow'); else robots.push('follow');
+            robots.push('max-image-preview:standard');
+            setMeta('robots', robots.join(', '));
 
-            // 6. Local SEO Schema (Organization) + Article Schema
+            // 6. Open Graph Updates
+            setOg('og:title', seo.title || post.title);
+            setOg('og:type', 'article');
+            setOg('og:url', window.location.href);
+            if(post.image) setOg('og:image', post.image);
+            setOg('og:description', seo.description || fallbackDesc);
+            setOg('og:site_name', 'Digital Services Hub');
+            setOg('og:locale', 'en_US');
+
+            // 7. Local SEO Schema (Organization) + Article Schema
             const localSeoSchema = {
                 "@context": "https://schema.org",
                 "@type": "Organization",
