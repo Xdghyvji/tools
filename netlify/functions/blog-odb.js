@@ -1,4 +1,4 @@
-// FORCE UPDATE: v8.0 - Live Comments + Advanced SEO + ODB
+// FORCE UPDATE: v9.0 - SEO Perfected (Schema + Social Cards + Performance)
 const { builder } = require('@netlify/functions');
 const fetch = require('node-fetch');
 
@@ -73,6 +73,7 @@ function generatePage(fields, config, currentSlug) {
       // SEO Fields
       seoTitle: fields.seo?.mapValue?.fields?.title?.stringValue || getString(fields.title),
       seoDesc: fields.seo?.mapValue?.fields?.description?.stringValue || getString(fields.content).substring(0, 160),
+      seoKeywords: fields.seo?.mapValue?.fields?.keywords?.stringValue || "Digital Services, SEO, Marketing, AI Tools",
       canonical: fields.seo?.mapValue?.fields?.canonical?.stringValue || `https://digitalserviceshub.online/blog/${currentSlug}`
     };
 
@@ -82,40 +83,83 @@ function generatePage(fields, config, currentSlug) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Title: Removed the extra colon -->
     <title>${data.seoTitle} | Digital Services Hub</title>
     
     <!-- Core SEO -->
     <meta name="description" content="${data.seoDesc}">
-    <meta name="generator" content="DigitalServicesHub v1.0">
+    <meta name="keywords" content="${data.seoKeywords}">
+    <meta name="author" content="${data.author}">
+    <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="referrer" content="origin-when-cross-origin">
-    <meta name="robots" content="index, follow, max-image-preview:standard">
     <meta name="format-detection" content="telephone=no">
-    
-    <!-- Open Graph / Social -->
-    <meta property="og:title" content="${data.seoTitle}">
-    <meta property="og:type" content="article">
-    <meta property="og:site_name" content="Digital Services Hub">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:url" content="https://digitalserviceshub.online/blog/${currentSlug}">
-    <meta property="og:image" content="${data.image}">
-    <meta property="article:published_time" content="${data.date}">
-    <meta property="article:author" content="${data.author}">
+    <meta name="generator" content="DigitalServicesHub v1.0">
     
     <!-- Canonical -->
     <link rel="canonical" href="${data.canonical}">
-    <link rel="license" href="https://digitalserviceshub.online/terms.html">
     
+    <!-- Open Graph (Facebook/LinkedIn) -->
+    <meta property="og:site_name" content="Digital Services Hub">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${data.seoTitle}">
+    <meta property="og:description" content="${data.seoDesc}">
+    <meta property="og:url" content="https://digitalserviceshub.online/blog/${currentSlug}">
+    <meta property="og:image" content="${data.image}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="article:published_time" content="${data.date}">
+    <meta property="article:author" content="${data.author}">
+    
+    <!-- Twitter Card (Essential for X/Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${data.seoTitle}">
+    <meta name="twitter:description" content="${data.seoDesc}">
+    <meta name="twitter:image" content="${data.image}">
+    
+    <!-- Structured Data (JSON-LD) for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "${data.seoTitle}",
+      "image": "${data.image}",
+      "author": {
+        "@type": "Person",
+        "name": "${data.author}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Digital Services Hub",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://digitalserviceshub.online/assets/img/digitalserviceshub.png"
+        }
+      },
+      "datePublished": "${data.date}",
+      "description": "${data.seoDesc}"
+    }
+    </script>
+
     <!-- Performance & Preconnect -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://firestore.googleapis.com">
     
-    <!-- Icons -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/assets/img/digitalserviceshub.png">
     <link rel="apple-touch-icon" href="/assets/img/digitalserviceshub.png">
     
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Pinned version for stability) -->
+    <script src="https://unpkg.com/lucide@0.300.0/dist/umd/lucide.min.js"></script>
+
     <!-- Tailwind CSS -->
+    <!-- WARNING: Using CDN is bad for production performance. Use a build step if possible. -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -132,15 +176,13 @@ function generatePage(fields, config, currentSlug) {
             }
         }
     </script>
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- Custom Overrides -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Plus Jakarta Sans', sans-serif; }
         
+        /* Prose Styles */
         .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; color: #0f172a; }
         .prose h2 { font-size: 1.875em; font-weight: 700; margin-top: 2em; margin-bottom: 1em; color: #0f172a; }
         .prose h3 { font-size: 1.5em; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.75em; color: #334155; }
